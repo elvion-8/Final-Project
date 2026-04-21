@@ -2,13 +2,13 @@
 .vs/
 
 # This .gitignore file should be placed at the root of your Unity project directory
-/[Ll]ibrary/
-/[Tt]emp/
-/[Oo]bj/
-/[Bb]uild/
-/[Bb]uilds/
-/[Ll]ogs/
-/UserSettings/
+**/[Ll]ibrary/
+**/[Tt]emp/
+**/[Oo]bj/
+**/[Bb]uild/
+**/[Bb]uilds/
+**/[Ll]ogs/
+**/UserSettings/
 
 # MemoryCaptures
 /[Mm]emoryCaptures/
