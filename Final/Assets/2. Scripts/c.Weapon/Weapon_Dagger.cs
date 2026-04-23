@@ -19,5 +19,8 @@ public class Weapon_Dagger : MonoBehaviour, IWeaponStats
 
     public void died()
     {}
-
+    public void Skill1()
+    {}
+    public void Skill2()
+    {}
 }

@@ -11,4 +11,7 @@ public interface IWeaponStats
    // public WeaponType Type { get;}      //무기 종류
 
     public void Equip();                //무기 착용
+
+    public void Skill1();               //무기별 기본 스킬 2개 정도는 넣기!
+    public void Skill2();
 }

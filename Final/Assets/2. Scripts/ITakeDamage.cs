@@ -2,14 +2,9 @@ using UnityEngine;
 
 public interface ITakeDamage
 {
-    public void TakeDamage(int damage)
+    public int TakeDamage(int damage)
     {
-        IWeaponStats IWeapon;
-        
-        if(Random.Range(0,100)<)
-        {
-            return damage + (damage * );
-        }
-        else return damage;
+      
+        return damage;
     }
 }
