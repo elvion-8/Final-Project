@@ -1,5 +1,3 @@
-using System.Collections;
-
 public interface IEnemy
 {
     int hp {get;}
@@ -12,13 +10,4 @@ public interface IEnemy
     void Skill2();
     void Skill3();
     void Skill4();
-    StartCoroutine(SkillCtrl());
-    IEnumerator SkillCtrl()
-    {
-        while(true)
-        {
-            
-        }
-    }
-
 }

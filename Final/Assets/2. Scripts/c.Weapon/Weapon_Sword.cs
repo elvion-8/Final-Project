@@ -20,4 +20,9 @@ public class Weapon_Sword : MonoBehaviour, IWeaponStats
     public void Equip()                //무기 착용
     {Debug.Log("스워드임");
     Debug.Log(attackDmg);}
+
+    public void Skill1()
+    {}
+    public void Skill2()
+    {}
 }
