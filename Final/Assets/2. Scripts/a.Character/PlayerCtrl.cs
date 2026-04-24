@@ -12,6 +12,7 @@ public class PlayerCtrl : MonoBehaviour
     public bool isDie;
     public float rotationSpeed = 10.0f;
     public float runningSpeed = 3f;
+    public GameObject trail;
 
     void Awake()
     {
@@ -24,7 +25,7 @@ public class PlayerCtrl : MonoBehaviour
     {
         MoveDir = Vector3.zero;
         moveSpeed = 1.3f;
-        jumpPower = 8.0f;
+        jumpPower = 9.0f;
         gravity = 20.0f;
     }
 
@@ -45,6 +46,8 @@ public class PlayerCtrl : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             anim.SetTrigger("Attack");
+            // if(trail!=null)
+            // {trail.SetActive(true);}
             anim.SetBool("Walk", false);
             anim.SetBool("RightSide", false);
             anim.SetBool("LeftSide", false);
