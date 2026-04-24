@@ -11,6 +11,7 @@ public class PlayerCtrl : MonoBehaviour
     public Vector3 MoveDir;
     public bool isDie;
     public float rotationSpeed = 10.0f;
+    public float runningSpeed = 3f;
 
     void Awake()
     {
@@ -76,7 +77,7 @@ public class PlayerCtrl : MonoBehaviour
                     if (Input.GetKey(KeyCode.LeftShift))
                     {
                         anim.SetBool("Run", true);
-                        moveSpeed = 2.3f;
+                        moveSpeed = runningSpeed;
                     }
                     else
                     {
