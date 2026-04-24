@@ -4,14 +4,13 @@ public class PlayerCtrl : MonoBehaviour
 {
     private CharacterController charCon;
     private Transform cmTr;
-    private float moveSpeed;
+    public float moveSpeed;
     private float jumpPower;
     private float gravity;
     public Animator anim;
     public Vector3 MoveDir;
     public bool isDie;
     public float rotationSpeed = 10.0f;
-    private float mouseMove;
 
     void Awake()
     {
@@ -42,6 +41,13 @@ public class PlayerCtrl : MonoBehaviour
         camRight.y = 0;
         Vector3 moveDir = camForward * v + camRight * h;
 
+        if (Input.GetMouseButtonDown(0))
+        {
+            anim.SetTrigger("Attack");
+            anim.SetBool("Walk", false);
+            anim.SetBool("RightSide", false);
+            anim.SetBool("LeftSide", false);
+        }
 
         if (charCon.isGrounded)
         {
@@ -49,22 +55,51 @@ public class PlayerCtrl : MonoBehaviour
 
             if (inputDir.magnitude > 0.1f)
             {
-                Quaternion targetRotation = Quaternion.LookRotation(MoveDir);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-                anim.SetBool("Run", true);
-            }
+                if (Mathf.Abs(v) < 0.1f && Mathf.Abs(h) > 0.1f)
+                {
+                    anim.SetBool("Walk", false);
+                    if (h > 0.1f)
+                    {
+                        anim.SetBool("RightSide", true);
+                        anim.SetBool("LeftSide", false);
+                    }
+                    else if (h < -0.1f)
+                    {
+                        anim.SetBool("LeftSide", true);
+                        anim.SetBool("RightSide", false);
+                    }
+                }
+                else
+                {
+                    Quaternion targetRotation = Quaternion.LookRotation(MoveDir);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+                    if (Input.GetKey(KeyCode.LeftShift))
+                    {
+                        anim.SetBool("Run", true);
+                        moveSpeed = 2.3f;
+                    }
+                    else
+                    {
+                        anim.SetBool("Walk", true);
+                        moveSpeed = 1.3f;
+                        anim.SetBool("Run", false);
+                    }
+                }
+                }
             else
-            {
-                anim.SetBool("Run", false);
+                {
+                    anim.SetBool("Walk", false);
+                    anim.SetBool("RightSide", false);
+                    anim.SetBool("LeftSide", false);
+                }
+
+                if (Input.GetButton("Jump"))
+                {
+                    MoveDir.y = jumpPower;
+                    anim.SetTrigger("Jump");
+                }
             }
-            if (Input.GetButton("Jump")) MoveDir.y = jumpPower;
+            MoveDir.y -= gravity * Time.deltaTime;
+            charCon.Move(MoveDir * Time.deltaTime);
         }
-        if (h > 0.5f)
-        {
-            anim.SetBool("RightSide", true);
-        }
-        else anim.SetBool("RightSide", false);
-        MoveDir.y -= gravity * Time.deltaTime;
-        charCon.Move(MoveDir * Time.deltaTime);
     }
-}
