@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class PlayerCtrl : MonoBehaviour
@@ -13,12 +14,29 @@ public class PlayerCtrl : MonoBehaviour
     public float rotationSpeed = 10.0f;
     public float runningSpeed = 3f;
     public GameObject trail;
+    public GameObject[] weapons;
+    public Transform weaponPoint;
+    private GameObject currentWeapon;
+    private int weaponIndex = 0;
 
     void Awake()
     {
         charCon = GetComponent<CharacterController>();
         anim = GetComponentInChildren<Animator>();
         cmTr = GameObject.FindGameObjectWithTag("MainCamera").transform;
+
+        if (weaponPoint == null)
+        {
+            Transform[] allWeapons = GetComponentsInChildren<Transform>(true);
+            foreach (Transform child in allWeapons)
+            {
+                if (child.name == "WeaponPoint")
+                {
+                    weaponPoint = child;
+                    break;
+                }
+            }
+        }
     }
 
     void Start()
@@ -31,6 +49,7 @@ public class PlayerCtrl : MonoBehaviour
 
     void Update()
     {
+        WeaponSwap();
         if (isDie) return;
 
         float h = Input.GetAxis("Horizontal");
@@ -46,8 +65,7 @@ public class PlayerCtrl : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             anim.SetTrigger("Attack");
-            // if(trail!=null)
-            // {trail.SetActive(true);}
+            if (trail != null) { this.StartCoroutine(TrailWeapon()); }//trail.SetActive(true);}
             anim.SetBool("Walk", false);
             anim.SetBool("RightSide", false);
             anim.SetBool("LeftSide", false);
@@ -89,21 +107,60 @@ public class PlayerCtrl : MonoBehaviour
                         anim.SetBool("Run", false);
                     }
                 }
-                }
-            else
-                {
-                    anim.SetBool("Walk", false);
-                    anim.SetBool("RightSide", false);
-                    anim.SetBool("LeftSide", false);
-                }
-
-                if (Input.GetButton("Jump"))
-                {
-                    MoveDir.y = jumpPower;
-                    anim.SetTrigger("Jump");
-                }
             }
-            MoveDir.y -= gravity * Time.deltaTime;
-            charCon.Move(MoveDir * Time.deltaTime);
+            else
+            {
+                anim.SetBool("Walk", false);
+                anim.SetBool("RightSide", false);
+                anim.SetBool("LeftSide", false);
+            }
+
+            if (Input.GetButton("Jump"))
+            {
+                MoveDir.y = jumpPower;
+                anim.SetTrigger("Jump");
+            }
         }
+        MoveDir.y -= gravity * Time.deltaTime;
+        charCon.Move(MoveDir * Time.deltaTime);
     }
+
+    void WeaponSwap()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            EquipWeapon(0);
+            anim.SetLayerWeight(4, 0f);
+            anim.SetLayerWeight(3, 1f);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            EquipWeapon(1);
+            anim.SetLayerWeight(3, 0f);
+            anim.SetLayerWeight(4, 1f);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha3)) EquipWeapon(2);
+        else if (Input.GetKeyDown(KeyCode.Alpha4)) EquipWeapon(3);
+    }
+
+    void EquipWeapon(int index)
+    {
+        if (index < 0 || index >= weapons.Length || weapons[index] == null) return;
+
+        if (currentWeapon != null)
+        {
+            Destroy(currentWeapon);
+        }
+
+        Transform spawnPoint = weaponPoint != null ? weaponPoint : transform;
+        currentWeapon = Instantiate(weapons[index], spawnPoint.position, spawnPoint.rotation, spawnPoint);
+    }
+    IEnumerator TrailWeapon()
+    {
+        yield return new WaitForSeconds(0.3f);
+        trail.SetActive(true);
+        yield return new WaitForSeconds(0.5f);
+        trail.SetActive(false);
+    }
+}
+

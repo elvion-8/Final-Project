@@ -249,6 +249,10 @@ MonoBehaviour:
   rotationSpeed: 10
   runningSpeed: 4.5
   trail: {fileID: 1016038775}
+  weapons:
+  - {fileID: 9159102852955507597, guid: c80eb222afb88204e95ad885914ad504, type: 3}
+  - {fileID: 8559635611127355586, guid: aabed7cef3451b446a0a2b41e92bab43, type: 3}
+  weaponPoint: {fileID: 0}
 --- !u!4 &547871998
 Transform:
   m_ObjectHideFlags: 0
@@ -286,7 +290,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1016038776
 Transform:
   m_ObjectHideFlags: 0
@@ -344,7 +348,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 1
+  m_Time: 0.3
   m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
@@ -1481,6 +1485,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 7f671be9f5f44f04489583d98a64c5e3, type: 3}
       propertyPath: m_Name
       value: sci-fi_energy_axe_3d_model
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 7f671be9f5f44f04489583d98a64c5e3, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
