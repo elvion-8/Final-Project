@@ -252,6 +252,7 @@ MonoBehaviour:
   weapons:
   - {fileID: 9159102852955507597, guid: c80eb222afb88204e95ad885914ad504, type: 3}
   - {fileID: 8559635611127355586, guid: aabed7cef3451b446a0a2b41e92bab43, type: 3}
+  - {fileID: 0}
   weaponPoint: {fileID: 0}
 --- !u!4 &547871998
 Transform:
