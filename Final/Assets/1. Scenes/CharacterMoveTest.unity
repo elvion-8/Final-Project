@@ -174,6 +174,7 @@ GameObject:
   - component: {fileID: 547871997}
   - component: {fileID: 547871996}
   - component: {fileID: 547871995}
+  - component: {fileID: 547871999}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -249,10 +250,7 @@ MonoBehaviour:
   rotationSpeed: 10
   runningSpeed: 4.5
   trail: {fileID: 1016038775}
-  weapons:
-  - {fileID: 9159102852955507597, guid: c80eb222afb88204e95ad885914ad504, type: 3}
-  - {fileID: 8559635611127355586, guid: aabed7cef3451b446a0a2b41e92bab43, type: 3}
-  - {fileID: 0}
+  weapons: []
   weaponPoint: {fileID: 0}
 --- !u!4 &547871998
 Transform:
@@ -270,6 +268,23 @@ Transform:
   - {fileID: 1252070494}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &547871999
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 547871993}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e60bb9a7aebe73459b6a9a43a5123c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponPrefabs:
+  - {fileID: 9159102852955507597, guid: c80eb222afb88204e95ad885914ad504, type: 3}
+  - {fileID: 8559635611127355586, guid: aabed7cef3451b446a0a2b41e92bab43, type: 3}
+  weaponPoint: {fileID: 0}
+  anim: {fileID: 0}
 --- !u!4 &969118428 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3566545587860125915, guid: 7c7da1f49932da64a97904e8cb275f76, type: 3}
