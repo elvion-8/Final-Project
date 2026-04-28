@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using UnityEngine;
 
 public class Weapon_Sword : MonoBehaviour, IWeaponStats
@@ -25,4 +26,14 @@ public class Weapon_Sword : MonoBehaviour, IWeaponStats
     {}
     public void Skill2()
     {}
+    void OnTriggerEnter(Collider other)
+    {
+        ITakeDamage target = other.GetComponent<ITakeDamage>();
+
+        if(target != null)
+        {
+            target.TakeDamage(attackDmg);
+        }
+    }
+
 }

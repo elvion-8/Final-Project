@@ -28,7 +28,7 @@ public class Anim
     public AnimationClip die;
 }
 
-public class EnemyCtrl : MonoBehaviour
+public class EnemyCtrl : MonoBehaviour, ITakeDamage
 {
     // 애니메이션 어트리뷰트
     [Space(10)]
@@ -229,6 +229,15 @@ public class EnemyCtrl : MonoBehaviour
     void FuncStart()
     {
         Debug.Log("Func start"); 
-    }  
+    } 
+    public void TakeDamage(int damage)
+    {
+        hp -= damage;
+        Debug.Log("남은 체력 : "+hp);
+        if(hp <=0)
+        {
+            EnemyDie();
+        }
+    }
 
 }
