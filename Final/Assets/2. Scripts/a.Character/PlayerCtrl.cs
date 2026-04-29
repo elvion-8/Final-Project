@@ -14,6 +14,7 @@ public class PlayerCtrl : MonoBehaviour
     public float rotationSpeed = 10.0f;
     public float runningSpeed = 3f;
     public GameObject trail;
+    public bool isAttacking = false;
 
     void Awake()
     {
@@ -46,11 +47,15 @@ public class PlayerCtrl : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            anim.SetTrigger("Attack");
-            if (trail != null) { this.StartCoroutine(TrailWeapon()); }
-            anim.SetBool("Walk", false);
-            anim.SetBool("RightSide", false);
-            anim.SetBool("LeftSide", false);
+            if (!isAttacking)
+            {
+                isAttacking = true;
+                anim.SetTrigger("Attack");
+                if (trail != null) { this.StartCoroutine(TrailWeapon()); }
+                anim.SetBool("Walk", false);
+                anim.SetBool("RightSide", false);
+                anim.SetBool("LeftSide", false);
+            }
         }
 
         if (charCon.isGrounded)
@@ -113,5 +118,12 @@ public class PlayerCtrl : MonoBehaviour
         trail.SetActive(true);
         yield return new WaitForSeconds(0.5f);
         trail.SetActive(false);
+        yield return new WaitForSeconds(1);
+        AttactEnd();
+    }
+
+    void AttactEnd()
+    {
+        isAttacking = false;
     }
 }

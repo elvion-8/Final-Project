@@ -1,5 +1,6 @@
 using JetBrains.Annotations;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Weapon_Sword : MonoBehaviour, IWeaponStats
 {
@@ -13,9 +14,15 @@ public class Weapon_Sword : MonoBehaviour, IWeaponStats
     public int criticalProb {get; private set;}=10;     //치명타 확률
     //public WeaponType Type { get; private set;}=      //무기 종류
 
+    int damage;
+    
+    
+
     void Awake()
     {
         //애니메이션 컴포넌트 연결
+
+        
     }
     //[ContextMenu.test("")]
     public void Equip()                //무기 착용
@@ -28,12 +35,35 @@ public class Weapon_Sword : MonoBehaviour, IWeaponStats
     {}
     void OnTriggerEnter(Collider other)
     {
-        ITakeDamage target = other.GetComponent<ITakeDamage>();
+        //ITakeDamage target = other.GetComponent<ITakeDamage>();
 
-        if(target != null)
+        //if(target != null)
+        //{
+        //    target.TakeDamage(attackDmg);
+        //}
+
+        
+            if (other.gameObject.tag == "Enemy")
+            {
+                other.GetComponent<EnemyCtrl>().TakeDamage(Damage());
+            }
+        
+    }
+
+
+    public int Damage()
+    {
+        int multiplier = 1;
+
+        if (Random.Range(0, 30) < criticalProb)
         {
-            target.TakeDamage(attackDmg);
+            multiplier = criticalDmg;
+            Debug.Log("크리티컬 히트!");
         }
+
+        damage = multiplier * attackDmg;
+        
+        return damage;
     }
 
 }
