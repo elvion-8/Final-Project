@@ -55,6 +55,7 @@ MonoBehaviour:
   rotationSpeed: 10
   runningSpeed: 4.5
   trail: {fileID: 2277274160073182921}
+  isAttacking: 0
 --- !u!136 &2713677463199808178
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -572,6 +573,10 @@ PrefabInstance:
     - target: {fileID: 4194323483264803425, guid: 7c7da1f49932da64a97904e8cb275f76, type: 3}
       propertyPath: m_Name
       value: SkeletonShield
+      objectReference: {fileID: 0}
+    - target: {fileID: 4194323483264803425, guid: 7c7da1f49932da64a97904e8cb275f76, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
