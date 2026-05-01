@@ -12,7 +12,7 @@ public class AttackMotion : MonoBehaviour
     void Awake()
     {
         anim = GetComponentInChildren<Animator>();
-        if(weaponPoint==null)
+        if (weaponPoint == null) 
         {
             Transform[] allWeapons = GetComponentsInChildren<Transform>(true);
             foreach(Transform child in allWeapons)
@@ -28,7 +28,10 @@ public class AttackMotion : MonoBehaviour
 
     void Update()
     {
-        WeaponSwap();
+        if (GameObject.FindWithTag("Player").GetComponent<PlayerCtrl>().isAttacking == false)
+        {
+            WeaponSwap();
+        }
     }
 
     void WeaponSwap()

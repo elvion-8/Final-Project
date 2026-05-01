@@ -8,7 +8,10 @@ public interface IWeaponStats
     public float attackSpeed { get;}   //공격 속도
     public int criticalDmg {get;}      //치명타 데미지
     public int criticalProb {get;}     //치명타 확률
-   // public WeaponType Type { get;}      //무기 종류
+                                       // public WeaponType Type { get;}      //무기 종류
+
+    public int Durability { get; }     //내구도
+
 
     public void Equip();                //무기 착용
 

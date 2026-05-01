@@ -15,6 +15,7 @@ public class PlayerCtrl : MonoBehaviour
     public float runningSpeed = 3f;
     public GameObject trail;
     public bool isAttacking = false;
+    public float attackSpeed = 1;
 
     void Awake()
     {
@@ -49,7 +50,7 @@ public class PlayerCtrl : MonoBehaviour
         {
             if (!isAttacking)
             {
-                isAttacking = true;
+                if (GameObject.FindWithTag("Weapon") != null) { isAttacking = true; }
                 anim.SetTrigger("Attack");
                 if (trail != null) { this.StartCoroutine(TrailWeapon()); }
                 anim.SetBool("Walk", false);
@@ -114,16 +115,24 @@ public class PlayerCtrl : MonoBehaviour
     
     IEnumerator TrailWeapon()
     {
+        if(GameObject.FindWithTag("Weapon") != null)
+        {
+            attackSpeed = GameObject.FindWithTag("Weapon").GetComponent<IWeaponStats>().attackSpeed;
+
+        }
+       
         yield return new WaitForSeconds(0.3f);
         trail.SetActive(true);
         yield return new WaitForSeconds(0.5f);
         trail.SetActive(false);
-        yield return new WaitForSeconds(1);
+        
+        yield return new WaitForSeconds(1/attackSpeed);
         AttactEnd();
     }
 
     void AttactEnd()
     {
+        Debug.Log("공격가능");
         isAttacking = false;
     }
 }
