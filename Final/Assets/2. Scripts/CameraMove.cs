@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System;
+using UnityEditor.EditorTools;
 
 public class CameraMove : MonoBehaviour
 {
@@ -10,7 +11,11 @@ public class CameraMove : MonoBehaviour
     [Header("Camera Settings")]
     public float mouseSensitivity;
     public float distance = 7f;
-    public float height = 3f;
+    [Range(-3f,10f)]
+    [Tooltip("카메라 높이")]
+    public float cameraHeight;
+    [Tooltip("락온 높이")]
+    public float height;
     public float heightDamping = 2.0f;
     public float rotationDamping = 3.0f;
     private float mouseX;
@@ -121,7 +126,7 @@ public class CameraMove : MonoBehaviour
         rotY -= mouseY;
         rotY = Mathf.Clamp(rotY, -20f, 90f);
         Quaternion rotation = Quaternion.Euler(rotY, rotX, 0);
-        Vector3 position = playerPos.position - (rotation * Vector3.forward * distance);
+        Vector3 position = playerPos.position - (rotation * Vector3.forward * distance)+(Vector3.up * cameraHeight);
 
         cmTr.rotation = rotation;
         cmTr.position = position;

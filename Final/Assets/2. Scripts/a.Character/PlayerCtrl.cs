@@ -3,18 +3,34 @@ using UnityEngine;
 
 public class PlayerCtrl : MonoBehaviour
 {
+    [Header("Player Move")]
+    [Range(1f, 5f)]
+    [Tooltip("기본값 : 1.3")]
+    private float moveSpeed;
+    [Range(1f, 20f)]
+    [Tooltip("기본값 : 10")]
+    public float rotationSpeed = 10.0f;
+    [Range(1f, 10f)]
+    [Tooltip("기본값 : 6")]
+    public float runningSpeed = 6f;
+    [Range(1f, 10f)]
+    [Tooltip("기본값 : 7")]
+    public float rollPower;
+
+    [Space(10)]
     private CharacterController charCon;
     private Transform cmTr;
-    public float moveSpeed;
+
     private float jumpPower;
     private float gravity;
+    [Header("others")]
     public Animator anim;
     public Vector3 MoveDir;
     public bool isDie;
-    public float rotationSpeed = 10.0f;
-    public float runningSpeed = 3f;
-    public GameObject trail;
+    //public GameObject trail;
     public bool isAttacking = false;
+
+    private bool isRolling;
     public float attackSpeed = 1;
 
     void Awake()
@@ -27,7 +43,6 @@ public class PlayerCtrl : MonoBehaviour
     void Start()
     {
         MoveDir = Vector3.zero;
-        moveSpeed = 1.3f;
         jumpPower = 9.0f;
         gravity = 20.0f;
     }
@@ -50,36 +65,19 @@ public class PlayerCtrl : MonoBehaviour
         {
             if (!isAttacking)
             {
-                if (GameObject.FindWithTag("Weapon") != null) { isAttacking = true; }
+                isAttacking = true;
                 anim.SetTrigger("Attack");
-                if (trail != null) { this.StartCoroutine(TrailWeapon()); }
-                anim.SetBool("Walk", false);
-                anim.SetBool("RightSide", false);
-                anim.SetBool("LeftSide", false);
+                StartCoroutine(AttackRoutine());
             }
         }
 
         if (charCon.isGrounded)
         {
-            MoveDir = moveDir.normalized * moveSpeed;
 
-            if (inputDir.magnitude > 0.1f)
+            if (!isRolling)
             {
-                if (Mathf.Abs(v) < 0.1f && Mathf.Abs(h) > 0.1f)
-                {
-                    anim.SetBool("Walk", false);
-                    if (h > 0.1f)
-                    {
-                        anim.SetBool("RightSide", true);
-                        anim.SetBool("LeftSide", false);
-                    }
-                    else if (h < -0.1f)
-                    {
-                        anim.SetBool("LeftSide", true);
-                        anim.SetBool("RightSide", false);
-                    }
-                }
-                else
+                MoveDir = moveDir.normalized * moveSpeed;
+                if (inputDir.magnitude > 0.1f)
                 {
                     Quaternion targetRotation = Quaternion.LookRotation(MoveDir);
                     transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
@@ -95,44 +93,59 @@ public class PlayerCtrl : MonoBehaviour
                         anim.SetBool("Run", false);
                     }
                 }
+                else
+                {
+                    anim.SetBool("Walk", false);
+                    anim.SetBool("RightSide", false);
+                    anim.SetBool("LeftSide", false);
+                }
+
+                if (Input.GetButtonDown("Jump"))
+                {
+                    MoveDir.y = jumpPower;
+                    anim.SetTrigger("Jump");
+                }
             }
-            else
+            if (Input.GetButtonDown("LeftCtrl") && !isRolling)
             {
-                anim.SetBool("Walk", false);
-                anim.SetBool("RightSide", false);
-                anim.SetBool("LeftSide", false);
+                StartCoroutine(Rolling());
             }
 
-            if (Input.GetButton("Jump"))
-            {
-                MoveDir.y = jumpPower;
-                anim.SetTrigger("Jump");
-            }
         }
         MoveDir.y -= gravity * Time.deltaTime;
         charCon.Move(MoveDir * Time.deltaTime);
     }
-    
-    IEnumerator TrailWeapon()
-    {
-        if(GameObject.FindWithTag("Weapon") != null)
-        {
-            attackSpeed = GameObject.FindWithTag("Weapon").GetComponent<IWeaponStats>().attackSpeed;
 
-        }
-       
-        yield return new WaitForSeconds(0.3f);
-        trail.SetActive(true);
-        yield return new WaitForSeconds(0.5f);
-        trail.SetActive(false);
-        
-        yield return new WaitForSeconds(1/attackSpeed);
-        AttactEnd();
+
+    // IEnumerator TrailWeapon()
+    // {
+    //     if (GameObject.FindWithTag("Weapon") != null)
+    //     {
+    //         attackSpeed = GameObject.FindWithTag("Weapon").GetComponent<IWeaponStats>().attackSpeed;
+
+    //     }
+
+    //     yield return new WaitForSeconds(0.3f);
+    //     trail.SetActive(true);
+    //     yield return new WaitForSeconds(0.5f);
+    //     trail.SetActive(false);
+
+    //     yield return new WaitForSeconds(1 / attackSpeed);
+    // }
+    IEnumerator Rolling()
+    {
+        isRolling = true;
+        anim.SetTrigger("Roll");
+        Vector3 rollDir = transform.forward * rollPower;
+        MoveDir.x = rollDir.x;
+        MoveDir.z = rollDir.z;
+        yield return new WaitForSeconds(1f);
+        isRolling = false;
     }
 
-    void AttactEnd()
+    IEnumerator AttackRoutine()
     {
-        Debug.Log("���ݰ���");
+        yield return new WaitForSeconds(0.5f);
         isAttacking = false;
     }
 }
