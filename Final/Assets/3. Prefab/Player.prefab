@@ -55,6 +55,7 @@ MonoBehaviour:
   MoveDir: {x: 0, y: 0, z: 0}
   isDie: 0
   isAttacking: 0
+  attackSpeed: 1
 --- !u!136 &2713677463199808178
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -122,6 +123,7 @@ MonoBehaviour:
   weaponPoint: {fileID: 0}
   anim: {fileID: 0}
   trail: {fileID: 0}
+  attackSpeed: 0
 --- !u!1 &5151858258256872092
 GameObject:
   m_ObjectHideFlags: 0
@@ -324,7 +326,7 @@ PrefabInstance:
     - target: {fileID: 5866666021909216657, guid: 5dc7f807f808b0f448accc980b1a9fdf, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: f893d78148eef4541b5a78c4b4571608, type: 2}
+      objectReference: {fileID: 9100000, guid: 243b10b14637dda4db895aac87beae82, type: 2}
     - target: {fileID: 8560559809517495412, guid: 5dc7f807f808b0f448accc980b1a9fdf, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
