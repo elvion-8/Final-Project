@@ -51,10 +51,13 @@ MonoBehaviour:
   rotationSpeed: 10
   runningSpeed: 6
   rollPower: 7
+  hp: 100
+  fullHp: 0
   anim: {fileID: 0}
   MoveDir: {x: 0, y: 0, z: 0}
   isDie: 0
   isAttacking: 0
+  hpBar: {fileID: 0}
   attackSpeed: 1
 --- !u!136 &2713677463199808178
 CapsuleCollider:

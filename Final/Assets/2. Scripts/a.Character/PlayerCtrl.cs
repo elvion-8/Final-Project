@@ -1,7 +1,8 @@
 using System.Collections;
+using UnityEngine.UI;
 using UnityEngine;
 
-public class PlayerCtrl : MonoBehaviour
+public class PlayerCtrl : MonoBehaviour, ITakeDamage
 {
     [Header("Player Move")]
     [Range(1f, 5f)]
@@ -16,6 +17,17 @@ public class PlayerCtrl : MonoBehaviour
     [Range(1f, 10f)]
     [Tooltip("기본값 : 7")]
     public float rollPower;
+    [Range(1f, 10f)]
+    public float attackSpeed = 1;
+
+    [Space(10)]
+    [Header("playerStat")]
+    [Range(1f, 1000f)]
+    public int hp;
+    private int fullHp;
+    public Image hpBar;
+
+    scPlayerStat pS;
 
     [Space(10)]
     private CharacterController charCon;
@@ -26,12 +38,12 @@ public class PlayerCtrl : MonoBehaviour
     [Header("others")]
     public Animator anim;
     public Vector3 MoveDir;
-    public bool isDie;
-    //public GameObject trail;
-    public bool isAttacking = false;
+    private bool isDie;
+    public bool isAttacking = false;        //무기들에서 공격 여부를 참조하기 때문에 퍼블릭
+
 
     private bool isRolling;
-    public float attackSpeed = 1;
+
 
     void Awake()
     {
@@ -45,6 +57,8 @@ public class PlayerCtrl : MonoBehaviour
         MoveDir = Vector3.zero;
         jumpPower = 9.0f;
         gravity = 20.0f;
+        hp += pS.hpUpgrade;
+        fullHp = hp;
     }
 
     void Update()
@@ -116,22 +130,6 @@ public class PlayerCtrl : MonoBehaviour
         charCon.Move(MoveDir * Time.deltaTime);
     }
 
-
-    // IEnumerator TrailWeapon()
-    // {
-    //     if (GameObject.FindWithTag("Weapon") != null)
-    //     {
-    //         attackSpeed = GameObject.FindWithTag("Weapon").GetComponent<IWeaponStats>().attackSpeed;
-
-    //     }
-
-    //     yield return new WaitForSeconds(0.3f);
-    //     trail.SetActive(true);
-    //     yield return new WaitForSeconds(0.5f);
-    //     trail.SetActive(false);
-
-    //     yield return new WaitForSeconds(1 / attackSpeed);
-    // }
     IEnumerator Rolling()
     {
         isRolling = true;
@@ -147,5 +145,21 @@ public class PlayerCtrl : MonoBehaviour
     {
         yield return new WaitForSeconds(0.5f);
         isAttacking = false;
+    }
+
+    public int TakeDamage(int damage)
+    {
+        hp -= damage;
+        hpBar.fillAmount = (float)hp / (float)fullHp;
+        Debug.Log("takeDamage : " + damage);
+        if (hp <= 0)
+        {
+            Die();
+        }
+        return damage;
+    }
+    void Die()
+    {
+        Debug.Log("you die");
     }
 }

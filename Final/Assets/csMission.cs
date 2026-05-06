@@ -6,7 +6,9 @@ public class csMission : MonoBehaviour
     public GameObject pnlMission;
     private PlayerCtrl player;
     Transform mainCameraPos;
+    Vector3 tempMainCamPos;
     Quaternion mainCameraRot;
+    CameraMove camMove;
     private bool isPlayerInRange = false;
     private bool isMissionPanelOpen = false;
     Animator anim;
@@ -15,6 +17,7 @@ public class csMission : MonoBehaviour
     {
         player = GameObject.FindWithTag("Player").GetComponent<PlayerCtrl>();
         mainCameraPos = GameObject.FindWithTag("MainCamera").transform;
+        camMove = mainCameraPos.GetComponent<CameraMove>();
         anim = player.GetComponentInChildren<Animator>();
     }
 
@@ -22,29 +25,34 @@ public class csMission : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.X))
+        if (isMissionPanelOpen)
         {
-            ExitMission();
+            if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.X))
+            {
+                ExitMission();
+            }
         }
-
-        if (isPlayerInRange && Input.GetKeyDown(KeyCode.X) && isMissionPanelOpen == false)
+        else
         {
-            pnlMission.SetActive(true);
-            isMissionPanelOpen = true;
-            anim.SetBool("Run", false);
-            anim.SetBool("Walk", false);
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-            player.enabled = false;
-            mainCameraPos.position = mainCameraPos.position;
-            mainCameraPos.position = mainCameraPos.position; // (이 줄은 의미가 없지만 기존 코드 유지)
-            mainCameraRot = mainCameraPos.rotation;
+            if (isPlayerInRange && Input.GetKeyDown(KeyCode.X))
+            {
+                pnlMission.SetActive(true);
+                isMissionPanelOpen = true;
+                anim.SetBool("Run", false);
+                anim.SetBool("Walk", false);
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+                player.enabled = false;
 
-            // 1. 플레이어를 쳐다보게 세팅
-            mainCameraPos.LookAt(player.transform.position + Vector3.up * 1.5f);
+                if (camMove != null) camMove.enabled = false;
 
-            // 2. 카메라를 왼쪽으로 회전시켜 플레이어를 화면 우측으로 배치
-            mainCameraPos.Rotate(0, -15f, 0, Space.Self);
+                tempMainCamPos = mainCameraPos.position;
+                mainCameraRot = mainCameraPos.rotation;
+
+                mainCameraPos.LookAt(player.transform.position + Vector3.up * 1.5f);
+
+                mainCameraPos.Rotate(0, -15f, 0, Space.Self);
+            }
         }
     }
 
@@ -71,9 +79,12 @@ public class csMission : MonoBehaviour
         player.enabled = true;
         isMissionPanelOpen = false;
 
+        if (camMove != null) camMove.enabled = true;
+
         if (mainCameraPos != null)
         {
             mainCameraPos.rotation = mainCameraRot;
+            mainCameraPos.position = tempMainCamPos;
         }
     }
     public void EasyMode()
