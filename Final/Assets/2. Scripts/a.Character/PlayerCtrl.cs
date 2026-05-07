@@ -27,7 +27,8 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     private int fullHp;
     public Image hpBar;
 
-    scPlayerStat pS;
+    [HideInInspector]
+    public scPlayerStat pS;
 
     [Space(10)]
     private CharacterController charCon;
@@ -50,6 +51,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         charCon = GetComponent<CharacterController>();
         anim = GetComponentInChildren<Animator>();
         cmTr = GameObject.FindGameObjectWithTag("MainCamera").transform;
+        pS = GetComponent<scPlayerStat>();
     }
 
     void Start()
@@ -143,7 +145,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
 
     IEnumerator AttackRoutine()
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1f);
         isAttacking = false;
     }
 
