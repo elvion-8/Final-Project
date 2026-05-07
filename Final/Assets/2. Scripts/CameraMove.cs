@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections;
 using System;
-using UnityEditor.EditorTools;
 
 public class CameraMove : MonoBehaviour
 {
@@ -9,40 +8,55 @@ public class CameraMove : MonoBehaviour
     public Transform playerPos;
 
     [Header("Camera Settings")]
-    public float mouseSensitivity;
+    public float mouseSensitivity = 2.0f;
     public float distance = 7f;
     [Range(-3f,10f)]
-    [Tooltip("카메라 높이")]
-    public float cameraHeight;
-    [Tooltip("락온 높이")]
-    public float height;
-    public float heightDamping = 2.0f;
-    public float rotationDamping = 3.0f;
+    [Tooltip("카메라가 바라보는 플레이어의 높이 오프셋")]
+    public float cameraHeight = 1.5f;
+    [Tooltip("락온 시 높이 보정")]
+    public float height = 1.5f;
+
+    [Header("Collision Settings (벽 뚫기 방지)")]
+    [Tooltip("카메라가 통과하지 못하는 장애물 레이어")]
+    public LayerMask obstacleLayers;
+    [Tooltip("카메라 충돌체 반지름")]
+    public float cameraRadius = 0.3f;
+    [Tooltip("카메라 기존위치 복귀 속도")]
+    public float smoothSpeed = 10f;
+
     private float mouseX;
     private float mouseY;
     private float rotX;
     private float rotY;
+    private float currentDistance;
+
     //=====================Lockon 구현
     public bool lockOn;
     private GameObject[] enemys;
     private Transform EnemyTarget;
     private bool isEnemyDetected;
-    private Quaternion enemyLookRotation;
     private bool isDie;
     private float hf;
-
-
 
     void Awake()
     {
         cmTr = GetComponent<Transform>();
-        playerPos = GameObject.FindGameObjectWithTag("Player").transform;
-
+        if (playerPos == null)
+        {
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            if (player != null) playerPos = player.transform;
+        }
+        currentDistance = distance;
     }
 
     void Start()
     {
-        mouseSensitivity = 2.0f;
+        if (mouseSensitivity <= 0f) mouseSensitivity = 2.0f;
+
+        Vector3 angles = transform.eulerAngles;
+        rotX = angles.y;
+        rotY = angles.x;
+
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
     }
@@ -51,55 +65,43 @@ public class CameraMove : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.G))
         {
-            if (!lockOn)
+            lockOn = !lockOn;
+            if (lockOn) 
             {
-                lockOn = true;
                 LockOnStart();
-
             }
-            else if (lockOn)
+            else
             {
-                lockOn = false;
+                isEnemyDetected = false;
+                EnemyTarget = null;
             }
         }
-
-
     }
+
     void LockOnStart()
     {
-        StartCoroutine(this.LookSetting());
-    }
-
-    IEnumerator EnemyLockOn()
-    {
-        while (!lockOn)
-        {
-            StartCoroutine(this.LookSetting());
-        }
-        yield return 0;
-
+        StartCoroutine(LookSetting());
     }
 
     IEnumerator LookSetting()
     {
-        while (!isDie)
+        while (lockOn && !isDie)
         {
-            yield return new WaitForSeconds(0.2f);
-
             enemys = GameObject.FindGameObjectsWithTag("Enemy");
             if (enemys.Length == 0)
             {
                 EnemyTarget = null;
                 isEnemyDetected = false;
-                continue;
+                lockOn = false;
+                yield break;
             }
 
             Transform closestEnemy = enemys[0].transform;
-            float closestDist = (closestEnemy.position - cmTr.position).sqrMagnitude;
+            float closestDist = (closestEnemy.position - playerPos.position).sqrMagnitude;
 
             foreach (GameObject _Enemy in enemys)
             {
-                float currentDist = (_Enemy.transform.position - cmTr.position).sqrMagnitude;
+                float currentDist = (_Enemy.transform.position - playerPos.position).sqrMagnitude;
 
                 if (currentDist < closestDist)
                 {
@@ -110,12 +112,20 @@ public class CameraMove : MonoBehaviour
 
             EnemyTarget = closestEnemy;
             isEnemyDetected = true;
+            
+            yield return new WaitForSeconds(0.2f);
         }
     }
+
     void LateUpdate()
     {
-        if(!lockOn){MouseMove();}
-        if(lockOn){LockOn();}
+        if (playerPos == null) 
+        {
+            return;
+        }
+
+        if (!lockOn) { MouseMove(); }
+        else { LockOn(); }
     }
 
     void MouseMove()
@@ -124,33 +134,70 @@ public class CameraMove : MonoBehaviour
         mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
         rotX += mouseX;
         rotY -= mouseY;
-        rotY = Mathf.Clamp(rotY, -20f, 90f);
+        
+        rotY = Mathf.Clamp(rotY, -20f, 75f); 
+
         Quaternion rotation = Quaternion.Euler(rotY, rotX, 0);
-        Vector3 position = playerPos.position - (rotation * Vector3.forward * distance)+(Vector3.up * cameraHeight);
+
+        Vector3 targetPos = playerPos.position + (Vector3.up * cameraHeight);
+        Vector3 direction = -(rotation * Vector3.forward);
+        
+        float targetDistance = distance;
+        RaycastHit hit;
+
+        if (Physics.SphereCast(targetPos, cameraRadius, direction, out hit, distance, obstacleLayers))
+        {
+            targetDistance = Mathf.Clamp(hit.distance, 0.1f, distance);
+        }
+
+        if (targetDistance < currentDistance)
+            currentDistance = targetDistance;
+        else
+            currentDistance = Mathf.Lerp(currentDistance, targetDistance, Time.deltaTime * smoothSpeed);
+
+        Vector3 finalPosition = targetPos + (direction * currentDistance);
 
         cmTr.rotation = rotation;
-        cmTr.position = position;
+        cmTr.position = finalPosition;
     }
 
     void LockOn()
     {
         if (lockOn && isEnemyDetected && EnemyTarget != null && !isDie)
         {
+            Vector3 targetPos = playerPos.position + (Vector3.up * cameraHeight);
+            
             Vector3 dirFrom = (playerPos.position - EnemyTarget.position).normalized;
-
-            hf = (float)Math.Round(dirFrom.y / 10 + 0.4f,1);
-
+            hf = (float)Math.Round(dirFrom.y / 10 + 0.4f, 1);
             dirFrom.y = hf;
 
-            Vector3 dir = playerPos.position + (dirFrom * height) + (dirFrom * distance);
+            Vector3 desiredPosition = playerPos.position + (dirFrom * height) + (dirFrom * distance);
+            Vector3 direction = (desiredPosition - targetPos).normalized;
+            float desiredDist = Vector3.Distance(targetPos, desiredPosition);
 
-            transform.position = Vector3.Lerp(transform.position, dir, Time.deltaTime * 10f);
+            float targetDistance = desiredDist;
+            RaycastHit hit;
+
+            if (Physics.SphereCast(targetPos, cameraRadius, direction, out hit, desiredDist, obstacleLayers))
+            {
+                targetDistance = hit.distance;
+            }
+
+            if (targetDistance < currentDistance)
+                currentDistance = targetDistance;
+            else
+                currentDistance = Mathf.Lerp(currentDistance, targetDistance, Time.deltaTime * smoothSpeed);
+
+            Vector3 finalPosition = targetPos + (direction * currentDistance);
+            
+            transform.position = Vector3.Lerp(transform.position, finalPosition, Time.deltaTime * 10f);
 
             Vector3 lookDir = EnemyTarget.position - transform.position;
-
-            Quaternion targetRotation = Quaternion.LookRotation(lookDir);
-
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
+            if (lookDir != Vector3.zero)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(lookDir);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
+            }
         }
     }
 }
