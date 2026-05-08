@@ -8,375 +8,223 @@ using UnityEngine;
 using UnityEngine.AI;
 using Rand = UnityEngine.Random;
 
-// 필요한 컴포넌트를 위해 어트리뷰트 선언
-//[RequireComponent(typeof(AudioSource))]
-//[AddComponentMenu("IEnemy")]
-
-[System.Serializable]
-public class Anim
-{
-    public AnimationClip idle1;
-    public AnimationClip idel2;
-    public AnimationClip idel3;
-    public AnimationClip attack1;
-    public AnimationClip attack2;
-    public AnimationClip attack3;
-    public AnimationClip attack4;
-    public AnimationClip hit1;
-    public AnimationClip transform1;
-    public AnimationClip transform2;
-    public AnimationClip die;
-}
-
 public class EnemyCtrl : MonoBehaviour, ITakeDamage
 {
-    // 애니메이션 어트리뷰트
-    [Space(10)]
-    [Header("ANIMATION")]   
-    public Anim anims;
-    private Animation _anim;
-    AnimationState animState;
-    private float randAnimTime;
-    private int randAnim;
+    [Header("ANIMATION DURATION")]
+    public float idle1Duration  = 2.0f;
+    public float idle2Duration  = 2.0f;
+    public float aggroDuration  = 1.5f;
+    public float attack1Duration = 1.0f;
+    public float attack2Duration = 1.0f;
+    public float attack3Duration = 1.0f;
+    public float hitDuration    = 0.5f;
 
-    //자신과 타겟 Transform 참조 변수  
-    private Transform myTr;
-    private Transform traceTarget;
-
-    //추적을 위한 변수
-    private bool traceObject;
-    private bool traceAttack;
-
-    //추적 대상 거리체크 변수 
-    float dist1;
-    float dist2;
-
-    //플레이어를 찾기 위한 배열 
-    private GameObject[] players;
-    private Transform playerTarget;
-
-    //공격 진행 여부를 체크
-    private bool isAttacking = false;
-    private bool isIdling = false;
-
-    [HideInInspector]
-    //죽었는지 상태변수 
-    public bool isDie;
-
-    // Enemy의 현재 상태정보를 위한 Enum 자료형 선언  
-    public enum MODE_STATE { IDLE = 1, MOVE, SURPRISE, TRACE, ATTACK, HIT, EAT, SLEEP, DIE };
-
-    // Enemy의 종류 정보를 위한 Enum 자료형 선언  
-    public enum MODE_KIND { ENEMY_1 = 1, ENEMY_2, ENEMY_BOSS };
-
-    //인스펙터의 헤더의 표현을 위한 어트리뷰트 선언
-    [Header("몬스터 상태")]
-    //인스펙터의 헤더의 표현을 위한 어트리뷰트 선언
     [Header("STATE")]
-    //Enemy의 상태 셋팅
     public MODE_STATE enemyMode = MODE_STATE.IDLE;
 
-    // 인스펙터의 헤더의 표현을 위한 어트리뷰트 선언
-    [Header("SETTING")]
-    // Enemy종류 셋팅
-    public MODE_KIND enemyKind = MODE_KIND.ENEMY_BOSS;
-
-    // 인스펙터의 헤더의 표현을 위한 어트리뷰트 선언
     [Header("몬스터 인공지능")]
-    //변수들의 간격을 위한 어트리뷰트 선언(보기 좋다)
-    [Space(10)]
-    //변수에 팁을 달아줄 수  있다.(인스펙터에서 확인)
-    [Tooltip("몬스터의 HP")]
     [Range(0, 1000)] public int hp = 1000;
+    [Range(10f, 30f)][SerializeField] float findDist   = 20.0f;
+    [Range(1f,  30f)][SerializeField] float attackDist = 5.0f;
 
-    //거리에 따른 상태 체크 변수 
-    [Tooltip("몬스터 발견거리!!!")]
-    [Range(10f, 30f)][SerializeField] float findDist = 20.0f;
-    [Tooltip("몬스터 공격거리!!!")]
-    [Range(1f, 30f)][SerializeField] float attackDist = 20.0f;
+    public enum MODE_STATE { IDLE, TRACE, SURPRISE, ATTACK, HIT, DIE }
 
-    [Header("TEST")]
-    [SerializeField] private bool isHit;
-    private float isHitTime;
+    private Animator    _anim;
+    private Transform   myTr;
+    private Transform   traceTarget;
+    private Rigidbody   rbody;
 
-    // 리지드바디
-    Rigidbody rbody;
+    // 상태 플래그
+    private bool isActing       = false; // 애니메이션 진행 중 여부 (단일 플래그로 통합)
+    private bool hasPlayedAggro = false;
+    private bool isHit          = false;
+    private float isHitEndTime;
+
+    // 타겟 탐색 주기 조절
+    private float targetSearchInterval = 0.3f;
+    private float lastTargetSearchTime;
 
     void Awake()
     {
-        //자신의 자식에 있는 Animation 컴포넌트를 찾아와 레퍼런스에 할당 
-        _anim = GetComponentInChildren<Animation>();
-        //자기 자신의 Transform 연결
-        myTr = GetComponent<Transform>();
-
-        // 리지드바디 연결
+        _anim = GetComponentInChildren<Animator>();
+        myTr  = GetComponent<Transform>();
         rbody = GetComponent<Rigidbody>();
-    }
-
-    void Start()
-    {
-        StartCoroutine(TargtSetting());
-        StartCoroutine(ModeSet());
-        StartCoroutine(ActionSet());
     }
 
     void Update()
     {
-        //myTraceAgent.SetDestination(traceTarget.position);
-        if (isHit && Time.time > isHitTime)
-        {
+        if (enemyMode == MODE_STATE.DIE) return;
+
+        UpdateHitState();
+        UpdateTarget();     // 일정 간격으로만 탐색
+        UpdateModeState();  // 매 프레임 상태 판단
+        UpdateRotation();
+        UpdateAction();     // 상태에 따른 액션 실행
+    }
+
+    // =============================================
+    // 피격 상태 업데이트
+    // =============================================
+    void UpdateHitState()
+    {
+        if (isHit && Time.time > isHitEndTime)
             isHit = false;
-        }
-
-        if (traceTarget != null && (enemyMode == MODE_STATE.TRACE || enemyMode == MODE_STATE.ATTACK))
-        {
-            Vector3 dir = traceTarget.position - myTr.position;
-            dir.y = 0;
-            myTr.rotation = Quaternion.Slerp(myTr.rotation, Quaternion.LookRotation(dir), Time.deltaTime * 10f);
-        }
-
-        //랜덤 애니메이션 선택 
-        if (Time.time > randAnimTime)
-        {
-            randAnim = Rand.Range(0, 4);
-            randAnimTime = Time.time + 5.0f;
-        }
-
-        //공격 받았을 경우 
-        if (isHit)
-        {
-           if (Time.time > isHitTime)
-            {
-               isHit = false;
-            }
-         }
     }
 
-    IEnumerator TargtSetting()
+    // =============================================
+    // 타겟 탐색 — 매 프레임이 아닌 일정 간격으로만 실행
+    // =============================================
+    void UpdateTarget()
     {
-        while (!isDie)
+        // 마지막 탐색 이후 interval이 지나지 않았으면 스킵
+        if (Time.time < lastTargetSearchTime + targetSearchInterval) return;
+        lastTargetSearchTime = Time.time;
+
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        if (players.Length == 0) { traceTarget = null; return; }
+
+        Transform closest = players[0].transform;
+        float closestDist = (closest.position - myTr.position).sqrMagnitude;
+
+        foreach (GameObject p in players)
         {
-            yield return new WaitForSeconds(0.2f);
-
-            // 자신과 가장 가까운 플레이어 찾음
-            players = GameObject.FindGameObjectsWithTag("Player");
-
-            //플레이어가 있을경우 
-            if (players.Length > 0)
-            {
-                playerTarget = players[0].transform;
-                float closestDist = (playerTarget.position - myTr.position).sqrMagnitude;
-
-                foreach (GameObject player in players)
-                {
-                    float dist = (player.transform.position - myTr.position).sqrMagnitude;
-                    if (dist < closestDist)
-                    {
-                        playerTarget = player.transform;
-                        closestDist = dist;
-                    }
-                }
-                traceTarget = playerTarget;
-            }
+            float d = (p.transform.position - myTr.position).sqrMagnitude;
+            if (d < closestDist) { closest = p.transform; closestDist = d; }
         }
+
+        traceTarget = closest;
     }
 
-    IEnumerator ModeSet()
+    // =============================================
+    // 상태 전환 판단 — Update()에서 직접 처리
+    // =============================================
+    void UpdateModeState()
     {
-        while (!isDie)
+        if (isHit) { ChangeState(MODE_STATE.HIT); return; }
+        if (traceTarget == null) { ChangeState(MODE_STATE.IDLE); return; }
+
+        float dist = Vector3.Distance(myTr.position, traceTarget.position);
+
+        if (dist <= attackDist)
         {
-            yield return new WaitForSeconds(0.2f);
-
-            if (traceTarget == null) continue;
-
-            float dist = Vector3.Distance(myTr.position, traceTarget.position);
-
-            if (isHit)  
-            {
-                enemyMode = MODE_STATE.HIT;
-            }
-            else if (dist <= attackDist) 
-            {
-                enemyMode = MODE_STATE.ATTACK; 
-            }
-            else if (dist <= findDist) // 발견 거리 내에 있으면 추적
-            {
-                enemyMode = MODE_STATE.TRACE;
-            }
-            else
-            {
-                enemyMode = MODE_STATE.IDLE; 
-            }
+            hasPlayedAggro = true;
+            ChangeState(MODE_STATE.ATTACK);
         }
-    }
-
-    IEnumerator ActionSet()
-    {
-        while (!isDie)
+        else if (dist <= findDist)
         {
-            yield return new WaitForSeconds(0.1f);
-
-            Vector3 dir = Vector3.zero;
-
-            switch (enemyMode)
-            {
-                case MODE_STATE.IDLE:
-                    if (!isIdling)
-                {
-                    StartCoroutine(RandomIdleCoroutine());
-                }
-                    break;
-
-                case MODE_STATE.TRACE:
-                    
-                    break;
-
-                case MODE_STATE.ATTACK:
-                
-                    // 공격 중이 아닐 때만 새로운 랜덤 공격 시작
-                    if (!isAttacking)
-                    {
-                        StartCoroutine(RandomAttackCoroutine());
-                    }
-                    break;
-
-                case MODE_STATE.HIT:
-                    _anim.CrossFade(anims.hit1.name);
-                    break;
-            }
-        }
-    }
-
-    IEnumerator RandomIdleCoroutine()
-    {
-        isIdling = true;
-
-        // Idle 애니메이션이 3종류이므로 1~3 사이의 난수 생성 
-        // (마지막 구령은 생략! 이니까 끝값을 4로 적어줍니다)
-        int rand = Rand.Range(1, 4); 
-        AnimationClip currentIdleClip = null;
-
-        switch (rand)
-        {
-            case 1: currentIdleClip = anims.idle1; break;
-            case 2: currentIdleClip = anims.idel2; break; // 변수명 오타 주의!
-            case 3: currentIdleClip = anims.idel3; break; // 변수명 오타 주의!
-        }
-
-        if (currentIdleClip != null)
-        {
-            _anim.CrossFade(currentIdleClip.name, 0.2f);
-            
-            // 해당 애니메이션 클립의 길이(재생 시간)만큼 기다림
-            yield return new WaitForSeconds(currentIdleClip.length);
+            ChangeState(hasPlayedAggro ? MODE_STATE.TRACE : MODE_STATE.SURPRISE);
         }
         else
         {
-            yield return new WaitForSeconds(1.0f);
+            hasPlayedAggro = false;
+            ChangeState(MODE_STATE.IDLE);
         }
-
-        // 재생이 다 끝났으면 다음 랜덤 대기를 위해 플래그 해제
-        isIdling = false;
     }
 
-    IEnumerator RandomAttackCoroutine()
+    // =============================================
+    // 상태 전환 — 같은 상태면 중복 전환 방지
+    // =============================================
+    void ChangeState(MODE_STATE newState)
     {
-        // 공격 시작
-        isAttacking = true;
+        if (enemyMode == newState) return; // ✅ 동일 상태면 무시
 
-        // 1부터 4까지의 난수 생성 (Random.Range의 max는 int일 때 제외되므로 5를 넣어야 1~4가 나옴)
-        int rand = Rand.Range(1, 5); 
-        AnimationClip currentAttackClip = null;
-
-        // 난수에 따라 애니메이션 클립 할당
-        switch (rand)
-        {
-            case 1: currentAttackClip = anims.attack1; break;
-            case 2: currentAttackClip = anims.attack2; break;
-            case 3: currentAttackClip = anims.attack3; break;
-            case 4: currentAttackClip = anims.attack4; break;
-        }
-
-        // 인스펙터에 애니메이션이 정상적으로 등록되어 있는지 확인
-        if (currentAttackClip != null)
-        {
-            // 애니메이션 실행
-            _anim.CrossFade(currentAttackClip.name, 0.2f);
-            
-            // 해당 애니메이션 클립의 길이(재생 시간)만큼 대기
-            // 이 시간 동안은 isAttacking이 true이므로 다른 공격이 겹치지 않음
-            yield return new WaitForSeconds(currentAttackClip.length);
-        }
-        else
-        {
-            // 할당된 애니메이션이 없을 경우 무한 공격 루프 에러를 막기 위한 기본 대기
-            yield return new WaitForSeconds(1.0f);
-        }
-
-        // 공격과 다음 공격 사이에 약간의 빈틈(후딜레이)을 주어 플레이어가 대응할 시간을 줌
-        yield return new WaitForSeconds(0.5f); 
-
-        // 공격 종료, 다시 다음 공격을 할 수 있는 상태로 변경
-        isAttacking = false;
+        enemyMode = newState;
+        isActing  = false; // 상태 바뀌면 진행 중 액션 초기화
+        StopAllCoroutines();
     }
 
+    // =============================================
+    // 회전
+    // =============================================
+    void UpdateRotation()
+    {
+        if (traceTarget == null) return;
+        if (enemyMode != MODE_STATE.TRACE && enemyMode != MODE_STATE.ATTACK) return;
+
+        Vector3 dir = traceTarget.position - myTr.position;
+        dir.y = 0;
+        myTr.rotation = Quaternion.Slerp(
+            myTr.rotation, Quaternion.LookRotation(dir), Time.deltaTime * 10f);
+    }
+
+    // =============================================
+    // 액션 실행 — isActing으로 중복 실행 방지
+    // =============================================
+    void UpdateAction()
+    {
+        if (isActing) return; // 애니메이션 진행 중이면 스킵
+
+        switch (enemyMode)
+        {
+            case MODE_STATE.IDLE:     StartCoroutine(IdleCoroutine());    break;
+            case MODE_STATE.SURPRISE: StartCoroutine(AggroCoroutine());   break;
+            case MODE_STATE.ATTACK:   StartCoroutine(AttackCoroutine());  break;
+            case MODE_STATE.HIT:      StartCoroutine(HitCoroutine());     break;
+            case MODE_STATE.TRACE:    /* 이동 로직 */                      break;
+        }
+    }
+
+    // =============================================
+    // 애니메이션 코루틴 — 대기 목적으로만 사용
+    // =============================================
+    IEnumerator IdleCoroutine()
+    {
+        isActing = true;
+        int rand = Rand.Range(1, 3);
+        _anim.SetTrigger("Idle" + rand);
+        yield return new WaitForSeconds(rand == 1 ? idle1Duration : idle2Duration);
+        isActing = false;
+    }
+
+    IEnumerator AggroCoroutine()
+    {
+        isActing = true;
+        _anim.SetTrigger("Aggro");
+        yield return new WaitForSeconds(aggroDuration);
+        hasPlayedAggro = true;
+        isActing = false;
+    }
+
+    IEnumerator AttackCoroutine()
+    {
+        isActing = true;
+        int rand = Rand.Range(1, 4);
+        float duration = rand switch { 1 => attack1Duration, 2 => attack2Duration, _ => attack3Duration };
+        _anim.SetTrigger("Attack" + rand);
+        yield return new WaitForSeconds(duration + 0.5f);
+        isActing = false;
+    }
+
+    IEnumerator HitCoroutine()
+    {
+        isActing = true;
+        _anim.SetTrigger("Hit");
+        yield return new WaitForSeconds(hitDuration);
+        isActing = false;
+    }
+
+    // =============================================
+    // 데미지 / 사망
+    // =============================================
     public void TakeDamage(int damage)
     {
         hp -= damage;
-        Debug.Log("남은 체력 : " + hp);
-        
-        // 피격 상태로 전환되도록 플래그 업데이트
-        isHit = true;
-        isHitTime = Time.time + 0.5f; // 경직 시간(예: 0.5초) 세팅
-
-        if (hp <= 0)
-        {
-            EnemyDie();
-        }
+        isHit       = true;
+        isHitEndTime = Time.time + hitDuration;
+        if (hp <= 0) StartCoroutine(DieCoroutine());
     }
 
-    // 몬스터 사망 처리
-    public void EnemyDie()
+    IEnumerator DieCoroutine()
     {
-        StartCoroutine(this.Die());
-    }
-
-    // Enemy의 사망 처리
-    IEnumerator Die()
-    {
-        // Enemy를 죽이자
-        isDie = true;
-        // 죽는 애니메이션 시작
-        _anim.CrossFade(anims.die.name, 0.3f);
-        // Enemy의 모드를 die로 설정
-        enemyMode = MODE_STATE.DIE;
-        // Enemy의 태그를 Untagged로 변경하여 더이상 플레이어랑 포탑이 찾지 못함
+        ChangeState(MODE_STATE.DIE);
+        _anim.SetTrigger("Die");
         this.gameObject.tag = "Untagged";
         this.gameObject.transform.Find("EnemyBody").tag = "Untagged";
-
-        // Enemy에 추가된 모든 Collider를 비활성화(모든 충돌체는 Collider를 상속했음 따라서 다음과 같이 추출 가능)
-        foreach (Collider coll in gameObject.GetComponentsInChildren<Collider>())
-        {
-            coll.enabled = false;
-        }
-
-        // 4.5초 후 오브젝트 삭제
+        foreach (Collider c in gameObject.GetComponentsInChildren<Collider>())
+            c.enabled = false;
         yield return new WaitForSeconds(4.5f);
         Destroy(gameObject);
     }
 
-    void OnDestroy()
-    {
-       // Debug.Log("Destroy");
-        // 모든 코루틴을 정지시키자
-        StopAllCoroutines();
-    }
-
-    //인스펙터에 스크립트 우 클릭시 컨텍스트 메뉴에서 함수호출 가능
-    [ContextMenu("FuncStart")]
-    void FuncStart()
-    {
-        Debug.Log("Func start"); 
-    }
-
+    void OnDestroy() => StopAllCoroutines();
 }

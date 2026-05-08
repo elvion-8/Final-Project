@@ -182,7 +182,7 @@ MonoBehaviour:
     idel3: {fileID: 7400000, guid: b09f4f55c76c36f45b4319be060781d0, type: 2}
     attack1: {fileID: 7400000, guid: 7487a517073e15541a99e608d919a684, type: 2}
     attack2: {fileID: 7400000, guid: 0d5695e8af113f94e81a4d9820f10be1, type: 2}
-    attack3: {fileID: 0}
+    attack3: {fileID: 7400000, guid: 9448d6a9018db734caf8ac6c5b3dcc58, type: 2}
     attack4: {fileID: 0}
     hit1: {fileID: 0}
     transform1: {fileID: 0}
