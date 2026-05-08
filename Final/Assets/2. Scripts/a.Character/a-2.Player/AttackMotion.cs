@@ -40,7 +40,7 @@ public class AttackMotion : MonoBehaviour
         {
             if (player.isAttacking)
             {
-                Debug.Log("trail");
+                //Debug.Log("trail");
                 StartCoroutine(TrailWeapon());
             }
         }
@@ -64,12 +64,31 @@ public class AttackMotion : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             EquipWeapon(0);
+<<<<<<< HEAD:Final/Assets/2. Scripts/a.Character/a-2.Player/AttackMotion.cs
+=======
+            anim.SetLayerWeight(3, 0f);
+            anim.SetLayerWeight(4, 1f);
+            anim.SetLayerWeight(5, 0f);
+>>>>>>> origin/master:Final/Assets/2. Scripts/a.Character/AttackMotion.cs
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             EquipWeapon(1);
+<<<<<<< HEAD:Final/Assets/2. Scripts/a.Character/a-2.Player/AttackMotion.cs
+=======
+            anim.SetLayerWeight(3, 0f);
+            anim.SetLayerWeight(4, 0f);
+            anim.SetLayerWeight(5, 1f);
+>>>>>>> origin/master:Final/Assets/2. Scripts/a.Character/AttackMotion.cs
         }
-        else if (Input.GetKeyDown(KeyCode.Alpha3)) EquipWeapon(2);
+        else if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            EquipWeapon(2);
+            anim.SetLayerWeight(3, 1f);
+            anim.SetLayerWeight(4, 0f);
+            anim.SetLayerWeight(5, 0f);
+
+        }
         else if (Input.GetKeyDown(KeyCode.Alpha4)) EquipWeapon(3);
     }
 

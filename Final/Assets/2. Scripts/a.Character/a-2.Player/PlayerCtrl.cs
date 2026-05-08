@@ -59,7 +59,11 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         MoveDir = Vector3.zero;
         jumpPower = 9.0f;
         gravity = 20.0f;
+<<<<<<< HEAD:Final/Assets/2. Scripts/a.Character/a-2.Player/PlayerCtrl.cs
         //hp += pS.hpUpgrade;
+=======
+       // hp += pS.hpUpgrade;
+>>>>>>> origin/master:Final/Assets/2. Scripts/a.Character/PlayerCtrl.cs
         fullHp = hp;
     }
 
@@ -151,7 +155,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
 
     IEnumerator AttackRoutine()
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1f);
         isAttacking = false;
     }
 
