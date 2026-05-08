@@ -14,8 +14,8 @@ GameObject:
   - component: {fileID: 1377453259886618042}
   m_Layer: 0
   m_Name: Core
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_TagString: EnemyBody
+  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -139,7 +139,6 @@ Transform:
   m_Children:
   - {fileID: 6735857635636839840}
   - {fileID: 5154840277541714543}
-  - {fileID: 5859407120816673918}
   - {fileID: 395390713124970231}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -187,37 +186,6 @@ MonoBehaviour:
   hp: 1000
   findDist: 30
   attackDist: 30
---- !u!1 &6896365569659909032
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 5859407120816673918}
-  m_Layer: 0
-  m_Name: EnemyBody
-  m_TagString: Untagged
-  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &5859407120816673918
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6896365569659909032}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 5959549033389167809}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6982967072352499708
 GameObject:
   m_ObjectHideFlags: 0
@@ -465,7 +433,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 1
   m_CookingOptions: 30
-  m_Mesh: {fileID: 0}
+  m_Mesh: {fileID: 4711208715938537054, guid: 5e5df29c632ad5a4c800ba2c084aaab4, type: 3}
 --- !u!1001 &6552785465408348747
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -572,7 +540,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 1
   m_CookingOptions: 30
-  m_Mesh: {fileID: 0}
+  m_Mesh: {fileID: 4711208715938537054, guid: 5e5df29c632ad5a4c800ba2c084aaab4, type: 3}
 --- !u!4 &6735857635636839840 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 5e5df29c632ad5a4c800ba2c084aaab4, type: 3}
