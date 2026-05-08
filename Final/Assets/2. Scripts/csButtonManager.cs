@@ -4,6 +4,8 @@ using UnityEngine.UI;
 
 public class csButtonManager : MonoBehaviour
 {
+    public static bool isMultiplayer = false;
+
     public GameObject pnlOption;
     public void NewGame()
     {
