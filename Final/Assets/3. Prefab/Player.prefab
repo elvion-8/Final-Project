@@ -51,14 +51,13 @@ MonoBehaviour:
   rotationSpeed: 10
   runningSpeed: 6
   rollPower: 7
+  attackSpeed: 1
   hp: 100
-  fullHp: 0
+  hpBar: {fileID: 0}
+  pS: {fileID: 0}
   anim: {fileID: 0}
   MoveDir: {x: 0, y: 0, z: 0}
-  isDie: 0
   isAttacking: 0
-  hpBar: {fileID: 0}
-  attackSpeed: 1
 --- !u!136 &2713677463199808178
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -123,6 +122,7 @@ MonoBehaviour:
   weaponPrefabs:
   - {fileID: 9159102852955507597, guid: c80eb222afb88204e95ad885914ad504, type: 3}
   - {fileID: 8559635611127355586, guid: aabed7cef3451b446a0a2b41e92bab43, type: 3}
+  - {fileID: 1410371666187230154, guid: ca564fb98b865574d9038cd4ba7e8d5a, type: 3}
   weaponPoint: {fileID: 0}
   anim: {fileID: 0}
   trail: {fileID: 0}

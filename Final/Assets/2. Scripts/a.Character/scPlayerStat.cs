@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class scPlayerStat : MonoBehaviour
+public class scPlayerStat
 {
     public int cost=0;
     public int hpUpgrade=0;

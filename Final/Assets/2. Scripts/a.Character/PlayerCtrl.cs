@@ -19,6 +19,8 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     public float rollPower;
     [Range(1f, 10f)]
     public float attackSpeed = 1;
+    public int jumpCnt = 0;
+    private int tempJumpCnt = 0;
 
     [Space(10)]
     [Header("playerStat")]
@@ -27,8 +29,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     private int fullHp;
     public Image hpBar;
 
-    [HideInInspector]
-    public scPlayerStat pS;
+    scPlayerStat pS;
 
     [Space(10)]
     private CharacterController charCon;
@@ -51,7 +52,6 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         charCon = GetComponent<CharacterController>();
         anim = GetComponentInChildren<Animator>();
         cmTr = GameObject.FindGameObjectWithTag("MainCamera").transform;
-        pS = GetComponent<scPlayerStat>();
     }
 
     void Start()
@@ -89,7 +89,6 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
 
         if (charCon.isGrounded)
         {
-
             if (!isRolling)
             {
                 MoveDir = moveDir.normalized * moveSpeed;
@@ -126,7 +125,14 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
             {
                 StartCoroutine(Rolling());
             }
+            tempJumpCnt = 0;      //땅에 닿으면 연속 점프 카운트 초기화
 
+        }
+        if (Input.GetButtonDown("Jump") && tempJumpCnt <= jumpCnt)
+        {
+            tempJumpCnt++;
+            MoveDir.y = jumpPower;
+            anim.SetTrigger("Jump");
         }
         MoveDir.y -= gravity * Time.deltaTime;
         charCon.Move(MoveDir * Time.deltaTime);
@@ -145,7 +151,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
 
     IEnumerator AttackRoutine()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.5f);
         isAttacking = false;
     }
 
