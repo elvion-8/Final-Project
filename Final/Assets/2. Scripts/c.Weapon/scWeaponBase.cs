@@ -12,14 +12,18 @@ public abstract class scWeaponBase : MonoBehaviour, IWeaponStats
 
     private scPlayerStat pS;
 
-    public int attackDmg { get{return baseAttackDmg+(pS.weaponDmgUpgradeCnt*5);}}       //공격력
+    public int attackDmg { get{if (pS == null) return baseAttackDmg;
+            return baseAttackDmg+(pS.weaponDmgUpgradeCnt*5);}}       //공격력
     public float attackRange { get{return baseAttackRange;}}   //공격 범위
     public float attackCoolDown { get;}//공격 쿨다운
     public int attackType { get;}      //공격 타입
     public float weaponMoveSpeed { get;}  //무기 이동속도
-    public float attackSpeed { get{return baseAttackSpeed + pS.weaponAttackSpeed;}}   //공격 속도
-    public int criticalDmg { get{return baseCritDmg+(pS.weaponCritDmgUpgradeCnt);}}      //치명타 데미지
-    public int criticalProb { get{return baseCritProb+(pS.weaponCritProbUpgradeCnt);}}     //치명타 확률
+    public float attackSpeed { get{if( pS == null) return baseAttackSpeed; 
+            return baseAttackSpeed + pS.weaponAttackSpeed;}}   //공격 속도
+    public int criticalDmg { get{if( pS == null) return baseCritDmg;
+            return baseCritDmg+(pS.weaponCritDmgUpgradeCnt);}}      //치명타 데미지
+    public int criticalProb { get{if (pS == null) return baseCritProb;
+            return baseCritProb+(pS.weaponCritProbUpgradeCnt);}}     //치명타 확률
     public int Durability { get; }     //내구도
 
 
