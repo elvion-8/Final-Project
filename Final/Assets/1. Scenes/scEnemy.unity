@@ -273,6 +273,10 @@ PrefabInstance:
       propertyPath: attack3Duration
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 2818843278200713534, guid: cefa34030b7b5824fadfa099f90e0df5, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
     - target: {fileID: 4688862856659575060, guid: cefa34030b7b5824fadfa099f90e0df5, type: 3}
       propertyPath: m_Name
       value: TempEnemy

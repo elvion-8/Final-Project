@@ -7,6 +7,7 @@ TagManager:
   - Trail
   - Enemy
   - Weapon
+  - EnemyBody
   layers:
   - Default
   - TransparentFX
