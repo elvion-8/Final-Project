@@ -59,7 +59,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         MoveDir = Vector3.zero;
         jumpPower = 9.0f;
         gravity = 20.0f;
-        hp += pS.hpUpgrade;
+        //hp += pS.hpUpgrade;
         fullHp = hp;
     }
 
