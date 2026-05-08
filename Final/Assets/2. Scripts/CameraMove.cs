@@ -86,7 +86,7 @@ public class CameraMove : MonoBehaviour
         {
             yield return new WaitForSeconds(0.2f);
 
-            enemys = GameObject.FindGameObjectsWithTag("Enemy");
+            enemys = GameObject.FindGameObjectsWithTag("EnemyBody");
             if (enemys.Length == 0)
             {
                 EnemyTarget = null;
