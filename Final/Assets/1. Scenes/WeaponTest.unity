@@ -655,11 +655,8 @@ MonoBehaviour:
   distance: 7
   cameraHeight: 0
   height: 3
-  obstacleLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  cameraRadius: 0.3
-  smoothSpeed: 10
+  heightDamping: 2
+  rotationDamping: 3
   lockOn: 0
 --- !u!1001 &1101969423
 PrefabInstance:
@@ -744,14 +741,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 8986190712626478489, guid: 50f548e03a0fda14f957253dbf17f35c, type: 3}
-      propertyPath: weaponPrefabs.Array.size
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 8986190712626478489, guid: 50f548e03a0fda14f957253dbf17f35c, type: 3}
-      propertyPath: weaponPrefabs.Array.data[2]
-      value: 
-      objectReference: {fileID: 1410371666187230154, guid: ca564fb98b865574d9038cd4ba7e8d5a, type: 3}
     - target: {fileID: 8995780927049456821, guid: 50f548e03a0fda14f957253dbf17f35c, type: 3}
       propertyPath: m_LocalPosition.x
       value: -5.4

@@ -64,26 +64,19 @@ public class AttackMotion : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             EquipWeapon(0);
-            anim.SetLayerWeight(3, 0f);
-            anim.SetLayerWeight(4, 1f);
-            anim.SetLayerWeight(5, 0f);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             EquipWeapon(1);
-            anim.SetLayerWeight(3, 0f);
-            anim.SetLayerWeight(4, 0f);
-            anim.SetLayerWeight(5, 1f);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha3))
         {
             EquipWeapon(2);
-            anim.SetLayerWeight(3, 1f);
-            anim.SetLayerWeight(4, 0f);
-            anim.SetLayerWeight(5, 0f);
-
         }
-        else if (Input.GetKeyDown(KeyCode.Alpha4)) EquipWeapon(3);
+        else if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            EquipWeapon(3);
+        }
     }
 
     void EquipWeapon(int index)
@@ -103,13 +96,31 @@ public class AttackMotion : MonoBehaviour
         // 애니메이션 레이어 조절 (임시: 무기 종류에 따라 레이어를 설정을 위해 ItemData에 속성을 추가해 구분 예정)
         if (index == 0)
         {
-            anim.SetLayerWeight(5, 0f);
+            anim.SetLayerWeight(3, 0f);
             anim.SetLayerWeight(4, 1f);
+            anim.SetLayerWeight(5, 0f);
+            anim.SetLayerWeight(6, 0f);
         }
         else if (index == 1)
         {
+            anim.SetLayerWeight(3, 0f);
             anim.SetLayerWeight(4, 0f);
             anim.SetLayerWeight(5, 1f);
+            anim.SetLayerWeight(6, 0f);
+        }
+        else if (index == 2)
+        {
+            anim.SetLayerWeight(3, 1f);
+            anim.SetLayerWeight(4, 0f);
+            anim.SetLayerWeight(5, 0f);
+            anim.SetLayerWeight(6, 0f);
+        }
+        else if (index == 3)
+        {
+            anim.SetLayerWeight(3, 0f);
+            anim.SetLayerWeight(4, 0f);
+            anim.SetLayerWeight(5, 0f);
+            anim.SetLayerWeight(6, 1f);
         }
 
         Transform spawnPoint = weaponPoint != null ? weaponPoint : transform;
