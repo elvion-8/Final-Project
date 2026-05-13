@@ -29,7 +29,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     private int fullHp;
     public Image hpBar;
 
-    scPlayerStat pS;
+    scPlayerStat stat = scPlayerStat.stat;
 
     [Space(10)]
     private CharacterController charCon;
@@ -59,7 +59,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         MoveDir = Vector3.zero;
         jumpPower = 9.0f;
         gravity = 20.0f;
-       // hp += pS.hpUpgrade;
+        hp += stat.hpUpgrade * 50;
         fullHp = hp;
     }
 

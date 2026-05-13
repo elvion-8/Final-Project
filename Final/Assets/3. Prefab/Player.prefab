@@ -93,6 +93,7 @@ GameObject:
   - component: {fileID: 8682280514685855374}
   - component: {fileID: 8986190712626478489}
   - component: {fileID: 52129214539883286}
+  - component: {fileID: 6817033599759912610}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -226,6 +227,25 @@ MonoBehaviour:
   - {fileID: 8967051082704155651}
   - {fileID: 2641164032291070650}
   - {fileID: 3014321355994168537}
+--- !u!114 &6817033599759912610
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1226331344322202821}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a5c598df6e888f468325ccbf755dcf1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stat:
+    cost: 1000
+    hpUpgrade: 0
+    weaponDmgUpgradeCnt: 0
+    weaponCritProbUpgradeCnt: 0
+    weaponCritDmgUpgradeCnt: 0
+    weaponAttackSpeed: 0
 --- !u!1 &2547345166289380973
 GameObject:
   m_ObjectHideFlags: 0
