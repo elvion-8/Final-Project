@@ -100,6 +100,8 @@ public class AttackMotion : MonoBehaviour
             anim.SetLayerWeight(4, 1f);
             anim.SetLayerWeight(5, 0f);
             anim.SetLayerWeight(6, 0f);
+            anim.SetLayerWeight(7, 0f);
+            anim.SetLayerWeight(8, 0f);
         }
         else if (index == 1)
         {
@@ -107,6 +109,8 @@ public class AttackMotion : MonoBehaviour
             anim.SetLayerWeight(4, 0f);
             anim.SetLayerWeight(5, 1f);
             anim.SetLayerWeight(6, 0f);
+            anim.SetLayerWeight(7, 0f);
+            anim.SetLayerWeight(8, 0f);
         }
         else if (index == 2)
         {
@@ -114,6 +118,8 @@ public class AttackMotion : MonoBehaviour
             anim.SetLayerWeight(4, 0f);
             anim.SetLayerWeight(5, 0f);
             anim.SetLayerWeight(6, 0f);
+            anim.SetLayerWeight(7, 0f);
+            anim.SetLayerWeight(8, 0f);
         }
         else if (index == 3)
         {
@@ -121,6 +127,26 @@ public class AttackMotion : MonoBehaviour
             anim.SetLayerWeight(4, 0f);
             anim.SetLayerWeight(5, 0f);
             anim.SetLayerWeight(6, 1f);
+            anim.SetLayerWeight(7, 0f);
+            anim.SetLayerWeight(8, 0f);
+        }
+        else if (index == 4)
+        {
+            anim.SetLayerWeight(3, 0f);
+            anim.SetLayerWeight(4, 0f);
+            anim.SetLayerWeight(5, 0f);
+            anim.SetLayerWeight(6, 0f);
+            anim.SetLayerWeight(7, 1f);
+            anim.SetLayerWeight(8, 0f);
+        }
+        else if (index == 5)
+        {
+            anim.SetLayerWeight(3, 0f);
+            anim.SetLayerWeight(4, 0f);
+            anim.SetLayerWeight(5, 0f);
+            anim.SetLayerWeight(6, 0f);
+            anim.SetLayerWeight(7, 0f);
+            anim.SetLayerWeight(8, 1f);
         }
 
         Transform spawnPoint = weaponPoint != null ? weaponPoint : transform;
