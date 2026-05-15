@@ -75,6 +75,13 @@ MonoBehaviour:
   baseCritDmg: 1
   baseAttackSpeed: 1
   baseDurability: 1
+  pS:
+    cost: 0
+    hpUpgrade: 0
+    weaponDmgUpgradeCnt: 0
+    weaponCritProbUpgradeCnt: 0
+    weaponCritDmgUpgradeCnt: 0
+    weaponAttackSpeed: 0
 --- !u!54 &-2789345741428020436
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -124,7 +131,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2c5117a3685d9694d81cc43bff066f73, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 0.079
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2c5117a3685d9694d81cc43bff066f73, type: 3}
       propertyPath: m_LocalPosition.y
@@ -132,7 +139,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2c5117a3685d9694d81cc43bff066f73, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 0.014
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2c5117a3685d9694d81cc43bff066f73, type: 3}
       propertyPath: m_LocalRotation.w

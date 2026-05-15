@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1044184267722594723}
   - component: {fileID: 2869976864720822880}
   m_Layer: 0
-  m_Name: spear
+  m_Name: Spear
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
