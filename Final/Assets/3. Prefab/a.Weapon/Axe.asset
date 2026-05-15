@@ -15,5 +15,6 @@ MonoBehaviour:
   itemType: 0
   itemName: Axe
   itemDesc: "\uB3C4\uB07C\uC784"
-  itemIcon: {fileID: 21300000, guid: 0875b4c5dbe876646a3af01eb13fc753, type: 3}
+  itemIcon: {fileID: 21300000, guid: 3d293f358e5ca0547aa3e1daa18d7450, type: 3}
+  iconLit: {fileID: 21300000, guid: e1dec728c3f595543a8785724b196cd2, type: 3}
   itemPrefab: {fileID: 9159102852955507597, guid: c80eb222afb88204e95ad885914ad504, type: 3}

@@ -81,9 +81,9 @@ public class AttackMotion : MonoBehaviour
 
     void EquipWeapon(int index)
     {
-        if (csInven.Instance == null) return;
+        if (csInvenManager.Instance == null) return;
 
-        ItemData hotbarItem = csInven.Instance.GetHotbarItem(index);
+        ItemData hotbarItem = csInvenManager.Instance.GetHotbarItem(index);
         
         if (hotbarItem == null || hotbarItem.itemType != ItemType.Weapon || hotbarItem.itemPrefab == null) return;
 
