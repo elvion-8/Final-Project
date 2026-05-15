@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ecab4e65bd3042741844077aed662ac1, type: 3}
+  m_Name: Weapon1
+  m_EditorClassIdentifier: 
+  artifactName: "\uC5D0\uD14C\uB974 \uB77C\uBE44\uB9AC\uC2A4"
+  description: "\uC591\uB0A0\uB3C4\uB07C  |  \uD65C\uC131\uD654 \uC2DC \uCCB4\uB825\uACFC
+    \uBC29\uC5B4\uB825\uC774 \uC99D\uAC00\uD55C\uB2E4.(\uC608\uC2DC)"
+  weaponType: "\uD06C\uB85C\uB178\uC2A4 \uC6E8\uD3F0"
+  iconNormal: {fileID: 21300000, guid: 3d293f358e5ca0547aa3e1daa18d7450, type: 3}
+  iconLit: {fileID: 21300000, guid: e1dec728c3f595543a8785724b196cd2, type: 3}
+  borderNormal: {fileID: 21300000, guid: 19d530e69a6eada4ea80ec59ee546c06, type: 3}
+  borderLit: {fileID: 21300000, guid: b533a8aa413a76e4aafce6a0b9cf145a, type: 3}
