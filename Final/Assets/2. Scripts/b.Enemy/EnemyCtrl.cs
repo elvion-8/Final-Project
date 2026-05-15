@@ -22,10 +22,21 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
     [Header("STATE")]
     public MODE_STATE enemyMode = MODE_STATE.IDLE;
 
+
     [Header("몬스터 인공지능")]
     [Range(0, 1000)] public int hp = 1000;
     [Range(10f, 30f)][SerializeField] float findDist   = 20.0f;
     [Range(1f,  30f)][SerializeField] float attackDist = 5.0f;
+
+
+    [Header("Attack1 패턴 - 장판")]
+    public GameObject attackZonePrefab;
+    [Range(1f, 20f)] public float attack1SpawnRadius   = 8f;
+    [Range(10f, 120f)] public float attack1TotalDuration = 60f;
+    [Range(1, 20)] public int attack1SpawnCount    = 10;  // 총 소환 횟수 (그룹 수)
+    [Range(1, 10)] public int attack1GroupMin      = 4;   // 그룹당 최소 개수
+    [Range(1, 10)] public int attack1GroupMax      = 5;   // 그룹당 최대 개수
+    public LayerMask groundLayer;                         // 바닥 감지
 
     public enum MODE_STATE { IDLE, TRACE, SURPRISE, ATTACK, HIT, DIE }
 
@@ -184,17 +195,99 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
         hasPlayedAggro = true;
         isActing = false;
     }
+    
 
     IEnumerator AttackCoroutine()
     {
         isActing = true;
         int rand = Rand.Range(1, 4);
-        float duration = rand switch { 1 => attack1Duration, 2 => attack2Duration, _ => attack3Duration };
         _anim.SetTrigger("Attack" + rand);
-        yield return new WaitForSeconds(duration + 0.5f);
+
+        if (rand == 1)
+        {
+            yield return StartCoroutine(Attack1PatternCoroutine()); // 1번 패턴
+        }
+        else
+        {
+            float duration = rand switch { 2 => attack2Duration, _ => attack3Duration };
+            yield return new WaitForSeconds(duration + 0.5f);
+        }
+
         isActing = false;
     }
 
+    // =============================================
+    // Attack1 장판 패턴
+    // =============================================
+    IEnumerator Attack1PatternCoroutine()
+    {
+        // 60초 안에 10번의 그룹 소환 타이밍을 랜덤 생성
+        float[] spawnTimes = new float[attack1SpawnCount];
+        for (int i = 0; i < attack1SpawnCount; i++)
+            spawnTimes[i] = Rand.Range(0f, attack1TotalDuration * 0.9f);
+        System.Array.Sort(spawnTimes);
+
+        float elapsed   = 0f;
+        int   nextSpawn = 0;
+
+        while (elapsed < attack1TotalDuration)
+        {
+            while (nextSpawn < attack1SpawnCount && elapsed >= spawnTimes[nextSpawn])
+            {
+                // 한 타이밍에 4~5개 동시 소환
+                int groupCount = Rand.Range(attack1GroupMin, attack1GroupMax + 1);
+                for (int i = 0; i < groupCount; i++)
+                    SpawnAttackZone();
+
+                nextSpawn++;
+            }
+
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+    }
+
+    // Attack1 장판 소환 위치 계산 및 생성
+    void SpawnAttackZone()
+    {
+        if (attackZonePrefab == null)
+        {
+            Debug.LogWarning($"[{gameObject.name}] AttackZone 프리팹이 할당되지 않았습니다!");
+
+            return;
+        }
+
+        // 플레이어가 있으면 플레이어 주변, 없으면 자기 주변에 소환
+        Vector3 center     = traceTarget != null ? traceTarget.position : myTr.position;
+
+        // 반경 내 랜덤 XZ 위치 (최소 1.5f 이상 떨어지게)
+        Vector2 randCircle = Rand.insideUnitCircle.normalized
+                           * Rand.Range(1.5f, attack1SpawnRadius);
+
+        Vector3 rayOrigin = new Vector3(
+        center.x + randCircle.x,
+        center.y + 50f,             // 충분히 높은 곳에서 쏨
+        center.z + randCircle.y
+        );
+
+        Vector3 spawnPos;
+        if (Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit hit, 100f, groundLayer))
+        {
+            spawnPos = hit.point; // 바닥 콜라이더 표면 위에 정확히 배치
+        }
+        else
+        {
+            // 레이캐스트 실패 시 fallback (플레이어 높이 기준)
+            spawnPos = new Vector3(rayOrigin.x, center.y, rayOrigin.z);
+            Debug.LogWarning($"[{gameObject.name}] 바닥을 찾지 못했습니다. GroundLayer 설정을 확인하세요.");
+        }
+
+        Instantiate(attackZonePrefab, spawnPos, Quaternion.identity);
+    }
+
+    // =============================================
+    // 데미지 / 사망
+    // =============================================
     IEnumerator HitCoroutine()
     {
         isActing = true;
@@ -203,9 +296,6 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
         isActing = false;
     }
 
-    // =============================================
-    // 데미지 / 사망
-    // =============================================
     public void TakeDamage(int damage)
     {
         hp -= damage;
