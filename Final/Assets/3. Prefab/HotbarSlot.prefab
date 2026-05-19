@@ -118,8 +118,8 @@ MonoBehaviour:
   slotType: 0
   itemIcon: {fileID: 6034112492032638308}
   borderImg: {fileID: 0}
-  defaultIconImg: {fileID: 0}
-  selectIconImg: {fileID: 0}
+  defaultIconImg: {fileID: 21300000, guid: a7afea13264307946ac2176684c36164, type: 3}
+  selectIconImg: {fileID: 21300000, guid: ce5bbf59b60aa6943b43ac5cd3f1839a, type: 3}
   defaultBorderImg: {fileID: 21300000, guid: 53705c31b1d85a6449ca8ad7ca33c763, type: 3}
   selectBorderImg: {fileID: 21300000, guid: 53705c31b1d85a6449ca8ad7ca33c763, type: 3}
   emptySlot: {fileID: 21300000, guid: 53705c31b1d85a6449ca8ad7ca33c763, type: 3}

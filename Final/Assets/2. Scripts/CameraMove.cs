@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections;
 using System;
-using UnityEditor.EditorTools;
 
 public class CameraMove : MonoBehaviour
 {

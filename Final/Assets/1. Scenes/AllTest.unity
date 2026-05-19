@@ -214,6 +214,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: HotbarSlot (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 6034112492032638308, guid: 4c48e053b7f968047bba1721592caf93, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6075042122218172586, guid: 4c48e053b7f968047bba1721592caf93, type: 3}
       propertyPath: slotType
       value: 2
@@ -1733,6 +1737,10 @@ PrefabInstance:
     - target: {fileID: 4616920762637462730, guid: 4c48e053b7f968047bba1721592caf93, type: 3}
       propertyPath: m_Name
       value: HotbarSlot (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6034112492032638308, guid: 4c48e053b7f968047bba1721592caf93, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6075042122218172586, guid: 4c48e053b7f968047bba1721592caf93, type: 3}
       propertyPath: slotType
@@ -4908,7 +4916,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: 67da526da2a596c47a6e0b6cd226da26, type: 3}
-    m_FontSize: 91
+    m_FontSize: 90
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 10
@@ -5161,18 +5169,54 @@ PrefabInstance:
       propertyPath: m_Name
       value: HotbarSlot
       objectReference: {fileID: 0}
+    - target: {fileID: 4616920762637462730, guid: 4c48e053b7f968047bba1721592caf93, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6034112492032638308, guid: 4c48e053b7f968047bba1721592caf93, type: 3}
+      propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6034112492032638308, guid: 4c48e053b7f968047bba1721592caf93, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6034112492032638308, guid: 4c48e053b7f968047bba1721592caf93, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6034112492032638308, guid: 4c48e053b7f968047bba1721592caf93, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6034112492032638308, guid: 4c48e053b7f968047bba1721592caf93, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6075042122218172586, guid: 4c48e053b7f968047bba1721592caf93, type: 3}
       propertyPath: slotType
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6075042122218172586, guid: 4c48e053b7f968047bba1721592caf93, type: 3}
+      propertyPath: emptySlot
+      value: 
+      objectReference: {fileID: 21300000, guid: a7afea13264307946ac2176684c36164, type: 3}
+    - target: {fileID: 6075042122218172586, guid: 4c48e053b7f968047bba1721592caf93, type: 3}
       propertyPath: selectIconImg
       value: 
-      objectReference: {fileID: 21300000, guid: b533a8aa413a76e4aafce6a0b9cf145a, type: 3}
+      objectReference: {fileID: 21300000, guid: ce5bbf59b60aa6943b43ac5cd3f1839a, type: 3}
     - target: {fileID: 6075042122218172586, guid: 4c48e053b7f968047bba1721592caf93, type: 3}
       propertyPath: defaultIconImg
       value: 
-      objectReference: {fileID: 21300000, guid: 19d530e69a6eada4ea80ec59ee546c06, type: 3}
+      objectReference: {fileID: 21300000, guid: a7afea13264307946ac2176684c36164, type: 3}
+    - target: {fileID: 6075042122218172586, guid: 4c48e053b7f968047bba1721592caf93, type: 3}
+      propertyPath: selectBorderImg
+      value: 
+      objectReference: {fileID: 21300000, guid: ce5bbf59b60aa6943b43ac5cd3f1839a, type: 3}
+    - target: {fileID: 6075042122218172586, guid: 4c48e053b7f968047bba1721592caf93, type: 3}
+      propertyPath: defaultBorderImg
+      value: 
+      objectReference: {fileID: 21300000, guid: a7afea13264307946ac2176684c36164, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -5331,8 +5375,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 37f73394ae5c81941bffd3d4eac5b66a, type: 3}
-    m_FontSize: 207
+    m_Font: {fileID: 12800000, guid: f286bd7f4a0691a4ba3f2aadbf0cb31e, type: 3}
+    m_FontSize: 175
     m_FontStyle: 2
     m_BestFit: 0
     m_MinSize: 0
@@ -5519,6 +5563,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: HotbarSlot (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 6034112492032638308, guid: 4c48e053b7f968047bba1721592caf93, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6075042122218172586, guid: 4c48e053b7f968047bba1721592caf93, type: 3}
       propertyPath: slotType
       value: 2
@@ -5610,8 +5658,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 87.98755, y: 27.218628}
-  m_SizeDelta: {x: 215.26001, y: 66.59}
+  m_AnchoredPosition: {x: 92.26428, y: 36.920868}
+  m_SizeDelta: {x: 225.723, y: 73.1444}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1957457318
 MonoBehaviour:
@@ -5650,15 +5698,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.3679245, g: 0.3679245, b: 0.3679245, a: 0.392}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: db52f22da68c846498f198495bca9358, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
