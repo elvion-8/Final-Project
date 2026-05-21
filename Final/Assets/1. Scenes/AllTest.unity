@@ -1741,10 +1741,10 @@ PrefabInstance:
     - target: {fileID: 6034112492032638308, guid: 4c48e053b7f968047bba1721592caf93, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: a7afea13264307946ac2176684c36164, type: 3}
+      objectReference: {fileID: 0}
     - target: {fileID: 6034112492032638308, guid: 4c48e053b7f968047bba1721592caf93, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6075042122218172586, guid: 4c48e053b7f968047bba1721592caf93, type: 3}
       propertyPath: slotType
@@ -3642,7 +3642,6 @@ MonoBehaviour:
   - {fileID: 495743446}
   - {fileID: 1924481541}
   - {fileID: 15149453}
-  selectHotKey: -1
   slotPrefab: {fileID: 4616920762637462730, guid: f2d747fe10372d54481c782938d5c2ee, type: 3}
   slotContainer: {fileID: 1095195804}
   totalSlotCount: 4
@@ -4996,6 +4995,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1957457317}
     m_Modifications:
+    - target: {fileID: 769040945266908409, guid: 4c48e053b7f968047bba1721592caf93, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1990487547029471921, guid: 4c48e053b7f968047bba1721592caf93, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -5076,6 +5079,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3905892212704407750, guid: 4c48e053b7f968047bba1721592caf93, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 66
+      objectReference: {fileID: 0}
+    - target: {fileID: 3905892212704407750, guid: 4c48e053b7f968047bba1721592caf93, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 66
+      objectReference: {fileID: 0}
     - target: {fileID: 4616920762637462730, guid: 4c48e053b7f968047bba1721592caf93, type: 3}
       propertyPath: m_Name
       value: HotbarSlot
@@ -5087,7 +5098,7 @@ PrefabInstance:
     - target: {fileID: 6034112492032638308, guid: 4c48e053b7f968047bba1721592caf93, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: a7afea13264307946ac2176684c36164, type: 3}
+      objectReference: {fileID: 0}
     - target: {fileID: 6034112492032638308, guid: 4c48e053b7f968047bba1721592caf93, type: 3}
       propertyPath: m_Color.a
       value: 1
@@ -5106,7 +5117,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6034112492032638308, guid: 4c48e053b7f968047bba1721592caf93, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6075042122218172586, guid: 4c48e053b7f968047bba1721592caf93, type: 3}
       propertyPath: slotType

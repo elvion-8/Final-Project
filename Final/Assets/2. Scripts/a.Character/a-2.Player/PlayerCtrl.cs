@@ -185,12 +185,10 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         }
         else
         {
-            // 공중 상태(점프 중)일 때
             if (!isWallClimbing && !isLedgeClimbing)
             {
                 if (inputDir.magnitude > 0.1f)
                 {
-                    // 카메라 방향 기준 입력 회전 방향 계산 (이동 속도 벡터는 바꾸지 않음)
                     Vector3 lookDir = camForward * v + camRight * h;
                     if (lookDir.magnitude > 0.1f)
                     {
@@ -241,7 +239,6 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
 
     void UpdateWallClimbing(float verticalInput)
     {
-        // 전진 입력 해제 혹은 음수 입력 시 벽에서 떨어짐
         if (verticalInput <= 0.1f)
         {
             isWallClimbing = false;
@@ -249,27 +246,22 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
             return;
         }
 
-        // 위 방향으로 지속 이동
         MoveDir = Vector3.up * climbSpeed;
         climbHeightCounter += climbSpeed * Time.deltaTime;
 
-        // 1. 최대 벽타기 높이 검사
         if (climbHeightCounter >= maxClimbHeight)
         {
             isWallClimbing = false;
             anim.SetBool("IsWallClimbing", false);
-            MoveDir = -transform.forward * 1.5f; // 벽에서 튕김
+            MoveDir = -transform.forward * 1.5f;
             return;
         }
 
-        // 2. 이동 적용 (중력 미적용)
         charCon.Move(MoveDir * Time.deltaTime);
 
-        // 3. 모서리(Ledge) 감지
         RaycastHit chestHit;
         bool hasWallAtChest = Physics.Raycast(transform.position + Vector3.up * 1.0f, transform.forward, out chestHit, wallCheckDistance, obstacleLayer);
 
-        // 더 이상 가슴 높이에 벽이 없으면 벽타기 중지 (허공을 오르는 현상 방지)
         if (!hasWallAtChest)
         {
             isWallClimbing = false;
@@ -282,8 +274,6 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
 
         if (!hasWallAtHead)
         {
-            // 모서리 착지 지점 계산을 위해 아래로 레이캐스트
-            // 벽면 충돌 지점(chestHit.point)에서 벽 내부 방향(-chestHit.normal)으로 살짝 들어간 위치에서 아래로 레이캐스트
             Vector3 ledgeCheckStart = chestHit.point - chestHit.normal * 0.15f;
             ledgeCheckStart.y = transform.position.y + ledgeUpperHeightOffset + 0.5f;
             Debug.DrawRay(ledgeCheckStart, Vector3.down * (ledgeUpperHeightOffset + 1.0f), Color.yellow, 2f);
@@ -305,17 +295,15 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         anim.SetBool("IsWallClimbing", false);
         anim.SetTrigger("LedgeClimb");
 
-        // CharacterController 비활성화하여 강제 위치 이동 충돌 차단
         charCon.enabled = false;
 
         Vector3 startPos = transform.position;
         Vector3 targetPos = ledgeSurfacePoint;
-        targetPos.y = ledgeSurfacePoint.y + 0.05f; // 바닥에 박히는 현상 방지
+        targetPos.y = ledgeSurfacePoint.y + 0.05f;
 
-        float duration = 1.2f; // 올라가는 애니메이션 재생시간에 맞게 튜닝
+        float duration = 1.2f;
         float elapsed = 0f;
 
-        // 위로 오르고 나서 앞으로 움직이는 2단계 보간(Lerp) 적용
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
@@ -347,7 +335,6 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     }
 
     void Die()
-
     {
         Debug.Log("you die");
     }
