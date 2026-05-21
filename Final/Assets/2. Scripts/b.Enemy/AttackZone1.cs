@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class AttackZone : MonoBehaviour
+public class AttackZone1 : MonoBehaviour
 {
     [Header("피격 설정")]
     public int   damage         = 20;
