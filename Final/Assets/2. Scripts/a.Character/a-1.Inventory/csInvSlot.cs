@@ -77,7 +77,7 @@ public class csInvSlot : MonoBehaviour, IPointerClickHandler
         itemIcon.sprite = lit ? litSprite : normalSprite;
     }
 
-    void SetBorder(bool lit)
+    public void SetBorder(bool lit)
     {
         if(borderImg == null) return;
 
