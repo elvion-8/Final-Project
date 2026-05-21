@@ -35,7 +35,7 @@ public class CameraMove : MonoBehaviour
     void Awake()
     {
         cmTr = GetComponent<Transform>();
-        playerPos = GameObject.FindGameObjectWithTag("Player").transform;
+        //playerPos = GameObject.FindGameObjectWithTag("Player").transform;
 
     }
 
