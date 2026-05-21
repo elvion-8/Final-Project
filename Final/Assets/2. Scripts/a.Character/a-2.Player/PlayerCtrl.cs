@@ -46,8 +46,22 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
 
     private bool isRolling;
 
+    [Space(10)]
+    [Header("Wall & Ledge Climb")]
+    public LayerMask obstacleLayer;
+    public float maxClimbHeight = 2.5f;
+    public float climbSpeed = 2.0f;
+    public float wallCheckDistance = 1.0f;
+    public float ledgeForwardOffset = 0.5f;
+    public float ledgeUpperHeightOffset = 2.2f;
+
+    private bool isWallClimbing = false;
+    private bool isLedgeClimbing = false;
+    private float climbHeightCounter = 0f;
+
 
     void Awake()
+
     {
         charCon = GetComponent<CharacterController>();
         anim = GetComponentInChildren<Animator>();
@@ -61,6 +75,11 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         gravity = 20.0f;
         hp += stat.hpUpgrade * 50;
         fullHp = hp;
+
+        if (obstacleLayer.value == 0)
+        {
+            obstacleLayer = LayerMask.GetMask("Obstacle");
+        }
     }
 
     void Update()
@@ -76,6 +95,42 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         camForward.y = 0;
         camRight.y = 0;
         Vector3 moveDir = camForward * v + camRight * h;
+
+        if (isLedgeClimbing) return;
+
+        if (isWallClimbing)
+        {
+            UpdateWallClimbing(v);
+            return;
+        }
+
+        // 공중 상태에서 전진 키와 점프 입력을 누를 때 벽타기 체크
+        if (!charCon.isGrounded && !isRolling && !isAttacking)
+        {
+            if (v > 0.1f && (Input.GetButtonDown("Jump") || Input.GetButton("Jump")))
+            {
+                RaycastHit wallHit;
+                Vector3 rayOrigin = transform.position + Vector3.up * 1.0f;
+                Debug.DrawRay(rayOrigin, transform.forward * wallCheckDistance, Color.red, 2f);
+
+                if (Physics.Raycast(rayOrigin, transform.forward, out wallHit, wallCheckDistance, obstacleLayer))
+                {
+                    float wallAngle = Vector3.Angle(wallHit.normal, Vector3.up);
+                    if (wallAngle > 70f && wallAngle < 110f)
+                    {
+                        transform.rotation = Quaternion.LookRotation(-wallHit.normal);
+                        isWallClimbing = true;
+                        climbHeightCounter = 0f;
+                        MoveDir = Vector3.zero;
+                        anim.SetBool("IsWallClimbing", true);
+                        anim.SetBool("Walk", false);
+                        anim.SetBool("Run", false);
+                        return;
+                    }
+                }
+            }
+        }
+
 
         if (Input.GetMouseButtonDown(0))
         {
@@ -128,6 +183,23 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
             tempJumpCnt = 0;      //땅에 닿으면 연속 점프 카운트 초기화
 
         }
+        else
+        {
+            // 공중 상태(점프 중)일 때
+            if (!isWallClimbing && !isLedgeClimbing)
+            {
+                if (inputDir.magnitude > 0.1f)
+                {
+                    // 카메라 방향 기준 입력 회전 방향 계산 (이동 속도 벡터는 바꾸지 않음)
+                    Vector3 lookDir = camForward * v + camRight * h;
+                    if (lookDir.magnitude > 0.1f)
+                    {
+                        Quaternion targetRotation = Quaternion.LookRotation(lookDir);
+                        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+                    }
+                }
+            }
+        }
         if (Input.GetButtonDown("Jump") && tempJumpCnt <= jumpCnt)
         {
             tempJumpCnt++;
@@ -166,7 +238,116 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         }
         return damage;
     }
+
+    void UpdateWallClimbing(float verticalInput)
+    {
+        // 전진 입력 해제 혹은 음수 입력 시 벽에서 떨어짐
+        if (verticalInput <= 0.1f)
+        {
+            isWallClimbing = false;
+            anim.SetBool("IsWallClimbing", false);
+            return;
+        }
+
+        // 위 방향으로 지속 이동
+        MoveDir = Vector3.up * climbSpeed;
+        climbHeightCounter += climbSpeed * Time.deltaTime;
+
+        // 1. 최대 벽타기 높이 검사
+        if (climbHeightCounter >= maxClimbHeight)
+        {
+            isWallClimbing = false;
+            anim.SetBool("IsWallClimbing", false);
+            MoveDir = -transform.forward * 1.5f; // 벽에서 튕김
+            return;
+        }
+
+        // 2. 이동 적용 (중력 미적용)
+        charCon.Move(MoveDir * Time.deltaTime);
+
+        // 3. 모서리(Ledge) 감지
+        RaycastHit chestHit;
+        bool hasWallAtChest = Physics.Raycast(transform.position + Vector3.up * 1.0f, transform.forward, out chestHit, wallCheckDistance, obstacleLayer);
+
+        // 더 이상 가슴 높이에 벽이 없으면 벽타기 중지 (허공을 오르는 현상 방지)
+        if (!hasWallAtChest)
+        {
+            isWallClimbing = false;
+            anim.SetBool("IsWallClimbing", false);
+            return;
+        }
+
+        RaycastHit headHit;
+        bool hasWallAtHead = Physics.Raycast(transform.position + Vector3.up * ledgeUpperHeightOffset, transform.forward, out headHit, wallCheckDistance, obstacleLayer);
+
+        if (!hasWallAtHead)
+        {
+            // 모서리 착지 지점 계산을 위해 아래로 레이캐스트
+            // 벽면 충돌 지점(chestHit.point)에서 벽 내부 방향(-chestHit.normal)으로 살짝 들어간 위치에서 아래로 레이캐스트
+            Vector3 ledgeCheckStart = chestHit.point - chestHit.normal * 0.15f;
+            ledgeCheckStart.y = transform.position.y + ledgeUpperHeightOffset + 0.5f;
+            Debug.DrawRay(ledgeCheckStart, Vector3.down * (ledgeUpperHeightOffset + 1.0f), Color.yellow, 2f);
+
+            RaycastHit ledgeHit;
+            if (Physics.Raycast(ledgeCheckStart, Vector3.down, out ledgeHit, ledgeUpperHeightOffset + 1.0f, obstacleLayer))
+            {
+                // 착지 시 캐릭터가 벽 안쪽으로 충분히 진입하도록 위치 조정
+                Vector3 landingPoint = ledgeHit.point - chestHit.normal * 0.25f;
+                StartCoroutine(LedgeClimbRoutine(landingPoint, chestHit.normal));
+            }
+        }
+    }
+
+    IEnumerator LedgeClimbRoutine(Vector3 ledgeSurfacePoint, Vector3 wallNormal)
+    {
+        isLedgeClimbing = true;
+        isWallClimbing = false;
+        anim.SetBool("IsWallClimbing", false);
+        anim.SetTrigger("LedgeClimb");
+
+        // CharacterController 비활성화하여 강제 위치 이동 충돌 차단
+        charCon.enabled = false;
+
+        Vector3 startPos = transform.position;
+        Vector3 targetPos = ledgeSurfacePoint;
+        targetPos.y = ledgeSurfacePoint.y + 0.05f; // 바닥에 박히는 현상 방지
+
+        float duration = 1.2f; // 올라가는 애니메이션 재생시간에 맞게 튜닝
+        float elapsed = 0f;
+
+        // 위로 오르고 나서 앞으로 움직이는 2단계 보간(Lerp) 적용
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float percent = elapsed / duration;
+
+            if (percent < 0.5f)
+            {
+                // 1단계: 수직 위로 상승
+                float t = percent / 0.5f;
+                Vector3 intermediatePos = new Vector3(startPos.x, targetPos.y, startPos.z);
+                transform.position = Vector3.Lerp(startPos, intermediatePos, t);
+            }
+            else
+            {
+                // 2단계: 착지점으로 전진
+                float t = (percent - 0.5f) / 0.5f;
+                Vector3 intermediatePos = new Vector3(startPos.x, targetPos.y, startPos.z);
+                transform.position = Vector3.Lerp(intermediatePos, targetPos, t);
+            }
+
+            yield return null;
+        }
+
+        transform.position = targetPos;
+        charCon.enabled = true;
+        isLedgeClimbing = false;
+
+        MoveDir = Vector3.zero;
+    }
+
     void Die()
+
     {
         Debug.Log("you die");
     }

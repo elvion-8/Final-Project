@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 8682280514685855374}
   - component: {fileID: 8986190712626478489}
   - component: {fileID: 6817033599759912610}
-  - component: {fileID: 8339101568950471469}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -60,6 +59,14 @@ MonoBehaviour:
   anim: {fileID: 0}
   MoveDir: {x: 0, y: 0, z: 0}
   isAttacking: 0
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  maxClimbHeight: 4
+  climbSpeed: 3
+  wallCheckDistance: 1
+  ledgeForwardOffset: 0.5
+  ledgeUpperHeightOffset: 2.2
 --- !u!136 &2713677463199808178
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -151,33 +158,6 @@ MonoBehaviour:
     weaponCritProbUpgradeCnt: 0
     weaponCritDmgUpgradeCnt: 0
     weaponAttackSpeed: 0
---- !u!114 &8339101568950471469
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1226331344322202821}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1c623643a0a220c44b3a09d44a567e89, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  pnlInven: {fileID: 0}
-  hotbarSlots:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  selectHotKey: -1
-  slotPrefab: {fileID: 4616920762637462730, guid: f2d747fe10372d54481c782938d5c2ee, type: 3}
-  slotContainer: {fileID: 0}
-  totalSlotCount: 4
-  startingItems:
-  - {fileID: 11400000, guid: e164640c8ad68d247807fcd0427bef0d, type: 2}
-  - {fileID: 11400000, guid: 61baa78dc988f8040bda223aace4f83d, type: 2}
-  - {fileID: 11400000, guid: 7e783e41d2f5d8f4aa649e4d7c96ea65, type: 2}
-  - {fileID: 11400000, guid: 0d9fa515fa88b0f4ebc7ff23c6f48e70, type: 2}
 --- !u!1 &5151858258256872092
 GameObject:
   m_ObjectHideFlags: 0
