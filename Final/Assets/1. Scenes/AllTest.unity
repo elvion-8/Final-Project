@@ -3365,6 +3365,10 @@ PrefabInstance:
       propertyPath: hpBar
       value: 
       objectReference: {fileID: 1867434455}
+    - target: {fileID: 8339101568950471469, guid: 50f548e03a0fda14f957253dbf17f35c, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8682280514685855374, guid: 50f548e03a0fda14f957253dbf17f35c, type: 3}
       propertyPath: m_Radius
       value: 0.23
@@ -3413,7 +3417,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 8339101568950471469, guid: 50f548e03a0fda14f957253dbf17f35c, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
