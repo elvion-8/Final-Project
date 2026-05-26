@@ -626,6 +626,8 @@ public class csPhotonInit : Photon.MonoBehaviour
     //Make Room 버튼 클릭 시 호출될 함수 (UI 버전에서 사용)
     public void CreatePhotonRoom(bool isVisible)
     {
+        csButtonManager.isMultiplayer = true;
+
         string _roomName = roomName.text;
 
         //룸 이름이 없거나 Null일 경우 룸 이름 지정
@@ -657,6 +659,7 @@ public class csPhotonInit : Photon.MonoBehaviour
     // 싱글플레이 모드 시작
     private void StartSinglePlayer()
     {
+        csButtonManager.isMultiplayer = false;
         //PhotonNetwork.offlineMode = true;
         PhotonNetwork.CreateRoom("SinglePlayerRoom");
         Debug.Log("싱글플레이 오프라인 방 생성 완료");
