@@ -9,6 +9,8 @@ TagManager:
   - Weapon
   - EnemyBody
   - Ground
+  - ROOM_ITEM
+  - PlayerSpawnPoint
   layers:
   - Default
   - TransparentFX

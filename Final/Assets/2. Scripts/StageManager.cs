@@ -96,6 +96,24 @@ public class StageManager : MonoBehaviour
             + currRoom.MaxPlayers.ToString();
     }
 
+    // 포톤 추가
+    // 룸 나가기 버튼 클릭 이벤트에 연결될 함수
+    public void OnClickExitRoom()
+    {
+        // 로그 메시지에 출력할 문자열 생성
+        string msg = "\n\t<color=#ff0000>["
+            + PhotonNetwork.player.NickName
+            + "] Disconnected</color>";
+
+        //RPC 함수 호출
+        pv.RPC("LogMsg", PhotonTargets.AllBuffered, msg);
+
+        //현재 룸을 빠져나가며 생성한 모든 네트워크 객체를 삭제
+        PhotonNetwork.LeaveRoom();
+
+        //(!) 서버에 통보한 후 룸에서 나가려는 클라이언트가 생성한 모든 네트워크 객체및 RPC를 제거하는 과정 진행(포톤 서버에서 진행)
+    }
+
     void OnPhotonPlayerConnected(PhotonPlayer newPlayer)
     {
         // �÷��̾� ID (���� ����), �̸�, Ŀ���� �Ӽ�
@@ -117,7 +135,7 @@ public class StageManager : MonoBehaviour
     void OnLeftRoom()
     {
         // �κ�� �̵�
-        SceneManager.LoadScene("scNetLobby");
+        SceneManager.LoadScene("ScStartPoint");
     }
 
     [PunRPC]
