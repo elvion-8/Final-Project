@@ -2365,8 +2365,11 @@ MonoBehaviour:
   distance: 5.5
   cameraHeight: 1.5
   height: 3
-  heightDamping: 2
-  rotationDamping: 3
+  obstacleLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  cameraRadius: 0.3
+  smoothSpeed: 10
   lockOn: 0
 --- !u!1 &1032584177
 GameObject:
@@ -2979,7 +2982,7 @@ PrefabInstance:
     - target: {fileID: 6762460525713461214, guid: 50f548e03a0fda14f957253dbf17f35c, type: 3}
       propertyPath: hpBar
       value: 
-      objectReference: {fileID: 1867434455}
+      objectReference: {fileID: 0}
     - target: {fileID: 8339101568950471469, guid: 50f548e03a0fda14f957253dbf17f35c, type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -5150,7 +5153,7 @@ GameObject:
   - component: {fileID: 1867434455}
   m_Layer: 5
   m_Name: HpBar
-  m_TagString: Untagged
+  m_TagString: HpBar
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

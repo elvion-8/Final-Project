@@ -9,6 +9,7 @@ TagManager:
   - Weapon
   - EnemyBody
   - Ground
+  - HpBar
   layers:
   - Default
   - TransparentFX

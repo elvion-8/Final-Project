@@ -66,6 +66,9 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         charCon = GetComponent<CharacterController>();
         anim = GetComponentInChildren<Animator>();
         cmTr = GameObject.FindGameObjectWithTag("MainCamera").transform;
+        GameObject hpBarObj = GameObject.FindGameObjectWithTag("HpBar");
+        if (hpBarObj != null) { hpBar = GameObject.FindGameObjectWithTag("HpBar").GetComponent<Image>(); }
+        else return;
     }
 
     void Start()
@@ -104,9 +107,11 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
             return;
         }
 
+
         // 공중 상태에서 전진 키와 점프 입력을 누를 때 벽타기 체크
         if (!charCon.isGrounded && !isRolling && !isAttacking)
         {
+
             if (v > 0.1f && (Input.GetButtonDown("Jump") || Input.GetButton("Jump")))
             {
                 RaycastHit wallHit;
@@ -130,6 +135,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
                 }
             }
         }
+        //anim.SetBool("isGrounded", charCon.isGrounded);
 
 
         if (Input.GetMouseButtonDown(0))
@@ -176,10 +182,10 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
                     anim.SetTrigger("Jump");
                 }
             }
-            if (Input.GetButtonDown("LeftCtrl") && !isRolling)
-            {
-                StartCoroutine(Rolling());
-            }
+            // if (Input.GetButtonDown("LeftCtrl") && !isRolling)
+            // {
+            //     StartCoroutine(Rolling());
+            // }
             tempJumpCnt = 0;      //땅에 닿으면 연속 점프 카운트 초기화
 
         }
@@ -197,6 +203,10 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
                     }
                 }
             }
+        }
+        if (Input.GetButtonDown("LeftCtrl") && !isRolling)
+        {
+            StartCoroutine(Rolling());
         }
         if (Input.GetButtonDown("Jump") && tempJumpCnt <= jumpCnt)
         {

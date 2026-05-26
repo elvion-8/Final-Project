@@ -50,7 +50,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: c5dc246efd6806c41ae7020eba702df7, type: 3}
       propertyPath: m_Name
-      value: tripo_convert_41a1563b-1fc7-4114-bf00-6f7c95270e84
+      value: Consol
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: c5dc246efd6806c41ae7020eba702df7, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
