@@ -497,6 +497,7 @@ MonoBehaviour:
   anim: {fileID: 0}
   MoveDir: {x: 0, y: 0, z: 0}
   isAttacking: 0
+  playerId: -1
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 0
@@ -612,12 +613,12 @@ MonoBehaviour:
   group: 0
   OwnerShipWasTransfered: 0
   prefixBackup: -1
-  synchronization: 0
+  synchronization: 3
   onSerializeTransformOption: 3
   onSerializeRigidBodyOption: 2
   ownershipTransfer: 0
   ObservedComponents:
-  - {fileID: 0}
+  - {fileID: 6762460525713461214}
   ObservedComponentsFoldoutOpen: 1
   viewIdField: 0
   instantiationId: -1

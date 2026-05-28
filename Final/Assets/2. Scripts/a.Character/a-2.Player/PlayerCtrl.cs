@@ -34,6 +34,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     [Space(10)]
     private CharacterController charCon;
     private Transform cmTr;
+    private Transform myTr;
 
     private float jumpPower;
     [Range(1f, 20f)]
@@ -48,6 +49,21 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
 
 
     private bool isRolling;
+
+    // Poton Viow /////////////////////////////////
+
+    PhotonView pv = null;
+
+    Vector3 currPos = Vector3.zero;
+    Quaternion currRot = Quaternion.identity;
+
+    //플레이어의 Id를 저장하는 변수
+    public int playerId = -1;
+
+    private float syncSpeed;   // [추가] 원격 플레이어의 애니메이션 속도를 담을 변수
+
+
+    /////////////////////////////////////////////////////
 
     [Space(10)]
     [Header("Wall & Ledge Climb")]
@@ -81,6 +97,36 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         GameObject hpBarObj = GameObject.FindGameObjectWithTag("HpBar");
         if (hpBarObj != null) { hpBar = GameObject.FindGameObjectWithTag("HpBar").GetComponent<Image>(); }
         else return;
+
+        myTr = GetComponent<Transform>();
+        pv = GetComponent<PhotonView>();
+
+
+        //pv.ObservedComponents[0] = this;
+
+        //pv.synchronization = ViewSynchronization.UnreliableOnChange;
+
+        playerId = pv.ownerId;
+
+        if (pv.isMine)   // 자신인 경우
+        {
+            //메인 카메라에 추가된 추적 대상을 연결
+            Camera.main.GetComponent<CameraMove>().playerPos = myTr;
+        }
+        else            // 자신의 네트워크 객체가 아닐때...
+        {
+            Collider col = GetComponent<Collider>();
+            if (col != null)
+            {
+                col.enabled = false;
+            }
+        }
+
+        // 원격 플래이어의 위치 및 회전 값을 처리할 변수의 초기값 설정 
+        // 잘 생각해보자 이런처리 안하면 순간이동 현상을 목격
+        currPos = myTr.position;
+        currRot = myTr.rotation;
+
     }
 
     void Start()
@@ -97,30 +143,61 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         }
     }
 
+    
     void Update()
     {
-        if (isDie) return;
+        if (pv.isMine)
+        {
+            if (isDie) return;
 
-        // 입력
-        GetInput();
+            // 입력
+            GetInput();
 
-        // 벽타기
-        if (Climb()) return;
+            // 벽타기
+            if (Climb()) return;
 
-        // 공격
-        Attack();
-        // 구르기
-        Roll();
+            // 공격
+            Attack();
+            // 구르기
+            Roll();
 
-        // 이동
-        Movement();
-        // 점프
-        Jump();
+            // 이동
+            Movement();
+            // 점프
+            Jump();
 
-        // 중력 및 이동 값 적용
-        ExecuteMove();
+            // 중력 및 이동 값 적용
+            ExecuteMove();
+
+            anim.SetFloat("Speed", inputDir.magnitude);
+        }
+        else   //내가 아닌 플레이어
+        {
+            // 원격 플레이어의 아바타를 수신받은 위치까지 부드럽게 이동시키자
+            myTr.position = Vector3.Lerp(myTr.position, currPos, Time.deltaTime * 3.0f);
+            //원격 플레이어의 아바타를 수신받은 각도만큼 부드럽게 회전시키자
+            myTr.rotation = Quaternion.Slerp(myTr.rotation, currRot, Time.deltaTime * 3.0f);
+
+            anim.SetFloat("Speed", syncSpeed);
+
+            // 3. [핵심 수정] 수신받은 속도 값에 따라 Walk/Run 상태 강제 동기화하기!
+            if (syncSpeed > 0.1f) // 상대방이 움직이고 있다면
+            {
+                // 만약 달리기를 하고 있는지, 걷기를 하고 있는지 구별해서 켜줍니다.
+                // (tip: 만약 더 정밀하게 하려면 달리 상태 여부(bool)도 패킷으로 보내야 하지만, 
+                // 우선 움직이면 걷기 애니메이션이라도 무조건 작동하도록 세팅합니다.)
+                anim.SetBool("Walk", true);
+            }
+            else // 상대방이 멈췄다면
+            {
+                anim.SetBool("Walk", false);
+                anim.SetBool("Run", false);
+            }
+        }
+
     }
 
+    
     //입력
     void GetInput()
     {
@@ -138,6 +215,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         }
     }
 
+    [PunRPC]
     // 벽타기
     bool Climb()
     {
@@ -178,17 +256,24 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     }
 
     // 공격
+    
     void Attack()
     {
         if (Input.GetMouseButtonDown(0))
         {
             if (!isAttacking)
             {
-                isAttacking = true;
-                anim.SetTrigger("Attack");
-                StartCoroutine(AttackRoutine());
+                pv.RPC("NetworkAttack", PhotonTargets.All);
             }
         }
+    }
+
+    [PunRPC]
+    void NetworkAttack()
+    {
+        isAttacking = true;
+        anim.SetTrigger("Attack");
+        StartCoroutine(AttackRoutine());
     }
 
     // 구르기
@@ -196,11 +281,18 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     {
         if (Input.GetButtonDown("LeftCtrl") && !isRolling)
         {
-            StartCoroutine(Rolling());
+            pv.RPC("NetworkRoll", PhotonTargets.All);
         }
     }
 
+    [PunRPC]
+    void NetworkRoll()
+    {
+        StartCoroutine(Rolling());
+    }
+
     // 점프
+    
     void Jump()
     {
         if (charCon.isGrounded)
@@ -236,6 +328,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     }
 
     // 이동
+    [PunRPC]
     void Movement()
     {
         if (charCon.isGrounded)
@@ -291,6 +384,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         charCon.Move(MoveDir * Time.deltaTime);
     }
 
+    [PunRPC]
     IEnumerator Rolling()
     {
         isRolling = true;
@@ -302,6 +396,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         isRolling = false;
     }
 
+    
     IEnumerator AttackRoutine()
     {
         yield return new WaitForSeconds(1f);
@@ -320,6 +415,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         return damage;
     }
 
+    [PunRPC]
     void UpdateWallClimbing(float verticalInput)
     {
         if (verticalInput <= 0.1f)
@@ -371,6 +467,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         }
     }
 
+    [PunRPC]
     IEnumerator LedgeClimbRoutine(Vector3 ledgeSurfacePoint, Vector3 wallNormal)
     {
         isLedgeClimbing = true;
@@ -417,8 +514,42 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         MoveDir = Vector3.zero;
     }
 
+    [PunRPC]
     void Die()
     {
         Debug.Log("you die");
+    }
+
+    // 포톤 추가
+    // 네트워크 객체 생성 완료시 자동 호출되는 함수
+    void OnPhotonInstantiate(PhotonMessageInfo info)
+    {
+        //info.sender.TagObject = this.GameObject;
+        // 네트워크 플레이어 생성시 전달 인자 확인
+        object[] data = pv.instantiationData;
+        Debug.Log((int)data[0]);
+    }
+
+    void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        //로컬 플레이어의 위치 정보를 송신
+        if (stream.isWriting)
+        {
+            //박싱 (로컬플레이어)
+            stream.SendNext(myTr.position);
+            stream.SendNext(myTr.rotation);
+
+            float mySpeed = inputDir.magnitude;
+            stream.SendNext(mySpeed);
+        }
+        else
+        {
+            //언박싱 (아바타들)
+            currPos = (Vector3)stream.ReceiveNext();
+            currRot = (Quaternion)stream.ReceiveNext();
+
+            // [추가] 3번째 데이터 순서에 맞춰 속도 값을 수신받아 변수에 저장합니다.
+            this.syncSpeed = (float)stream.ReceiveNext();
+        }
     }
 }

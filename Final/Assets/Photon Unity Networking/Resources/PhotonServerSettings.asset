@@ -44,4 +44,17 @@ MonoBehaviour:
   - RequestForPickupTimes
   - TaggedPlayer
   - LogMsg
+  - Update
+  - Attack
+  - Climb
+  - Die
+  - Jump
+  - LedgeClimbRoutine
+  - Movement
+  - Roll
+  - Rolling
+  - UpdateWallClimbing
+  - GetInput
+  - NetworkAttack
+  - NetworkRoll
   DisableAutoOpenWizard: 1
