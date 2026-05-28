@@ -90,5 +90,6 @@ public class csMission : MonoBehaviour
     public void EasyMode()
     {
         SceneManager.LoadScene("AllTest");
+       
     }
 }

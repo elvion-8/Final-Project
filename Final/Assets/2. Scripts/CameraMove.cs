@@ -41,24 +41,47 @@ public class CameraMove : MonoBehaviour
     void Awake()
     {
         cmTr = GetComponent<Transform>();
+<<<<<<< HEAD
         if (playerPos == null)
         {
             GameObject player = GameObject.FindGameObjectWithTag("Player");
             if (player != null) playerPos = player.transform;
         }
         currentDistance = distance;
+=======
+>>>>>>> 651f1686a12820bebca92b25f32805a9a253a36c
     }
 
     void Start()
     {
+<<<<<<< HEAD
         if (mouseSensitivity <= 0f) mouseSensitivity = 2.0f;
 
         Vector3 angles = transform.eulerAngles;
         rotX = angles.y;
         rotY = angles.x;
 
+=======
+        StartCoroutine(FindPlayerTarget());
+        mouseSensitivity = 2.0f;
+>>>>>>> 651f1686a12820bebca92b25f32805a9a253a36c
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+        
+    }
+
+    IEnumerator FindPlayerTarget()
+    {
+        while (playerPos == null)
+        {
+            GameObject player = GameObject.Find("Player");
+            if (player != null)
+            {
+                // 찾은 플레이어의 Transform을 할당
+                playerPos = player.transform;
+            }
+            yield return new WaitForSeconds(0.2f); // 0.2초마다 확인
+        }
     }
 
     void Update()
@@ -119,13 +142,22 @@ public class CameraMove : MonoBehaviour
 
     void LateUpdate()
     {
+<<<<<<< HEAD
         if (playerPos == null) 
+=======
+        if (playerPos == null)
+>>>>>>> 651f1686a12820bebca92b25f32805a9a253a36c
         {
             return;
         }
 
+<<<<<<< HEAD
         if (!lockOn) { MouseMove(); }
         else { LockOn(); }
+=======
+        if (!lockOn){MouseMove();}
+        if(lockOn){LockOn();}
+>>>>>>> 651f1686a12820bebca92b25f32805a9a253a36c
     }
 
     void MouseMove()

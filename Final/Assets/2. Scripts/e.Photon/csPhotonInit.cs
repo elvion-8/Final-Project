@@ -166,7 +166,7 @@ using UnityEngine.SceneManagement;
     - PhotonViewID
 */
 
-public class csPhotonInit : MonoBehaviour
+public class csPhotonInit : Photon.MonoBehaviour
 {
     //App의 버전 정보 (번들 버전과 일치 시키자...)
     public string version = "Ver 0.1.0";
@@ -245,6 +245,13 @@ public class csPhotonInit : MonoBehaviour
         로비에서 방을 만들거나, 특정 방에 연결하거나, 랜덤으로 열결하게 됨
     */
 
+    public void OnConnectedToMaster()
+    {
+        Debug.Log("마스터 서버 접속 완료!");
+
+        // 마스터 서버에 붙었으니 자동으로 로비 진입 명령을 내립니다.
+        PhotonNetwork.JoinLobby(TypedLobby.Default);
+    }
     //포톤 클라우드에 정상적으로 접속한 후 로비에 입장하면 호출되는 콜백 함수
     //즉, 로비 입장 후 포톤 클라우드 서버가 클라이언트에게 정상적으로 로비에 입장했다는 콜백 함수를 호출~
     void OnJoinedLobby()
@@ -314,7 +321,7 @@ public class csPhotonInit : MonoBehaviour
             userId = "USER_" + Random.Range(0, 999).ToString("000");
 
             //공부 하라구 
-            Debug.Log(9999999999.ToString("0,000"));
+            //Debug.Log(9999999999.ToString("0,000"));
             //Debug.Log(System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
             //Debug.Log(System.DateTime.Now.Millisecond.ToString("000"));
         }
@@ -497,7 +504,7 @@ public class csPhotonInit : MonoBehaviour
         PhotonNetwork.isMessageQueueRunning = false;
 
         //백그라운드로 씬 로딩
-        AsyncOperation ao = SceneManager.LoadSceneAsync("scNet");
+        AsyncOperation ao = SceneManager.LoadSceneAsync("AllTest");
 
         /*
             참고) PhotonNetwork.LoadLevelAsync =>  PhotonNetwork.isMessageQueueRunning = false 로 
@@ -593,9 +600,34 @@ public class csPhotonInit : MonoBehaviour
         PhotonNetwork.JoinRandomRoom();
     }
 
-    //Make Room 버튼 클릭 시 호출될 함수 (UI 버전에서 사용)
-    public void OnClickCreateRoom()
+    public void OnClickSelectGameMode(int modeNumber)
     {
+        switch (modeNumber)
+        {
+            case 0: // 공개방
+                CreatePhotonRoom(isVisible: true);
+                break;
+
+            case 1: // 비공개방
+                CreatePhotonRoom(isVisible: false);
+                break;
+
+            case 2: // 싱글플레이
+                StartSinglePlayer();
+                break;
+
+            default:
+                Debug.LogError("잘못된 모드 번호입니다!");
+                break;
+        }
+    }
+
+
+    //Make Room 버튼 클릭 시 호출될 함수 (UI 버전에서 사용)
+    public void CreatePhotonRoom(bool isVisible)
+    {
+        csButtonManager.isMultiplayer = true;
+
         string _roomName = roomName.text;
 
         //룸 이름이 없거나 Null일 경우 룸 이름 지정
@@ -614,14 +646,23 @@ public class csPhotonInit : MonoBehaviour
         //생성할 룸의 조건 설정 1
         RoomOptions roomOptions = new RoomOptions();
         roomOptions.IsOpen = true;
-        roomOptions.IsVisible = true;
-        roomOptions.MaxPlayers = 10;
+        roomOptions.IsVisible = isVisible;
+        roomOptions.MaxPlayers = 4;
 
         //생성할 룸의 조건 설정 2 (객체 생성과 동시에 멤버변수 초기화)
         //RoomOptions roomOptions = new RoomOptions() { IsOpen=true, IsVisible=true, MaxPlayers=50 };
 
         //지정한 조건에 맞는 룸 생성 함수 
         PhotonNetwork.CreateRoom(_roomName, roomOptions, TypedLobby.Default);
+    }
+
+    // 싱글플레이 모드 시작
+    private void StartSinglePlayer()
+    {
+        csButtonManager.isMultiplayer = false;
+        //PhotonNetwork.offlineMode = true;
+        PhotonNetwork.CreateRoom("SinglePlayerRoom");
+        Debug.Log("싱글플레이 오프라인 방 생성 완료");
     }
 
     //생성된 룸 목록이 변경됐을 때 호출되는 콜백 함수 (최초 룸 접속시 호출) (UI 버전에서 사용)
@@ -668,7 +709,7 @@ public class csPhotonInit : MonoBehaviour
             roomData.maxPlayers = _room.MaxPlayers;
 
             //텍스트 정보를 표시 
-            roomData.DisplayRoomData();
+            //roomData.DisplayRoomData();
 
             //RoomItem의  Button 컴포넌트에 클릭 이벤트를 동적으로 연결
             roomData.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(delegate { OnClickRoomItem(roomData.roomName); Debug.Log("Room Click " + roomData.roomName); });

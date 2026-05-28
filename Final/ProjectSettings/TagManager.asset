@@ -9,7 +9,12 @@ TagManager:
   - Weapon
   - EnemyBody
   - Ground
+<<<<<<< HEAD
   - HpBar
+=======
+  - ROOM_ITEM
+  - PlayerSpawnPoint
+>>>>>>> 651f1686a12820bebca92b25f32805a9a253a36c
   layers:
   - Default
   - TransparentFX

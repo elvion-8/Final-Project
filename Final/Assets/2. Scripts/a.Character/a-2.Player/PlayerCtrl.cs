@@ -36,6 +36,9 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     private Transform cmTr;
 
     private float jumpPower;
+    [Range(1f, 20f)]
+    [Tooltip("기본값 : 6.5")]
+    public float jumpForwardForce;
     private float gravity;
     [Header("others")]
     public Animator anim;
@@ -58,6 +61,15 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     private bool isWallClimbing = false;
     private bool isLedgeClimbing = false;
     private float climbHeightCounter = 0f;
+    private bool isMultiJump = false;
+
+    //입력용 변수
+    private float h;
+    private float v;
+    private Vector3 inputDir;
+    private Vector3 moveDir;
+    private Vector3 camForward;
+    private Vector3 camRight;
 
 
     void Awake()
@@ -89,29 +101,56 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     {
         if (isDie) return;
 
-        float h = Input.GetAxis("Horizontal");
-        float v = Input.GetAxis("Vertical");
+        // 입력
+        GetInput();
 
-        Vector3 inputDir = new Vector3(h, 0, v);
-        Vector3 camForward = cmTr.forward;
-        Vector3 camRight = cmTr.right;
-        camForward.y = 0;
-        camRight.y = 0;
-        Vector3 moveDir = camForward * v + camRight * h;
+        // 벽타기
+        if (Climb()) return;
 
-        if (isLedgeClimbing) return;
+        // 공격
+        Attack();
+        // 구르기
+        Roll();
+
+        // 이동
+        Movement();
+        // 점프
+        Jump();
+
+        // 중력 및 이동 값 적용
+        ExecuteMove();
+    }
+
+    //입력
+    void GetInput()
+    {
+        h = Input.GetAxis("Horizontal");
+        v = Input.GetAxis("Vertical");
+        inputDir = new Vector3(h, 0, v);
+
+        if (cmTr != null)
+        {
+            camForward = cmTr.forward;
+            camRight = cmTr.right;
+            camForward.y = 0;
+            camRight.y = 0;
+            moveDir = camForward * v + camRight * h;
+        }
+    }
+
+    // 벽타기
+    bool Climb()
+    {
+        if (isLedgeClimbing) return true;
 
         if (isWallClimbing)
         {
             UpdateWallClimbing(v);
-            return;
+            return true;
         }
 
-
-        // 공중 상태에서 전진 키와 점프 입력을 누를 때 벽타기 체크
         if (!charCon.isGrounded && !isRolling && !isAttacking)
         {
-
             if (v > 0.1f && (Input.GetButtonDown("Jump") || Input.GetButton("Jump")))
             {
                 RaycastHit wallHit;
@@ -130,14 +169,17 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
                         anim.SetBool("IsWallClimbing", true);
                         anim.SetBool("Walk", false);
                         anim.SetBool("Run", false);
-                        return;
+                        return true;
                     }
                 }
             }
         }
-        //anim.SetBool("isGrounded", charCon.isGrounded);
+        return false;
+    }
 
-
+    // 공격
+    void Attack()
+    {
         if (Input.GetMouseButtonDown(0))
         {
             if (!isAttacking)
@@ -147,7 +189,55 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
                 StartCoroutine(AttackRoutine());
             }
         }
+    }
 
+    // 구르기
+    void Roll()
+    {
+        if (Input.GetButtonDown("LeftCtrl") && !isRolling)
+        {
+            StartCoroutine(Rolling());
+        }
+    }
+
+    // 점프
+    void Jump()
+    {
+        if (charCon.isGrounded)
+        {
+            isMultiJump = false;
+            tempJumpCnt = 0;
+        }
+
+        // 점프
+        if (charCon.isGrounded && !isRolling && Input.GetButtonDown("Jump"))
+        {
+            MoveDir.y = jumpPower;
+            anim.SetTrigger("Jump");
+            isMultiJump = true;
+        }
+        // 추가 점프
+        else if (Input.GetButtonDown("Jump") && !charCon.isGrounded && tempJumpCnt < jumpCnt && isMultiJump)
+        {
+            tempJumpCnt++;
+            MoveDir.y = jumpPower;
+
+            Vector3 jumpDir = transform.forward.normalized;
+            MoveDir.x = jumpDir.x * jumpForwardForce;
+            MoveDir.z = jumpDir.z * jumpForwardForce;
+
+            if (jumpDir != Vector3.zero)
+            {
+                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(jumpDir), rotationSpeed * Time.deltaTime);
+            }
+
+            anim.SetTrigger("Jump");
+        }
+    }
+
+    // 이동
+    void Movement()
+    {
         if (charCon.isGrounded)
         {
             if (!isRolling)
@@ -175,19 +265,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
                     anim.SetBool("RightSide", false);
                     anim.SetBool("LeftSide", false);
                 }
-
-                if (Input.GetButtonDown("Jump"))
-                {
-                    MoveDir.y = jumpPower;
-                    anim.SetTrigger("Jump");
-                }
             }
-            // if (Input.GetButtonDown("LeftCtrl") && !isRolling)
-            // {
-            //     StartCoroutine(Rolling());
-            // }
-            tempJumpCnt = 0;      //땅에 닿으면 연속 점프 카운트 초기화
-
         }
         else
         {
@@ -204,16 +282,11 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
                 }
             }
         }
-        if (Input.GetButtonDown("LeftCtrl") && !isRolling)
-        {
-            StartCoroutine(Rolling());
-        }
-        if (Input.GetButtonDown("Jump") && tempJumpCnt <= jumpCnt)
-        {
-            tempJumpCnt++;
-            MoveDir.y = jumpPower;
-            anim.SetTrigger("Jump");
-        }
+    }
+
+    // 중력 적용, 캐릭터 실제 이동
+    void ExecuteMove()
+    {
         MoveDir.y -= gravity * Time.deltaTime;
         charCon.Move(MoveDir * Time.deltaTime);
     }

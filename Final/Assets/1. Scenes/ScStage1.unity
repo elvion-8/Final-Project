@@ -850,6 +850,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 6762460525713461214, guid: cf2fff39de4ef894393be997a8b45fd2, type: 3}
+      propertyPath: jumpCnt
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6762460525713461214, guid: cf2fff39de4ef894393be997a8b45fd2, type: 3}
+      propertyPath: jumpForwardForce
+      value: 6.5
+      objectReference: {fileID: 0}
     - target: {fileID: 8995780927049456821, guid: cf2fff39de4ef894393be997a8b45fd2, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -6382,7 +6390,7 @@ GameObject:
   - component: {fileID: 714232994}
   m_Layer: 0
   m_Name: Field
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -12588,8 +12596,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerPos: {fileID: 1738670473}
   mouseSensitivity: 2
-  distance: 7
-  cameraHeight: 1.39
+  distance: 4.5
+  cameraHeight: 2.5
   height: 0
   obstacleLayers:
     serializedVersion: 2
