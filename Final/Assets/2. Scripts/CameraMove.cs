@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System;
+using UnityEngine.InputSystem;
 
 public class CameraMove : MonoBehaviour
 {
@@ -37,6 +38,9 @@ public class CameraMove : MonoBehaviour
     private bool isEnemyDetected;
     private bool isDie;
     private float hf;
+
+    private Vector2 moveInput;
+    private bool isLockOnTrigger;
 
     void Awake()
     {
@@ -78,10 +82,16 @@ public class CameraMove : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.G))
+        //LockOn();
+    }
+    #region CallBack Input
+    public void OnScreenMove(InputValue value){moveInput = value.Get<Vector2>();}
+    public void OnLockOn(InputValue value)
+    {
+        if(value.isPressed)
         {
             lockOn = !lockOn;
-            if (lockOn) 
+            if(lockOn)
             {
                 LockOnStart();
             }
@@ -92,6 +102,7 @@ public class CameraMove : MonoBehaviour
             }
         }
     }
+    #endregion
 
     void LockOnStart()
     {
@@ -145,8 +156,8 @@ public class CameraMove : MonoBehaviour
 
     void MouseMove()
     {
-        mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
-        mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
+        mouseX = moveInput.x * mouseSensitivity*Time.deltaTime;
+        mouseY = moveInput.y * mouseSensitivity*Time.deltaTime;
         rotX += mouseX;
         rotY -= mouseY;
         
