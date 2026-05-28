@@ -493,6 +493,7 @@ MonoBehaviour:
   jumpCnt: 1
   hp: 100
   hpBar: {fileID: 0}
+  jumpForwardForce: 1
   anim: {fileID: 0}
   MoveDir: {x: 0, y: 0, z: 0}
   isAttacking: 0
