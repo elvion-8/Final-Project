@@ -4,7 +4,7 @@ using UnityEngine;
 public class csUpgrade : MonoBehaviour
 {
     public GameObject pnlUpgrade;
-    private PlayerCtrl player;
+    private LobbyPlayerCtrl player;
     Transform mainCameraPos;
     Vector3 tempMainCamPos;
     Quaternion mainCameraRot;
@@ -16,7 +16,7 @@ public class csUpgrade : MonoBehaviour
 
     void Awake()
     {
-        player = GameObject.FindWithTag("Player").GetComponent<PlayerCtrl>();
+        player = GameObject.FindWithTag("Player").GetComponent<LobbyPlayerCtrl>();
         mainCameraPos = GameObject.FindWithTag("MainCamera").transform;
         camMove = mainCameraPos.GetComponent<CameraMove>();
         anim = player.GetComponentInChildren<Animator>();

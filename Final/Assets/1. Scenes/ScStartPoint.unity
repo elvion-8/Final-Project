@@ -4864,36 +4864,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &148913729521761527
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5678150620160376812}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 46d730ce7ac1e5b4d99f575c280657e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rotationSpeed: 10
-  runningSpeed: 6
-  rollPower: 7
-  attackSpeed: 1
-  jumpCnt: 1
-  hp: 100
-  hpBar: {fileID: 0}
-  anim: {fileID: 0}
-  MoveDir: {x: 0, y: 0, z: 0}
-  isAttacking: 0
-  obstacleLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  maxClimbHeight: 2.5
-  climbSpeed: 2
-  wallCheckDistance: 1
-  ledgeForwardOffset: 0.5
-  ledgeUpperHeightOffset: 2.2
 --- !u!1 &244099491009260829
 GameObject:
   m_ObjectHideFlags: 0
@@ -5667,29 +5637,6 @@ Transform:
   - {fileID: 116545401812944684}
   m_Father: {fileID: 8464810433573957503}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2557278142885646000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5678150620160376812}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9e60bb9a7aebe73459b6a9a43a5123c9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  weaponPrefabs:
-  - {fileID: 9159102852955507597, guid: c80eb222afb88204e95ad885914ad504, type: 3}
-  - {fileID: 8559635611127355586, guid: aabed7cef3451b446a0a2b41e92bab43, type: 3}
-  - {fileID: 1410371666187230154, guid: ca564fb98b865574d9038cd4ba7e8d5a, type: 3}
-  - {fileID: 3691397499032880000, guid: f46f3cc2156fcb64e9e9bd22f143a652, type: 3}
-  - {fileID: 5097396333430142725, guid: 44647ffa648ccb84fb7288c1b362dd2a, type: 3}
-  - {fileID: 7973608593460275492, guid: 49f46d6e4ab99104a8d3f10a680072e9, type: 3}
-  weaponPoint: {fileID: 0}
-  anim: {fileID: 0}
-  trail: {fileID: 0}
-  attackSpeed: 0
 --- !u!4 &2609362829153936121
 Transform:
   m_ObjectHideFlags: 0
@@ -6459,11 +6406,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2530870351581573020}
-  - component: {fileID: 148913729521761527}
   - component: {fileID: 8818313593617631643}
   - component: {fileID: 2861388967343248807}
-  - component: {fileID: 2557278142885646000}
   - component: {fileID: 95399999521013131}
+  - component: {fileID: 8818313593617631644}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -7208,6 +7154,36 @@ CapsuleCollider:
   m_Height: 1.9
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}
+--- !u!114 &8818313593617631644
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5678150620160376812}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d2c8408aa46c7943bb7eebb048b3235, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotationSpeed: 10
+  runningSpeed: 6
+  rollPower: 1
+  attackSpeed: 1
+  jumpCnt: 0
+  hp: 1
+  hpBar: {fileID: 0}
+  anim: {fileID: 0}
+  MoveDir: {x: 0, y: 0, z: 0}
+  isAttacking: 0
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  maxClimbHeight: 2.5
+  climbSpeed: 2
+  wallCheckDistance: 1
+  ledgeForwardOffset: 0.5
+  ledgeUpperHeightOffset: 2.2
 --- !u!4 &8820770214522179727
 Transform:
   m_ObjectHideFlags: 0

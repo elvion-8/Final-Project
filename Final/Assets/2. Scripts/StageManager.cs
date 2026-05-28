@@ -23,12 +23,15 @@ public class StageManager : MonoBehaviour
     //���� ��
     private bool gameEnd;
 
+    csButtonManager buttonManager;
+
     private void Awake()
     {
         pv = GetComponent<PhotonView>();
 
         playerPos = GameObject.Find("PlayerSpawnPoint").GetComponentsInChildren<Transform>();
 
+       
     }
 
     // Start is called before the first frame update
