@@ -843,22 +843,30 @@ MonoBehaviour:
   popupEntries:
   - panelType: 0
     button: {fileID: 5717071508124704541}
-    popup: {fileID: 8413216455864145123, guid: d4a57492e84c58e4d9912103e5271c5a, type: 3}
+    popup: {fileID: 2486105025556007836, guid: 1710c4841fa52ae479b78ac5d495915c, type: 3}
     isOpen: 0
-  - panelType: 0
-    button: {fileID: 0}
+  - panelType: 1
+    button: {fileID: 6814126552826121418}
     popup: {fileID: 0}
     isOpen: 0
-  - panelType: 0
-    button: {fileID: 0}
+  - panelType: 2
+    button: {fileID: 2016300128327096404}
+    popup: {fileID: 4704081225721756031, guid: 39dba4bce3a636042a7fcb0402e48f75, type: 3}
+    isOpen: 0
+  - panelType: 3
+    button: {fileID: 4988658153040732039}
     popup: {fileID: 0}
     isOpen: 0
-  - panelType: 0
-    button: {fileID: 0}
+  - panelType: 4
+    button: {fileID: 3108028183815334713}
     popup: {fileID: 0}
     isOpen: 0
-  - panelType: 0
-    button: {fileID: 0}
+  - panelType: 5
+    button: {fileID: 372300023096988201}
+    popup: {fileID: 0}
+    isOpen: 0
+  - panelType: 6
+    button: {fileID: 6158326419846757885}
     popup: {fileID: 0}
     isOpen: 0
   exclusiveMode: 1
