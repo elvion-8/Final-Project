@@ -132,6 +132,10 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
             //메인 카메라에 추가된 추적 대상을 연결
             Camera.main.GetComponent<CameraMove>().playerPos = myTr;
         }
+        else if(PhotonNetwork.inRoom==false)
+        {
+            Camera.main.GetComponent<CameraMove>().playerPos = myTr;
+        }
         else            // 자신의 네트워크 객체가 아닐때
         {
             Collider col = GetComponent<Collider>();
@@ -165,7 +169,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
 
     void Update()
     {
-        if (pv.isMine)
+        if (pv.isMine||PhotonNetwork.inRoom==false)
         {
             if (isDie) return;
 
