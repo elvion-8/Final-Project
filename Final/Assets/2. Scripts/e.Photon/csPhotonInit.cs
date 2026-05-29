@@ -748,6 +748,7 @@ public class csPhotonInit : Photon.MonoBehaviour
     //RoomItem이 클릭되면 호출될 이벤트 연결 함수 (UI 버전에서 사용)
     void OnClickRoomItem(string roomName)
     {
+        csButtonManager.isMultiplayer = true;
         //로컬 플레이어의 이름을 설정
         PhotonNetwork.player.NickName = userId.text;
 

@@ -2625,7 +2625,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerPos: {fileID: 0}
-  mouseSensitivity: 0
+  mouseSensitivity: 150
   distance: 5.5
   cameraHeight: 1.5
   height: 3

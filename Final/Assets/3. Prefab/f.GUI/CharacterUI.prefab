@@ -853,7 +853,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -166.0699, y: 0.0000038146973}
+  m_AnchoredPosition: {x: -166.06989, y: 0}
   m_SizeDelta: {x: 201.7506, y: 205.0464}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8772420773380725303
@@ -910,7 +910,7 @@ MonoBehaviour:
   - tabName: "\uCE90\uB9AD\uD130"
     button: {fileID: 2935382982904194559}
     activeIndicator: {fileID: 7719893541962593715}
-    panel: {fileID: 0}
+    panel: {fileID: 5833062269990991903}
   - tabName: "\uB2A5\uB825\uCE58"
     button: {fileID: 6239354314269429066}
     activeIndicator: {fileID: 3241389915005688440}

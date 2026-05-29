@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: -7948147350544097422}
   m_Layer: 0
   m_Name: Dagger
-  m_TagString: Untagged
+  m_TagString: Weapon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -54,6 +54,13 @@ MonoBehaviour:
   baseCritDmg: 13
   baseAttackSpeed: 12
   baseDurability: 1
+  pS:
+    cost: 0
+    hpUpgrade: 0
+    weaponDmgUpgradeCnt: 0
+    weaponCritProbUpgradeCnt: 0
+    weaponCritDmgUpgradeCnt: 0
+    weaponAttackSpeed: 0
 --- !u!54 &8573224183058982588
 Rigidbody:
   m_ObjectHideFlags: 0
