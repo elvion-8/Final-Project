@@ -46,7 +46,9 @@ public class csInvenManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            ToggleInventory();
+            SystemBtn systemBtn = FindObjectOfType<SystemBtn>();
+            if (systemBtn != null)
+                systemBtn.OpenPopupByType(SystemBtn.PanelType.Inventory);
         }
 
         if (pnlInven.activeSelf)
@@ -155,21 +157,29 @@ public class csInvenManager : MonoBehaviour
         }
     }
 
-    void ToggleInventory() 
+    // Cursor, timeScale 제어 SystemBtn이 담당
+    public void ToggleInventory()
     {
         bool isActivating = !pnlInven.activeSelf;
         pnlInven.SetActive(isActivating);
-        
-        Cursor.lockState = isActivating ? CursorLockMode.None : CursorLockMode.Locked;
-        Cursor.visible = isActivating;
-
-        if (!csButtonManager.isMultiplayer)
-        {
-            Time.timeScale = isActivating ? 0f : 1f;
-        }
 
         if (!isActivating)
+            ClearSelection();
+    }
+
+    public void OpenInventory()
+    {
+        if (!pnlInven.activeSelf)
         {
+            pnlInven.SetActive(true);
+        }
+    }
+
+    public void CloseInventory()
+    {
+        if (pnlInven.activeSelf)
+        {
+            pnlInven.SetActive(false);
             ClearSelection();
         }
     }

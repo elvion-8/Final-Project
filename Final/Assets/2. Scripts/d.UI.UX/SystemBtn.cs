@@ -64,12 +64,41 @@ public class SystemBtn : MonoBehaviour
             PopupEntry captured = entry;
             entry.button?.onClick.AddListener(() => OnButtonClicked(captured));
         }
+
+        SetGameCursor(false);
     }
 
     void Update()
     {
         if (closeAllOnEsc && Input.GetKeyDown(KeyCode.Escape))
-            CloseAllPopups();
+        {
+            if (currentOpenEntry != null)
+            {
+                CloseAllPopups(); // 패널 닫기
+            }
+            else
+            {
+                // 아무 패널도 없으면 커서 토글 (일시정지 메뉴용)
+                ToggleCursor();
+            }
+        }
+    }
+
+    private bool _isCursorFree = false;
+
+    private void SetGameCursor(bool free)
+    {
+        _isCursorFree = free;
+        Cursor.lockState = free ? CursorLockMode.None : CursorLockMode.Locked;
+        Cursor.visible = free;
+
+        if (!csButtonManager.isMultiplayer)
+            Time.timeScale = free ? 0f : 1f;
+    }
+
+    private void ToggleCursor()
+    {
+        SetGameCursor(!_isCursorFree);
     }
 
     // ────────────────────────────────────────────
@@ -100,22 +129,45 @@ public class SystemBtn : MonoBehaviour
     // ────────────────────────────────────────────
     private void OpenPopup(PopupEntry entry)
     {
-        entry.popup.SetActive(true);
-        entry.isOpen = true;
-        currentOpenEntry = entry;
+        if (entry.panelType == PanelType.Inventory)
+        {
+            csInvenManager.Instance.OpenInventory();
+            entry.isOpen = true;
+            currentOpenEntry = entry;
+        }
+        else
+        {
+            entry.popup.SetActive(true);
+            entry.isOpen = true;
+            currentOpenEntry = entry;
+            entry.popup.transform.SetAsLastSibling();
+        }
 
-        entry.popup.transform.SetAsLastSibling();
+        // 패널 열릴 때 커서 해제
+        SetGameCursor(true);
 
         Debug.Log($"[ButtonPnl] {entry.panelType} 팝업 열림");
     }
 
     private void ClosePopup(PopupEntry entry)
     {
-        entry.popup.SetActive(false);
-        entry.isOpen = false;
+        if (entry.panelType == PanelType.Inventory)
+        {
+            csInvenManager.Instance.CloseInventory();
+        }
+        else
+        {
+            entry.popup.SetActive(false);
+        }
 
+        entry.isOpen = false;
         if (currentOpenEntry == entry)
             currentOpenEntry = null;
+
+        // 모든 패널 닫혔을 때만 커서 잠금
+        bool anyOpen = popupEntries.Exists(e => e.isOpen);
+        if (!anyOpen)
+            SetGameCursor(false);
 
         Debug.Log($"[ButtonPnl] {entry.panelType} 팝업 닫힘");
     }
