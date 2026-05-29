@@ -25,11 +25,38 @@ public class csInvenManager : MonoBehaviour
     private csInvSlot _selectedSlot;
     private bool onInven;
 
-    public void OnInventory(InputValue value) { if(value.isPressed) onInven = true; }
-    public void OnWeaponChange(InputValue value) {float weaponIndex = value.Get<float>(); Debug.Log(weaponIndex);}
+    bool one;
+    bool two;
+    bool three;
+    bool four;
+
+    public void OnInventory(InputValue value) { if (value.isPressed) onInven = true; }
+    public void OnWeaponChange(InputValue value)
+    {
+        float weaponIndex = value.Get<float>();
+
+        switch (weaponIndex)
+        {
+            case 1:
+            one = true;
+            break;
+
+            case 2:
+            two = true;
+            break;
+
+            case 3:
+            three = true;
+            break;
+
+            case 4:
+            four = true;
+            break;
+        }
+    }
     void ResetTriggers()
     {
-        onInven=false;
+        onInven = false;
     }
     [Header("text")]
     [SerializeField] private Text txtWType;
@@ -52,21 +79,26 @@ public class csInvenManager : MonoBehaviour
 
     void Update()
     {
-        ToggleInventory();
+        if (onInven)
+        {
+            SystemBtn systemBtn = FindObjectOfType<SystemBtn>();
+            if (systemBtn != null)
+                systemBtn.OpenPopupByType(SystemBtn.PanelType.Inventory);
+        }
 
         if (pnlInven.activeSelf)
         {
-            if (Input.GetKeyDown(KeyCode.Alpha1)) AssignToHotbarDirectly(0);
-            else if (Input.GetKeyDown(KeyCode.Alpha2)) AssignToHotbarDirectly(1);
-            else if (Input.GetKeyDown(KeyCode.Alpha3)) AssignToHotbarDirectly(2);
-            else if (Input.GetKeyDown(KeyCode.Alpha4)) AssignToHotbarDirectly(3);
+            if (one){one=false; AssignToHotbarDirectly(0);}
+            else if (two){two=false; AssignToHotbarDirectly(1);}
+            else if (three){three=false; AssignToHotbarDirectly(2);}
+            else if (four){four=false; AssignToHotbarDirectly(3);}
         }
         else
         {
-            if (Input.GetKeyDown(KeyCode.Alpha1)) SelectActiveHotbar(0);
-            else if (Input.GetKeyDown(KeyCode.Alpha2)) SelectActiveHotbar(1);
-            else if (Input.GetKeyDown(KeyCode.Alpha3)) SelectActiveHotbar(2);
-            else if (Input.GetKeyDown(KeyCode.Alpha4)) SelectActiveHotbar(3);
+            if (one){one=false; SelectActiveHotbar(0);}
+            else if (two){two=false; SelectActiveHotbar(1);}
+            else if (three){three=false; SelectActiveHotbar(2);}
+            else if (four){four=false; SelectActiveHotbar(3);}
         }
 
         if (Input.GetKeyDown(KeyCode.Escape) || Input.GetMouseButtonDown(1))
@@ -161,25 +193,30 @@ public class csInvenManager : MonoBehaviour
         }
     }
 
-    void ToggleInventory()
+    // Cursor, timeScale 제어 SystemBtn이 담당
+    public void ToggleInventory()
     {
-        if (onInven)
+        bool isActivating = !pnlInven.activeSelf;
+        pnlInven.SetActive(isActivating);
+
+        if (!isActivating)
+            ClearSelection();
+    }
+
+    public void OpenInventory()
+    {
+        if (!pnlInven.activeSelf)
         {
-            bool isActivating = !pnlInven.activeSelf;
-            pnlInven.SetActive(isActivating);
+            pnlInven.SetActive(true);
+        }
+    }
 
-            Cursor.lockState = isActivating ? CursorLockMode.None : CursorLockMode.Locked;
-            Cursor.visible = isActivating;
-
-            if (!csButtonManager.isMultiplayer)
-            {
-                Time.timeScale = isActivating ? 0f : 1f;
-            }
-
-            if (!isActivating)
-            {
-                ClearSelection();
-            }
+    public void CloseInventory()
+    {
+        if (pnlInven.activeSelf)
+        {
+            pnlInven.SetActive(false);
+            ClearSelection();
         }
         ResetTriggers();
     }
