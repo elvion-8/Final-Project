@@ -3,6 +3,11 @@ using UnityEngine.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+// enum animationNum
+// {
+//     animD, animDie
+// }
+
 public class PlayerCtrlNew : MonoBehaviour, ITakeDamage
 {
     [Header("Player Move")]
@@ -22,6 +27,9 @@ public class PlayerCtrlNew : MonoBehaviour, ITakeDamage
     public float attackSpeed = 1;
     public int jumpCnt = 0;
     private int tempJumpCnt = 0;
+    [Header("피격 시 무적 시간")]
+    [SerializeField] private float hitTime;
+    private bool invincibility;     //무적 여부
 
     [Space(10)]
     [Header("playerStat")]
@@ -74,6 +82,11 @@ public class PlayerCtrlNew : MonoBehaviour, ITakeDamage
     float stopTimer = 0f;
     float cancelDelay = 0.02f;
 
+    [SerializeField] private csGamePadVibMng gpV;
+    int animD;
+    int animDie;
+    
+
     //InputSystem용 변수
     #region Input Variables
     private Vector2 moveInput;
@@ -102,6 +115,8 @@ public class PlayerCtrlNew : MonoBehaviour, ITakeDamage
         gravity = 20.0f;
         hp += stat.hpUpgrade * 50;
         fullHp = hp;
+        animD = anim.GetLayerIndex("Hit");
+        animDie = anim.GetLayerIndex("Die");
 
         if (obstacleLayer.value == 0)
         {
@@ -217,6 +232,7 @@ public class PlayerCtrlNew : MonoBehaviour, ITakeDamage
             {
                 isAttacking = true;
                 anim.SetTrigger("Attack");
+                gpV.TriggerVib(0.3f,0.2f,0.8f);
                 StartCoroutine(AttackRoutine());
             }
         }
@@ -246,6 +262,7 @@ public class PlayerCtrlNew : MonoBehaviour, ITakeDamage
         {
             MoveDir.y = jumpPower;
             anim.SetTrigger("Jump");
+            gpV.TriggerVib(0.2f,0.1f,0.1f);
             isMultiJump = true;
         }
         // 추가 점프
@@ -264,6 +281,7 @@ public class PlayerCtrlNew : MonoBehaviour, ITakeDamage
             }
 
             anim.SetTrigger("Jump");
+            gpV.TriggerVib(0.2f,0.1f,0.1f);
         }
     }
 
@@ -335,6 +353,8 @@ public class PlayerCtrlNew : MonoBehaviour, ITakeDamage
     {
         isRolling = true;
         anim.SetTrigger("Roll");
+        gpV.TriggerVib(0.2f,0.3f,0.3f);
+        gpV.TriggerVib(0.5f,0.5f,0.5f);
         Vector3 rollDir = transform.forward * rollPower;
         MoveDir.x = rollDir.x;
         MoveDir.z = rollDir.z;
@@ -350,14 +370,28 @@ public class PlayerCtrlNew : MonoBehaviour, ITakeDamage
 
     public int TakeDamage(int damage)
     {
+        if(invincibility) return 0;
         hp -= damage;
-        hpBar.fillAmount = (float)hp / (float)fullHp;
+        //hpBar.fillAmount = (float)hp / (float)fullHp;
         Debug.Log("takeDamage : " + damage);
+        gpV.TriggerVib(0.3f,0.3f,0.5f);
+        StartCoroutine(Hit());
         if (hp <= 0)
         {
             Die();
         }
         return damage;
+    }
+    IEnumerator Hit()
+    {
+        invincibility=true;
+        anim.SetTrigger("Hit");
+        anim.SetLayerWeight(animD, 1f);
+        yield return new WaitForSeconds(hitTime);
+        anim.SetLayerWeight(animD, 0f);
+        Debug.Log(animD);
+        Debug.Log("i'm hit!");
+        invincibility=false;
     }
 
     void UpdateWallClimbing(float verticalInput)
@@ -459,6 +493,9 @@ public class PlayerCtrlNew : MonoBehaviour, ITakeDamage
 
     void Die()
     {
+        charCon.enabled = false;
+        anim.SetTrigger("Die");
+        anim.SetLayerWeight(animDie, 1f);
         Debug.Log("you die");
     }
 }
