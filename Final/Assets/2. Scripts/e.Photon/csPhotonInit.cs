@@ -659,9 +659,16 @@ public class csPhotonInit : Photon.MonoBehaviour
     // 싱글플레이 모드 시작
     private void StartSinglePlayer()
     {
+        RoomOptions roomOptions = new RoomOptions();
+
+        roomOptions.IsVisible = false;
+
+        roomOptions.MaxPlayers = 1;
+
         csButtonManager.isMultiplayer = false;
+
         //PhotonNetwork.offlineMode = true;
-        PhotonNetwork.CreateRoom("SinglePlayerRoom");
+        PhotonNetwork.CreateRoom("SinglePlayerRoom_" + Random.Range(0, 1000), roomOptions, null);
         Debug.Log("싱글플레이 오프라인 방 생성 완료");
     }
 
