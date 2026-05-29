@@ -54,11 +54,14 @@ MonoBehaviour:
   rollPower: 7
   attackSpeed: 1
   jumpCnt: 1
+  hitTime: 0
   hp: 100
   hpBar: {fileID: 0}
+  jumpForwardForce: 1
   anim: {fileID: 0}
   MoveDir: {x: 0, y: 0, z: 0}
   isAttacking: 0
+  playerId: -1
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 0
@@ -67,6 +70,9 @@ MonoBehaviour:
   wallCheckDistance: 1
   ledgeForwardOffset: 0.5
   ledgeUpperHeightOffset: 2.2
+  gpV: {fileID: 0}
+  isRunHeld: 0
+  isJumpHeld: 0
 --- !u!136 &2713677463199808178
 CapsuleCollider:
   m_ObjectHideFlags: 0

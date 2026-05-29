@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class StageManager : MonoBehaviour
 {
@@ -10,7 +11,7 @@ public class StageManager : MonoBehaviour
 
     //���� �α׸� ǥ���� Text UI �׸� ���� ���۷��� ����
     public Text txtLogMsg;
-    
+
     //RPC ȣ���� ���� PhotonView ���� ���۷���
     PhotonView pv;
 
@@ -24,14 +25,17 @@ public class StageManager : MonoBehaviour
     private bool gameEnd;
 
     csButtonManager buttonManager;
+    private Transform tempPos;
 
     private void Awake()
     {
         pv = GetComponent<PhotonView>();
 
         playerPos = GameObject.Find("PlayerSpawnPoint").GetComponentsInChildren<Transform>();
-
-       
+        if(GameObject.Find("tempPos")!=null)
+        {
+            tempPos = GameObject.Find("tempPos").GetComponent<Transform>();
+        }
     }
 
     // Start is called before the first frame update
@@ -50,8 +54,14 @@ public class StageManager : MonoBehaviour
         string msg = "\n\t<color=#00ff00>["
             + PhotonNetwork.player.NickName
             + "] Connected</color>";
-
-        pv.RPC("LogMsg", PhotonTargets.AllBuffered, msg);
+        if (PhotonNetwork.inRoom)
+        {
+            pv.RPC("LogMsg", PhotonTargets.AllBuffered, msg);
+        }
+        else
+        {
+            LogMsg("offline");
+        }
 
         yield return new WaitForSeconds(1.0f);
 
@@ -76,10 +86,24 @@ public class StageManager : MonoBehaviour
         //float pos = Random.Range(-100.0f, 100.0f);
         //�����Ʈ��ũ�� �̿��� ���� ��Ʈ��ũ ��ü�� ������ ���� Resources ���� �ȿ� �ּ��� �̸��� ���ڷ� ���� �ؾ��Ѵ�. 
         //PhotonNetwork.Instantiate( "MainPlayer", new Vector3(pos, 20.0f, pos), Quaternion.identity, 0 );
-        GameObject player = PhotonNetwork.Instantiate("MainPlayer", playerPos[currRoom.PlayerCount].position, playerPos[currRoom.PlayerCount].rotation, 0, ex);
+        GameObject player;
+        if (PhotonNetwork.inRoom)
+        {
+            player = PhotonNetwork.Instantiate("MainPlayer", playerPos[currRoom.PlayerCount].position, playerPos[currRoom.PlayerCount].rotation, 0, ex);
+        }
+        else
+        {
+            Debug.LogWarning("포톤 서버에 접속되어 있지 않습니다. 로컬(유니티 내장) Instantiate를 실행합니다.");
 
+            // Resources 폴더에 있는 "MainPlayer" 프리팹을 로드하여 일반 생성
+            GameObject playerPrefab = Resources.Load<GameObject>("MainPlayer");
+            if (playerPrefab != null)
+            {
+                player = Instantiate(playerPrefab,tempPos.position, tempPos.rotation);
+            }
+        }
         // ���� �̸����� �����ؾ� �巳�� ���� ����(DestructionRay ��ũ��Ʈ ����)
-        player.name = "Player";
+
 
         //PhotonNetwork.InstantiateSceneObject(string prefabName, Vector3 position, Quaternion rotation, byte group, object[] data);
         //�� �Լ��� PhotonNetwork.Instantiate�� ���������� ��Ʈ��ũ �� �������� ���ÿ� ������Ű����, Master Client �� ���� �� ���� ����.
@@ -93,10 +117,16 @@ public class StageManager : MonoBehaviour
         //���� ������ �� ������ �޾ƿ�(���۷��� ����)
         Room currRoom = PhotonNetwork.room;
 
-        //���� ���� ������ ���� �ִ� ���� ������ ���� ���ڿ��� ������ ���� Text UI �׸� ���
-        txtConnect.text = currRoom.PlayerCount.ToString()
-            + "/"
-            + currRoom.MaxPlayers.ToString();
+        if (PhotonNetwork.inRoom)
+        {
+            txtConnect.text = PhotonNetwork.room.PlayerCount.ToString()
+                              + "/"
+                              + PhotonNetwork.room.MaxPlayers.ToString();
+        }
+        else
+        {
+            txtConnect.text = "0/0 (Offline)";
+        }
     }
 
     // 포톤 추가
@@ -123,7 +153,7 @@ public class StageManager : MonoBehaviour
         Debug.Log(newPlayer.ToStringFull());
         // �뿡 ���� ������ ������ display
         GetConnectPlayerCount();
-       
+
     }
 
     // ���� �߰�
@@ -157,7 +187,7 @@ public class StageManager : MonoBehaviour
 
     }
 
-    
+
 
     void OnConnectionFail(DisconnectCause cause)
     {

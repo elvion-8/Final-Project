@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.InputSystem;
 
 public class AttackMotion : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class AttackMotion : MonoBehaviour
     public float attackSpeed;
     private bool isTrailing;
     CharacterController charCon;
+
 
     void Awake()
     {
@@ -36,10 +38,10 @@ public class AttackMotion : MonoBehaviour
 
     void Update()
     {
-        if (GameObject.FindWithTag("Player").GetComponent<PlayerCtrl>().isAttacking == false)
-        {
-            WeaponSwap();
-        }
+        // if (GameObject.FindWithTag("Player").GetComponent<PlayerCtrl>().isAttacking == false)
+        // {
+        //     WeaponSwap();
+        // }
         if (trail != null)
         {
             if (player.isAttacking && !isTrailing)
@@ -50,7 +52,32 @@ public class AttackMotion : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            WeaponSikll1();            
+            WeaponSikll1();
+        }
+    }
+
+    public void OnWeaponChange(InputValue value)
+    {
+        if (GameObject.FindWithTag("Player").GetComponent<PlayerCtrl>().isAttacking == false)
+        {
+            float weaponIndex = value.Get<float>();
+            if(weaponIndex==0) return;
+            Debug.Log(weaponIndex);
+            switch ((int)weaponIndex)
+            {
+                case 1:
+                    EquipWeapon(0);
+                    break;
+                case 2:
+                    EquipWeapon(1);
+                    break;
+                case 3:
+                    EquipWeapon(2);
+                    break;
+                case 4:
+                    EquipWeapon(3);
+                    break;
+            }
         }
     }
 
@@ -69,32 +96,32 @@ public class AttackMotion : MonoBehaviour
         isTrailing = false;
     }
 
-    void WeaponSwap()
-    {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            EquipWeapon(0);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            EquipWeapon(1);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            EquipWeapon(2);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha4))
-        {
-            EquipWeapon(3);
-        }
-    }
+    // void WeaponSwap()
+    // {
+    //     if (Input.GetKeyDown(KeyCode.Alpha1))
+    //     {
+    //         EquipWeapon(0);
+    //     }
+    //     else if (Input.GetKeyDown(KeyCode.Alpha2))
+    //     {
+    //         EquipWeapon(1);
+    //     }
+    //     else if (Input.GetKeyDown(KeyCode.Alpha3))
+    //     {
+    //         EquipWeapon(2);
+    //     }
+    //     else if (Input.GetKeyDown(KeyCode.Alpha4))
+    //     {
+    //         EquipWeapon(3);
+    //     }
+    // }
 
     void EquipWeapon(int index)
     {
         if (csInvenManager.Instance == null) return;
 
         ItemData hotbarItem = csInvenManager.Instance.GetHotbarItem(index);
-        
+
         if (hotbarItem == null || hotbarItem.itemType != ItemType.Weapon || hotbarItem.itemPrefab == null) return;
 
         // 기존 무기 제거
@@ -166,9 +193,9 @@ public class AttackMotion : MonoBehaviour
 
     void WeaponSikll1()
     {
-       charCon.enabled = false;
-       GameObject.FindWithTag("Weapon").GetComponent<scWeaponBase>().Skill1();
-       Debug.Log("스킬사용");
+        charCon.enabled = false;
+        GameObject.FindWithTag("Weapon").GetComponent<scWeaponBase>().Skill1();
+        Debug.Log("스킬사용");
         charCon.enabled = true;
     }
 }

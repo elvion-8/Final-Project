@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine.UI;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerCtrl : MonoBehaviour, ITakeDamage
 {
@@ -21,6 +22,9 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     public float attackSpeed = 1;
     public int jumpCnt = 0;
     private int tempJumpCnt = 0;
+    [Header("피격 시 무적 시간")]
+    [SerializeField] private float hitTime;
+    private bool invincibility;     //무적 여부
 
     [Space(10)]
     [Header("playerStat")]
@@ -60,7 +64,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     //플레이어의 Id를 저장하는 변수
     public int playerId = -1;
 
-    private float syncSpeed;   // [추가] 원격 플레이어의 애니메이션 속도를 담을 변수
+    private float syncSpeed;   // 원격 플레이어의 애니메이션 속도를 담을 변수
 
 
     /////////////////////////////////////////////////////
@@ -86,7 +90,22 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     private Vector3 moveDir;
     private Vector3 camForward;
     private Vector3 camRight;
+    float stopTimer = 0f;
+    float cancelDelay = 0.02f;
 
+    [SerializeField] private csGamePadVibMng gpV;
+    int animD;
+    int animDie;
+
+    //InputSystem용 변수
+    #region Input Variables
+    private Vector2 moveInput;
+    public bool isRunHeld;
+    private bool isJumpTriggered;
+    public bool isJumpHeld;
+    private bool isAttackTriggered;
+    private bool isRollTriggered;
+    #endregion
 
     void Awake()
 
@@ -105,15 +124,15 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         //pv.ObservedComponents[0] = this;
 
         //pv.synchronization = ViewSynchronization.UnreliableOnChange;
-
-        playerId = pv.ownerId;
+        if (pv.ownerId == null) { playerId = 1001; }
+        else playerId = pv.ownerId;
 
         if (pv.isMine)   // 자신인 경우
         {
             //메인 카메라에 추가된 추적 대상을 연결
             Camera.main.GetComponent<CameraMove>().playerPos = myTr;
         }
-        else            // 자신의 네트워크 객체가 아닐때...
+        else            // 자신의 네트워크 객체가 아닐때
         {
             Collider col = GetComponent<Collider>();
             if (col != null)
@@ -122,8 +141,6 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
             }
         }
 
-        // 원격 플래이어의 위치 및 회전 값을 처리할 변수의 초기값 설정 
-        // 잘 생각해보자 이런처리 안하면 순간이동 현상을 목격
         currPos = myTr.position;
         currRot = myTr.rotation;
 
@@ -141,9 +158,11 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         {
             obstacleLayer = LayerMask.GetMask("Obstacle");
         }
+        animD = anim.GetLayerIndex("Hit");
+        animDie = anim.GetLayerIndex("Die");
     }
 
-    
+
     void Update()
     {
         if (pv.isMine)
@@ -154,7 +173,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
             GetInput();
 
             // 벽타기
-            if (Climb()) return;
+            if (Climb()) {ResetInputTriggers();return;}
 
             // 공격
             Attack();
@@ -170,22 +189,17 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
             ExecuteMove();
 
             anim.SetFloat("Speed", inputDir.magnitude);
+            ResetInputTriggers();
         }
         else   //내가 아닌 플레이어
         {
-            // 원격 플레이어의 아바타를 수신받은 위치까지 부드럽게 이동시키자
             myTr.position = Vector3.Lerp(myTr.position, currPos, Time.deltaTime * 3.0f);
-            //원격 플레이어의 아바타를 수신받은 각도만큼 부드럽게 회전시키자
             myTr.rotation = Quaternion.Slerp(myTr.rotation, currRot, Time.deltaTime * 3.0f);
 
             anim.SetFloat("Speed", syncSpeed);
 
-            // 3. [핵심 수정] 수신받은 속도 값에 따라 Walk/Run 상태 강제 동기화하기!
             if (syncSpeed > 0.1f) // 상대방이 움직이고 있다면
             {
-                // 만약 달리기를 하고 있는지, 걷기를 하고 있는지 구별해서 켜줍니다.
-                // (tip: 만약 더 정밀하게 하려면 달리 상태 여부(bool)도 패킷으로 보내야 하지만, 
-                // 우선 움직이면 걷기 애니메이션이라도 무조건 작동하도록 세팅합니다.)
                 anim.SetBool("Walk", true);
             }
             else // 상대방이 멈췄다면
@@ -196,13 +210,31 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         }
 
     }
+    #region Input Callbacks
+    public void OnMove(InputValue value) { moveInput = value.Get<Vector2>(); }
+    public void OnRun(InputValue value) { isRunHeld = value.isPressed; }
+    public void OnJump(InputValue value)
+    {
+        if (value.isPressed) isJumpTriggered = true;
+        isJumpHeld = value.isPressed;
+    }
+    public void OnAttack(InputValue value) { if (value.isPressed) isAttackTriggered = true; }
+    public void OnRolling(InputValue value) { if (value.isPressed) isRollTriggered = true; }
 
-    
+    private void ResetInputTriggers()
+    {
+        isJumpTriggered = false;
+        isAttackTriggered = false;
+        isRollTriggered = false;
+    }
+    #endregion
+
+
     //입력
     void GetInput()
     {
-        h = Input.GetAxis("Horizontal");
-        v = Input.GetAxis("Vertical");
+        h = moveInput.x;
+        v = moveInput.y;
         inputDir = new Vector3(h, 0, v);
 
         if (cmTr != null)
@@ -229,7 +261,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
 
         if (!charCon.isGrounded && !isRolling && !isAttacking)
         {
-            if (v > 0.1f && (Input.GetButtonDown("Jump") || Input.GetButton("Jump")))
+            if (v > 0.1f && (isJumpTriggered || isJumpHeld))
             {
                 RaycastHit wallHit;
                 Vector3 rayOrigin = transform.position + Vector3.up * 1.0f;
@@ -256,14 +288,17 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     }
 
     // 공격
-    
+
     void Attack()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (isAttackTriggered)
         {
             if (!isAttacking)
             {
-                pv.RPC("NetworkAttack", PhotonTargets.All);
+                isAttacking = true;
+                anim.SetTrigger("Attack");
+                gpV.TriggerVib(0.3f, 0.2f, 0.8f);
+                StartCoroutine(AttackRoutine());
             }
         }
     }
@@ -279,7 +314,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     // 구르기
     void Roll()
     {
-        if (Input.GetButtonDown("LeftCtrl") && !isRolling)
+        if (isRollTriggered && !isRolling)
         {
             pv.RPC("NetworkRoll", PhotonTargets.All);
         }
@@ -292,24 +327,26 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     }
 
     // 점프
-    
+
     void Jump()
     {
         if (charCon.isGrounded)
         {
+            isJumpHeld = false;
             isMultiJump = false;
             tempJumpCnt = 0;
         }
 
         // 점프
-        if (charCon.isGrounded && !isRolling && Input.GetButtonDown("Jump"))
+        if (charCon.isGrounded && !isRolling && isJumpTriggered)
         {
             MoveDir.y = jumpPower;
             anim.SetTrigger("Jump");
+            gpV.TriggerVib(0.2f, 0.1f, 0.1f);
             isMultiJump = true;
         }
         // 추가 점프
-        else if (Input.GetButtonDown("Jump") && !charCon.isGrounded && tempJumpCnt < jumpCnt && isMultiJump)
+        else if (isJumpTriggered && !charCon.isGrounded && tempJumpCnt < jumpCnt && isMultiJump)
         {
             tempJumpCnt++;
             MoveDir.y = jumpPower;
@@ -324,6 +361,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
             }
 
             anim.SetTrigger("Jump");
+            gpV.TriggerVib(0.2f, 0.1f, 0.1f);
         }
     }
 
@@ -338,9 +376,10 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
                 MoveDir = moveDir.normalized * moveSpeed;
                 if (inputDir.magnitude > 0.1f)
                 {
+                    stopTimer = 0f;
                     Quaternion targetRotation = Quaternion.LookRotation(MoveDir);
                     transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-                    if (Input.GetKey(KeyCode.LeftShift))
+                    if (isRunHeld)
                     {
                         anim.SetBool("Run", true);
                         moveSpeed = runningSpeed;
@@ -354,9 +393,15 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
                 }
                 else
                 {
-                    anim.SetBool("Walk", false);
-                    anim.SetBool("RightSide", false);
-                    anim.SetBool("LeftSide", false);
+                    stopTimer += Time.deltaTime;
+                    if (stopTimer >= cancelDelay)
+                    {
+                        anim.SetBool("Walk", false);
+                        anim.SetBool("RightSide", false);
+                        anim.SetBool("LeftSide", false);
+                        anim.SetBool("Run", false);
+                        isRunHeld = false;
+                    }
                 }
             }
         }
@@ -389,6 +434,8 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     {
         isRolling = true;
         anim.SetTrigger("Roll");
+        gpV.TriggerVib(0.2f, 0.3f, 0.3f);
+        gpV.TriggerVib(0.5f, 0.5f, 0.5f);
         Vector3 rollDir = transform.forward * rollPower;
         MoveDir.x = rollDir.x;
         MoveDir.z = rollDir.z;
@@ -396,7 +443,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         isRolling = false;
     }
 
-    
+
     IEnumerator AttackRoutine()
     {
         yield return new WaitForSeconds(1f);
@@ -408,11 +455,24 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         hp -= damage;
         hpBar.fillAmount = (float)hp / (float)fullHp;
         Debug.Log("takeDamage : " + damage);
+        gpV.TriggerVib(0.3f, 0.3f, 0.5f);
+        StartCoroutine(Hit());
         if (hp <= 0)
         {
             Die();
         }
         return damage;
+    }
+    IEnumerator Hit()
+    {
+        invincibility = true;
+        anim.SetTrigger("Hit");
+        anim.SetLayerWeight(animD, 1f);
+        yield return new WaitForSeconds(hitTime);
+        anim.SetLayerWeight(animD, 0f);
+        Debug.Log(animD);
+        Debug.Log("i'm hit!");
+        invincibility = false;
     }
 
     [PunRPC]
@@ -517,6 +577,9 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     [PunRPC]
     void Die()
     {
+        charCon.enabled = false;
+        anim.SetTrigger("Die");
+        anim.SetLayerWeight(animDie, 1f);
         Debug.Log("you die");
     }
 

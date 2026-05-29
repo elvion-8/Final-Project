@@ -493,6 +493,7 @@ public class PlayerCtrlNew : MonoBehaviour, ITakeDamage
 
     void Die()
     {
+        isDie=true;
         charCon.enabled = false;
         anim.SetTrigger("Die");
         anim.SetLayerWeight(animDie, 1f);

@@ -451,6 +451,7 @@ GameObject:
   - component: {fileID: 8986190712626478489}
   - component: {fileID: 6817033599759912610}
   - component: {fileID: 7718799050016782552}
+  - component: {fileID: 2603203910917137108}
   m_Layer: 0
   m_Name: MainPlayer
   m_TagString: Player
@@ -471,6 +472,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 3249585471656261460}
   - {fileID: 3732099660719114264}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
@@ -491,6 +493,7 @@ MonoBehaviour:
   rollPower: 7
   attackSpeed: 1
   jumpCnt: 1
+  hitTime: 0
   hp: 100
   hpBar: {fileID: 0}
   jumpForwardForce: 1
@@ -506,6 +509,9 @@ MonoBehaviour:
   wallCheckDistance: 1
   ledgeForwardOffset: 0.5
   ledgeUpperHeightOffset: 2.2
+  gpV: {fileID: 655839309683755263}
+  isRunHeld: 0
+  isJumpHeld: 0
 --- !u!136 &2713677463199808178
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -624,6 +630,36 @@ MonoBehaviour:
   instantiationId: -1
   currentMasterID: -1
   isRuntimeInstantiated: 0
+--- !u!114 &2603203910917137108
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1226331344322202821}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Actions: {fileID: -944628639613478452, guid: f39f0a90142b4d643ba42be095bdd9ea, type: 3}
+  m_NotificationBehavior: 0
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents: []
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: 
+  m_DefaultActionMap: Player
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}
 --- !u!1 &1484445931561779259
 GameObject:
   m_ObjectHideFlags: 0
@@ -1382,6 +1418,50 @@ Transform:
   - {fileID: 419237549516104846}
   m_Father: {fileID: 6797646352002462725}
   m_LocalEulerAnglesHint: {x: 0, y: 97.262, z: -80.682}
+--- !u!1 &5244194690137758687
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3249585471656261460}
+  - component: {fileID: 655839309683755263}
+  m_Layer: 0
+  m_Name: GamePadVibManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3249585471656261460
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5244194690137758687}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: -101.15528, y: 2.9786596, z: -6.5715714}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8995780927049456821}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &655839309683755263
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5244194690137758687}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e18d31ea51b0ae489c4c0aea0a81132, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5261242803456798893
 GameObject:
   m_ObjectHideFlags: 0

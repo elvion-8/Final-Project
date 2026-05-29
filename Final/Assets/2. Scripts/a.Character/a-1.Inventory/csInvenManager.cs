@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 public class csInvenManager : MonoBehaviour
 {
@@ -10,9 +11,9 @@ public class csInvenManager : MonoBehaviour
 
     [Header("핫바 설정")]
     public csInvSlot[] hotbarSlots = new csInvSlot[4];
-    
-    // [추가됨] 현재 게임 플레이 중 선택(활성화)된 핫바의 번호를 기억합니다.
-    private int _activeHotbarIndex = -1; 
+
+    // 선택된 핫바의 번호 기억
+    private int _activeHotbarIndex = -1;
 
     [Header("인벤토리 설정")]
     public GameObject slotPrefab;
@@ -22,7 +23,14 @@ public class csInvenManager : MonoBehaviour
 
     private List<csInvSlot> _inventorySlots = new List<csInvSlot>();
     private csInvSlot _selectedSlot;
+    private bool onInven;
 
+    public void OnInventory(InputValue value) { if(value.isPressed) onInven = true; }
+    public void OnWeaponChange(InputValue value) {float weaponIndex = value.Get<float>(); Debug.Log(weaponIndex);}
+    void ResetTriggers()
+    {
+        onInven=false;
+    }
     [Header("text")]
     [SerializeField] private Text txtWType;
     [SerializeField] private Text txtTitle;
@@ -37,17 +45,14 @@ public class csInvenManager : MonoBehaviour
         else
         {
             Destroy(gameObject);
-            return; 
+            return;
         }
         BuildSlots();
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Tab))
-        {
-            ToggleInventory();
-        }
+        ToggleInventory();
 
         if (pnlInven.activeSelf)
         {
@@ -66,8 +71,9 @@ public class csInvenManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Escape) || Input.GetMouseButtonDown(1))
         {
-            ClearSelection(); 
+            ClearSelection();
         }
+        ResetTriggers();
     }
 
     public void SelectActiveHotbar(int index)
@@ -90,20 +96,20 @@ public class csInvenManager : MonoBehaviour
 
         if (_selectedSlot != null && _selectedSlot != clickedSlot)
         {
-            _selectedSlot.SetSelected(false); 
+            _selectedSlot.SetSelected(false);
         }
-        
+
         _selectedSlot = clickedSlot;
-        _selectedSlot.SetSelected(true); 
+        _selectedSlot.SetSelected(true);
         UpdateInfoPnl(_selectedSlot.GetData());
     }
 
     private void AssignToHotbarDirectly(int hotbarIndex)
     {
-        if (_selectedSlot == null) 
+        if (_selectedSlot == null)
         {
             Debug.Log("인벤토리 무기 선택 먼저");
-            return; 
+            return;
         }
 
         ItemData dataToAssign = _selectedSlot.GetData();
@@ -111,9 +117,9 @@ public class csInvenManager : MonoBehaviour
         if (hotbarSlots[hotbarIndex] != null && hotbarSlots[hotbarIndex].CanAcceptItem(dataToAssign))
         {
             hotbarSlots[hotbarIndex].Setup(dataToAssign);
-            
+
             SelectActiveHotbar(hotbarIndex);
-            
+
             Debug.Log($"선택한 아이템을 핫바 {hotbarIndex + 1}번에 장착했습니다.");
         }
         else
@@ -121,7 +127,7 @@ public class csInvenManager : MonoBehaviour
             Debug.Log("핫바 장착 불가");
         }
 
-        ClearSelection(); 
+        ClearSelection();
     }
 
     private void ClearSelection()
@@ -138,7 +144,7 @@ public class csInvenManager : MonoBehaviour
     {
         foreach (Transform child in slotContainer)
             Destroy(child.gameObject);
-            
+
         _inventorySlots.Clear();
         for (int i = 0; i < totalSlotCount; i++)
         {
@@ -147,7 +153,7 @@ public class csInvenManager : MonoBehaviour
 
             csInvSlot slot = go.GetComponent<csInvSlot>();
             if (slot == null) continue;
-            
+
             ItemData data = i < startingItems.Count ? startingItems[i] : null;
             slot.Setup(data);
             slot.OnSlotClicked += HandleInventorySlotClicked;
@@ -155,23 +161,27 @@ public class csInvenManager : MonoBehaviour
         }
     }
 
-    void ToggleInventory() 
+    void ToggleInventory()
     {
-        bool isActivating = !pnlInven.activeSelf;
-        pnlInven.SetActive(isActivating);
-        
-        Cursor.lockState = isActivating ? CursorLockMode.None : CursorLockMode.Locked;
-        Cursor.visible = isActivating;
-
-        if (!csButtonManager.isMultiplayer)
+        if (onInven)
         {
-            Time.timeScale = isActivating ? 0f : 1f;
-        }
+            bool isActivating = !pnlInven.activeSelf;
+            pnlInven.SetActive(isActivating);
 
-        if (!isActivating)
-        {
-            ClearSelection();
+            Cursor.lockState = isActivating ? CursorLockMode.None : CursorLockMode.Locked;
+            Cursor.visible = isActivating;
+
+            if (!csButtonManager.isMultiplayer)
+            {
+                Time.timeScale = isActivating ? 0f : 1f;
+            }
+
+            if (!isActivating)
+            {
+                ClearSelection();
+            }
         }
+        ResetTriggers();
     }
 
     public ItemData GetHotbarItem(int index)
@@ -194,17 +204,17 @@ public class csInvenManager : MonoBehaviour
 
     void UpdateInfoPnl(ItemData data)
     {
-        if(data == null){ ClearInfoPnl(); return; }
+        if (data == null) { ClearInfoPnl(); return; }
 
-        if(txtWType != null) txtWType.text = data.itemType.ToString();
-        if(txtTitle != null) txtTitle.text = data.itemName;
-        if(txtSub != null) txtSub.text = data.itemDesc;
+        if (txtWType != null) txtWType.text = data.itemType.ToString();
+        if (txtTitle != null) txtTitle.text = data.itemName;
+        if (txtSub != null) txtSub.text = data.itemDesc;
     }
 
     void ClearInfoPnl()
     {
-        if(txtWType != null) txtWType.text = string.Empty;
-        if(txtTitle != null) txtTitle.text = string.Empty;
-        if(txtSub != null) txtSub.text = string.Empty;
+        if (txtWType != null) txtWType.text = string.Empty;
+        if (txtTitle != null) txtTitle.text = string.Empty;
+        if (txtSub != null) txtSub.text = string.Empty;
     }
 }
