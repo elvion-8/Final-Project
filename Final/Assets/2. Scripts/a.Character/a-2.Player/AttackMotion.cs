@@ -10,12 +10,16 @@ public class AttackMotion : MonoBehaviour
     private PlayerCtrl player;
     public GameObject trail;
     public float attackSpeed;
+    private bool isTrailing;
+    CharacterController charCon;
 
     void Awake()
     {
         player = GetComponent<PlayerCtrl>();
         anim = GetComponentInChildren<Animator>();
         attackSpeed = player.attackSpeed;
+        charCon = GetComponent<CharacterController>();
+
         if (weaponPoint == null)
         {
             Transform[] allWeapons = GetComponentsInChildren<Transform>(true);
@@ -38,25 +42,31 @@ public class AttackMotion : MonoBehaviour
         }
         if (trail != null)
         {
-            if (player.isAttacking)
+            if (player.isAttacking && !isTrailing)
             {
                 //Debug.Log("trail");
                 StartCoroutine(TrailWeapon());
             }
         }
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            WeaponSikll1();            
+        }
     }
+
     IEnumerator TrailWeapon()
     {
+        isTrailing = true;
         if (GameObject.FindWithTag("Weapon") != null)
         {
             attackSpeed = GameObject.FindWithTag("Weapon").GetComponent<IWeaponStats>().attackSpeed;
-
         }
         yield return new WaitForSeconds(0.3f);
         trail.SetActive(true);
         yield return new WaitForSeconds(0.5f);
         trail.SetActive(false);
         yield return new WaitForSeconds(1f / attackSpeed);
+        isTrailing = false;
     }
 
     void WeaponSwap()
@@ -152,5 +162,13 @@ public class AttackMotion : MonoBehaviour
         Transform spawnPoint = weaponPoint != null ? weaponPoint : transform;
         currentWeapon = Instantiate(hotbarItem.itemPrefab, spawnPoint.position, spawnPoint.rotation, spawnPoint);
         trail = currentWeapon.GetComponentInChildren<TrailRenderer>(true).gameObject;
+    }
+
+    void WeaponSikll1()
+    {
+       charCon.enabled = false;
+       GameObject.FindWithTag("Weapon").GetComponent<scWeaponBase>().Skill1();
+       Debug.Log("스킬사용");
+        charCon.enabled = true;
     }
 }
