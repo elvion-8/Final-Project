@@ -14,6 +14,8 @@ public class AttackMotion : MonoBehaviour
     private bool isTrailing;
     CharacterController charCon;
 
+    // Photon view //////////
+    PhotonView pv;
 
     void Awake()
     {
@@ -21,6 +23,7 @@ public class AttackMotion : MonoBehaviour
         anim = GetComponentInChildren<Animator>();
         attackSpeed = player.attackSpeed;
         charCon = GetComponent<CharacterController>();
+        pv = GetComponent<PhotonView>();
 
         if (weaponPoint == null)
         {
@@ -58,25 +61,44 @@ public class AttackMotion : MonoBehaviour
 
     public void OnWeaponChange(InputValue value)
     {
-        if (GameObject.FindWithTag("Player").GetComponent<PlayerCtrl>().isAttacking == false)
+        if (pv.isMine)
         {
-            float weaponIndex = value.Get<float>();
-            if(weaponIndex==0) return;
-            Debug.Log(weaponIndex);
-            switch ((int)weaponIndex)
+            if (GameObject.FindWithTag("Player").GetComponent<PlayerCtrl>().isAttacking == false)
             {
-                case 1:
-                    EquipWeapon(0);
-                    break;
-                case 2:
-                    EquipWeapon(1);
-                    break;
-                case 3:
-                    EquipWeapon(2);
-                    break;
-                case 4:
-                    EquipWeapon(3);
-                    break;
+                float weaponIndex = value.Get<float>();
+                if (weaponIndex == 0) return;
+                Debug.Log(weaponIndex);
+                switch ((int)weaponIndex)
+                {
+                    case 1:
+                        if (PhotonNetwork.inRoom)
+                        {
+                            pv.RPC("EquipWeapon", PhotonTargets.All, 0);
+                        }
+                        else EquipWeapon(0);
+                        break;
+                    case 2:
+                        if (PhotonNetwork.inRoom)
+                        {
+                            pv.RPC("EquipWeapon", PhotonTargets.All, 1);
+                        }
+                        else EquipWeapon(1);
+                        break;
+                    case 3:
+                        if (PhotonNetwork.inRoom)
+                        {
+                            pv.RPC("EquipWeapon", PhotonTargets.All, 2);
+                        }
+                        else EquipWeapon(2);
+                        break;
+                    case 4:
+                        if (PhotonNetwork.inRoom)
+                        {
+                            pv.RPC("EquipWeapon", PhotonTargets.All, 3);
+                        }
+                        else EquipWeapon(3);
+                        break;
+                }
             }
         }
     }
@@ -116,6 +138,7 @@ public class AttackMotion : MonoBehaviour
     //     }
     // }
 
+    [PunRPC]
     void EquipWeapon(int index)
     {
         if (csInvenManager.Instance == null) return;
