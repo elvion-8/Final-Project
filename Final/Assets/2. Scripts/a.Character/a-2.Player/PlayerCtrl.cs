@@ -132,7 +132,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
             //메인 카메라에 추가된 추적 대상을 연결
             Camera.main.GetComponent<CameraMove>().playerPos = myTr;
         }
-        else if(PhotonNetwork.inRoom==false)
+        else if(PhotonNetwork.inRoom == false)
         {
             Camera.main.GetComponent<CameraMove>().playerPos = myTr;
         }
@@ -169,7 +169,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
 
     void Update()
     {
-        if (pv.isMine||PhotonNetwork.inRoom==false)
+        if (pv.isMine || PhotonNetwork.inRoom == false)
         {
             if (isDie) return;
 
@@ -297,13 +297,16 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     {
         if (isAttackTriggered)
         {
-            if (!isAttacking)
+
+            if (!isAttacking) 
             {
-                isAttacking = true;
-                anim.SetTrigger("Attack");
-                gpV.TriggerVib(0.3f, 0.2f, 0.8f);
-                StartCoroutine(AttackRoutine());
+                if (PhotonNetwork.inRoom)
+                {
+                    pv.RPC("NetworkAttack", PhotonTargets.All);
+                }
+                else NetworkAttack();
             }
+            
         }
     }
 
@@ -320,7 +323,11 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     {
         if (isRollTriggered && !isRolling)
         {
-            pv.RPC("NetworkRoll", PhotonTargets.All);
+            if (PhotonNetwork.inRoom)
+            {
+                pv.RPC("NetworkRoll", PhotonTargets.All);
+            }
+            else NetworkRoll();
         }
     }
 
@@ -345,8 +352,13 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         if (charCon.isGrounded && !isRolling && isJumpTriggered)
         {
             MoveDir.y = jumpPower;
-            anim.SetTrigger("Jump");
-            gpV.TriggerVib(0.2f, 0.1f, 0.1f);
+
+            if (PhotonNetwork.inRoom)
+            {
+                pv.RPC("NetworkJump", PhotonTargets.All);
+            }
+            else NetworkJump();
+
             isMultiJump = true;
         }
         // 추가 점프
@@ -363,14 +375,22 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
             {
                 transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(jumpDir), rotationSpeed * Time.deltaTime);
             }
-
-            anim.SetTrigger("Jump");
-            gpV.TriggerVib(0.2f, 0.1f, 0.1f);
+            if (PhotonNetwork.inRoom)
+            {
+                pv.RPC("NetworkJump", PhotonTargets.All);
+            }
+            else NetworkJump();
         }
     }
 
-    // 이동
     [PunRPC]
+    void NetworkJump()
+    {
+        anim.SetTrigger("Jump");
+        gpV.TriggerVib(0.2f, 0.1f, 0.1f);
+    }
+
+    // 이동
     void Movement()
     {
         if (charCon.isGrounded)
@@ -433,7 +453,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         charCon.Move(MoveDir * Time.deltaTime);
     }
 
-    [PunRPC]
+    
     IEnumerator Rolling()
     {
         isRolling = true;
@@ -479,7 +499,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         invincibility = false;
     }
 
-    [PunRPC]
+    
     void UpdateWallClimbing(float verticalInput)
     {
         if (verticalInput <= 0.1f)
@@ -531,7 +551,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         }
     }
 
-    [PunRPC]
+    
     IEnumerator LedgeClimbRoutine(Vector3 ledgeSurfacePoint, Vector3 wallNormal)
     {
         isLedgeClimbing = true;
@@ -578,13 +598,24 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         MoveDir = Vector3.zero;
     }
 
-    [PunRPC]
+    
     void Die()
+    {
+        if (PhotonNetwork.inRoom)
+        {
+            pv.RPC("NetworkDie", PhotonTargets.All);
+        }
+        else NetworkDie();
+    }
+
+    [PunRPC]
+    void NetworkDie()
     {
         charCon.enabled = false;
         anim.SetTrigger("Die");
         anim.SetLayerWeight(animDie, 1f);
         Debug.Log("you die");
+
     }
 
     // 포톤 추가
