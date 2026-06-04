@@ -2,7 +2,20 @@ using UnityEngine;
 
 public class PlayerStatManage : MonoBehaviour
 {
-    public scPlayerStat stat = scPlayerStat.stat;
+    public scPlayerStat stat;
+    public bool isMultiPlayer = false;
+
+    void Awake()
+    {
+        if(isMultiPlayer)
+        {
+            stat = new scPlayerStat();
+        }
+        else
+        {
+            stat = Managers.Data.stat;
+        }
+    }
 
     public void UpgradeHp()
     {
@@ -10,6 +23,7 @@ public class PlayerStatManage : MonoBehaviour
         {
             stat.cost -= (1+stat.hpUpgrade)*100;
             stat.hpUpgrade += 1;
+            Managers.Data.SaveGame();
         }
         else
         {

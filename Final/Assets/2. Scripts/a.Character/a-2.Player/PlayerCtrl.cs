@@ -33,7 +33,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     private int fullHp;
     public Image hpBar;
 
-    scPlayerStat stat = scPlayerStat.stat;
+    scPlayerStat stat;
 
     [Space(10)]
     private CharacterController charCon;
@@ -110,6 +110,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     void Awake()
 
     {
+        stat = Managers.Data.stat;
         charCon = GetComponent<CharacterController>();
         anim = GetComponentInChildren<Animator>();
         cmTr = GameObject.FindGameObjectWithTag("MainCamera").transform;

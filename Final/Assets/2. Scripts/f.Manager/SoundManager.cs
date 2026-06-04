@@ -69,6 +69,7 @@ public class SoundManager : MonoBehaviour
 
         LoadVolumeSettings();
         UpdateAudioSourceVolumes();
+        PlayBGM("back1");
     }
 
     private void LoadVolumeSettings()

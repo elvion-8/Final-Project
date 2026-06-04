@@ -13,6 +13,7 @@ public class AttackMotion : MonoBehaviour
     public float attackSpeed;
     private bool isTrailing;
     CharacterController charCon;
+    AttackSound sound;
 
     // Photon view //////////
     PhotonView pv;
@@ -24,6 +25,7 @@ public class AttackMotion : MonoBehaviour
         attackSpeed = player.attackSpeed;
         charCon = GetComponent<CharacterController>();
         pv = GetComponent<PhotonView>();
+        sound = GetComponentInChildren<AttackSound>();
 
         if (weaponPoint == null)
         {
@@ -49,6 +51,7 @@ public class AttackMotion : MonoBehaviour
         {
             if (player.isAttacking && !isTrailing)
             {
+                isTrailing = false;
                 //Debug.Log("trail");
                 StartCoroutine(TrailWeapon());
             }
@@ -105,7 +108,7 @@ public class AttackMotion : MonoBehaviour
 
     IEnumerator TrailWeapon()
     {
-        isTrailing = true;
+        //isTrailing = true;
         if (GameObject.FindWithTag("Weapon") != null)
         {
             attackSpeed = GameObject.FindWithTag("Weapon").GetComponent<IWeaponStats>().attackSpeed;
@@ -115,7 +118,7 @@ public class AttackMotion : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         trail.SetActive(false);
         yield return new WaitForSeconds(1f / attackSpeed);
-        isTrailing = false;
+        //isTrailing = false;
     }
 
     // void WeaponSwap()
@@ -212,6 +215,7 @@ public class AttackMotion : MonoBehaviour
         Transform spawnPoint = weaponPoint != null ? weaponPoint : transform;
         currentWeapon = Instantiate(hotbarItem.itemPrefab, spawnPoint.position, spawnPoint.rotation, spawnPoint);
         trail = currentWeapon.GetComponentInChildren<TrailRenderer>(true).gameObject;
+        sound.ChangeWeapon(hotbarItem);
     }
 
     void WeaponSikll1()

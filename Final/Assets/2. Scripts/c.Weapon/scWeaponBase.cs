@@ -10,7 +10,7 @@ public abstract class scWeaponBase : MonoBehaviour, IWeaponStats
     [SerializeField][Range(1,100)] protected int baseAttackSpeed;
     [SerializeField][Range(1,500)] protected int baseDurability;
 
-    public scPlayerStat pS = scPlayerStat.stat;
+    public scPlayerStat pS;
 
     public int attackDmg { get{if (pS == null) return baseAttackDmg;
             return baseAttackDmg+(pS.weaponDmgUpgradeCnt*5);}}       //공격력

@@ -16,4 +16,5 @@ public class ItemData : ScriptableObject
     public Sprite itemIcon;     //아이템 icon
     public Sprite iconLit;      //선택 시 출력 될 icon 이미지
     public GameObject itemPrefab;   //슬롯이 참조할 아이템 프리펩
+    public string attackSoundName;
 }

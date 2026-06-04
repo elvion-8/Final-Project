@@ -16,4 +16,19 @@ MonoBehaviour:
   - name: back1
     clip: {fileID: 8300000, guid: 2ad46f3dcd24ba045aa753c117f3502d, type: 3}
     volumeMultiplier: 0.5
-  sfxClips: []
+  sfxClips:
+  - name: Axe
+    clip: {fileID: 8300000, guid: 0eac1d1417131524bba1829b7d815219, type: 3}
+    volumeMultiplier: 0.5
+  - name: Sword
+    clip: {fileID: 8300000, guid: 254fba039a4dd4a42a0d51936abb1571, type: 3}
+    volumeMultiplier: 0.5
+  - name: Dagger
+    clip: {fileID: 8300000, guid: d3316a78e8c21ba449786f64eb425cc0, type: 3}
+    volumeMultiplier: 0.5
+  - name: other1
+    clip: {fileID: 8300000, guid: caca5f1a58c99234bbd591007d9c23e6, type: 3}
+    volumeMultiplier: 0.5
+  - name: other2
+    clip: {fileID: 8300000, guid: 9df54098d84f759418b09716b86465be, type: 3}
+    volumeMultiplier: 0.5
