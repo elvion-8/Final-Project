@@ -38,7 +38,7 @@ public class PlayerCtrlNew : MonoBehaviour, ITakeDamage
     private int fullHp;
     public Image hpBar;
 
-    scPlayerStat stat = scPlayerStat.stat;
+    scPlayerStat stat;
 
     [Space(10)]
     private CharacterController charCon;

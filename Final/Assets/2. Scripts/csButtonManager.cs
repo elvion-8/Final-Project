@@ -14,7 +14,8 @@ public class csButtonManager : MonoBehaviour
 
     public void LoadGame()
     {
-
+        Managers.Data.LoadGame();
+        SceneManager.LoadScene("scstartpoint");
     }
 
     public void Option()

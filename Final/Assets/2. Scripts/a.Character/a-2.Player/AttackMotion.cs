@@ -13,7 +13,10 @@ public class AttackMotion : MonoBehaviour
     public float attackSpeed;
     private bool isTrailing;
     CharacterController charCon;
+    AttackSound sound;
 
+    // Photon view //////////
+    PhotonView pv;
 
     void Awake()
     {
@@ -21,6 +24,8 @@ public class AttackMotion : MonoBehaviour
         anim = GetComponentInChildren<Animator>();
         attackSpeed = player.attackSpeed;
         charCon = GetComponent<CharacterController>();
+        pv = GetComponent<PhotonView>();
+        sound = GetComponentInChildren<AttackSound>();
 
         if (weaponPoint == null)
         {
@@ -46,6 +51,7 @@ public class AttackMotion : MonoBehaviour
         {
             if (player.isAttacking && !isTrailing)
             {
+                isTrailing = false;
                 //Debug.Log("trail");
                 StartCoroutine(TrailWeapon());
             }
@@ -58,32 +64,51 @@ public class AttackMotion : MonoBehaviour
 
     public void OnWeaponChange(InputValue value)
     {
-        if (GameObject.FindWithTag("Player").GetComponent<PlayerCtrl>().isAttacking == false)
+        if (pv.isMine)
         {
-            float weaponIndex = value.Get<float>();
-            if(weaponIndex==0) return;
-            Debug.Log(weaponIndex);
-            switch ((int)weaponIndex)
+            if (GameObject.FindWithTag("Player").GetComponent<PlayerCtrl>().isAttacking == false)
             {
-                case 1:
-                    EquipWeapon(0);
-                    break;
-                case 2:
-                    EquipWeapon(1);
-                    break;
-                case 3:
-                    EquipWeapon(2);
-                    break;
-                case 4:
-                    EquipWeapon(3);
-                    break;
+                float weaponIndex = value.Get<float>();
+                if (weaponIndex == 0) return;
+                Debug.Log(weaponIndex);
+                switch ((int)weaponIndex)
+                {
+                    case 1:
+                        if (PhotonNetwork.inRoom)
+                        {
+                            pv.RPC("EquipWeapon", PhotonTargets.All, 0);
+                        }
+                        else EquipWeapon(0);
+                        break;
+                    case 2:
+                        if (PhotonNetwork.inRoom)
+                        {
+                            pv.RPC("EquipWeapon", PhotonTargets.All, 1);
+                        }
+                        else EquipWeapon(1);
+                        break;
+                    case 3:
+                        if (PhotonNetwork.inRoom)
+                        {
+                            pv.RPC("EquipWeapon", PhotonTargets.All, 2);
+                        }
+                        else EquipWeapon(2);
+                        break;
+                    case 4:
+                        if (PhotonNetwork.inRoom)
+                        {
+                            pv.RPC("EquipWeapon", PhotonTargets.All, 3);
+                        }
+                        else EquipWeapon(3);
+                        break;
+                }
             }
         }
     }
 
     IEnumerator TrailWeapon()
     {
-        isTrailing = true;
+        //isTrailing = true;
         if (GameObject.FindWithTag("Weapon") != null)
         {
             attackSpeed = GameObject.FindWithTag("Weapon").GetComponent<IWeaponStats>().attackSpeed;
@@ -93,7 +118,7 @@ public class AttackMotion : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         trail.SetActive(false);
         yield return new WaitForSeconds(1f / attackSpeed);
-        isTrailing = false;
+        //isTrailing = false;
     }
 
     // void WeaponSwap()
@@ -116,6 +141,7 @@ public class AttackMotion : MonoBehaviour
     //     }
     // }
 
+    [PunRPC]
     void EquipWeapon(int index)
     {
         if (csInvenManager.Instance == null) return;
@@ -189,6 +215,7 @@ public class AttackMotion : MonoBehaviour
         Transform spawnPoint = weaponPoint != null ? weaponPoint : transform;
         currentWeapon = Instantiate(hotbarItem.itemPrefab, spawnPoint.position, spawnPoint.rotation, spawnPoint);
         trail = currentWeapon.GetComponentInChildren<TrailRenderer>(true).gameObject;
+        sound.ChangeWeapon(hotbarItem);
     }
 
     void WeaponSikll1()

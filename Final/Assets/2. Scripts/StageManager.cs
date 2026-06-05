@@ -90,6 +90,8 @@ public class StageManager : MonoBehaviour
         if (PhotonNetwork.inRoom)
         {
             player = PhotonNetwork.Instantiate("MainPlayer", playerPos[currRoom.PlayerCount].position, playerPos[currRoom.PlayerCount].rotation, 0, ex);
+
+            player.name = "Player";
         }
         else
         {
@@ -100,10 +102,13 @@ public class StageManager : MonoBehaviour
             if (playerPrefab != null)
             {
                 player = Instantiate(playerPrefab,tempPos.position, tempPos.rotation);
+                player.name = "Player";
             }
+
+
         }
         // ���� �̸����� �����ؾ� �巳�� ���� ����(DestructionRay ��ũ��Ʈ ����)
-
+        
 
         //PhotonNetwork.InstantiateSceneObject(string prefabName, Vector3 position, Quaternion rotation, byte group, object[] data);
         //�� �Լ��� PhotonNetwork.Instantiate�� ���������� ��Ʈ��ũ �� �������� ���ÿ� ������Ű����, Master Client �� ���� �� ���� ����.

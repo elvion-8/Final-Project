@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using Unity.VisualScripting;
 
 public class csInvenManager : MonoBehaviour
 {
@@ -30,28 +31,38 @@ public class csInvenManager : MonoBehaviour
     bool three;
     bool four;
 
+    ///////////// Photon View /////////////
+    PhotonView pv;
+
     public void OnInventory(InputValue value) { if (value.isPressed) onInven = true; }
     public void OnWeaponChange(InputValue value)
     {
-        float weaponIndex = value.Get<float>();
-
-        switch (weaponIndex)
+        if(pv == null)
         {
-            case 1:
-            one = true;
-            break;
+            pv = GameObject.Find("Player").GetComponent<PhotonView>();
+        }
+        if (pv.isMine)
+        {
+            float weaponIndex = value.Get<float>();
 
-            case 2:
-            two = true;
-            break;
+            switch (weaponIndex)
+            {
+                case 1:
+                    one = true;
+                    break;
 
-            case 3:
-            three = true;
-            break;
+                case 2:
+                    two = true;
+                    break;
 
-            case 4:
-            four = true;
-            break;
+                case 3:
+                    three = true;
+                    break;
+
+                case 4:
+                    four = true;
+                    break;
+            }
         }
     }
     void ResetTriggers()
@@ -75,6 +86,7 @@ public class csInvenManager : MonoBehaviour
             return;
         }
         BuildSlots();
+
     }
 
     void Update()

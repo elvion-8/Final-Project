@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,10 +16,11 @@ public class PlayerStatOutputManager : MonoBehaviour
     public int wCPN;
     public int wCDN;
     public int costN;
+    scPlayerStat stat;
 
     void Awake()
     {
-
+        stat = Managers.Data.stat;
     }
     void Start()
     {
@@ -31,12 +30,12 @@ public class PlayerStatOutputManager : MonoBehaviour
 
     void Update()
     {
-        hpN = scPlayerStat.stat.hpUpgrade;
-        wDmgN = scPlayerStat.stat.weaponDmgUpgradeCnt;
-        wASN = scPlayerStat.stat.weaponAttackSpeed;
-        wCPN = scPlayerStat.stat.weaponCritProbUpgradeCnt;
-        wCDN = scPlayerStat.stat.weaponCritDmgUpgradeCnt;
-        costN = scPlayerStat.stat.cost;
+        hpN = stat.hpUpgrade;
+        wDmgN = stat.weaponDmgUpgradeCnt;
+        wASN = stat.weaponAttackSpeed;
+        wCPN = stat.weaponCritProbUpgradeCnt;
+        wCDN = stat.weaponCritDmgUpgradeCnt;
+        costN = stat.cost;
 
         hp.text = hpN.ToString();
         wDmg.text = wDmgN.ToString();

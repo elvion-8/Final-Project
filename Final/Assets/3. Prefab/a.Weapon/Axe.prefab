@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7400313354081062812}
   - component: {fileID: 356194811668164964}
   - component: {fileID: 188463217489179451}
+  - component: {fileID: -5622214419761577228}
   m_Layer: 0
   m_Name: Axe
   m_TagString: Weapon
@@ -74,6 +75,13 @@ MonoBehaviour:
   baseCritDmg: 1
   baseAttackSpeed: 1
   baseDurability: 1
+  pS:
+    cost: 0
+    hpUpgrade: 0
+    weaponDmgUpgradeCnt: 0
+    weaponCritProbUpgradeCnt: 0
+    weaponCritDmgUpgradeCnt: 0
+    weaponAttackSpeed: 0
 --- !u!54 &188463217489179451
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -101,6 +109,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &-5622214419761577228
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9159102852955507597}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e33db94edb39166429e44ad74d858a0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemData: {fileID: 11400000, guid: e164640c8ad68d247807fcd0427bef0d, type: 2}
 --- !u!1001 &3294354659433871834
 PrefabInstance:
   m_ObjectHideFlags: 0

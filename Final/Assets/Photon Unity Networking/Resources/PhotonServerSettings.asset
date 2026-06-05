@@ -57,4 +57,7 @@ MonoBehaviour:
   - GetInput
   - NetworkAttack
   - NetworkRoll
+  - NetworkJump
+  - NetworkDie
+  - EquipWeapon
   DisableAutoOpenWizard: 1
