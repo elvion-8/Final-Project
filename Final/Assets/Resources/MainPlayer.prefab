@@ -575,9 +575,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponPrefabs:
   - {fileID: 9159102852955507597, guid: c80eb222afb88204e95ad885914ad504, type: 3}
-  - {fileID: 8559635611127355586, guid: aabed7cef3451b446a0a2b41e92bab43, type: 3}
   - {fileID: 1410371666187230154, guid: ca564fb98b865574d9038cd4ba7e8d5a, type: 3}
   - {fileID: 3691397499032880000, guid: f46f3cc2156fcb64e9e9bd22f143a652, type: 3}
+  - {fileID: 8559635611127355586, guid: aabed7cef3451b446a0a2b41e92bab43, type: 3}
   - {fileID: 5097396333430142725, guid: 44647ffa648ccb84fb7288c1b362dd2a, type: 3}
   - {fileID: 7973608593460275492, guid: 49f46d6e4ab99104a8d3f10a680072e9, type: 3}
   weaponPoint: {fileID: 0}
@@ -603,6 +603,7 @@ MonoBehaviour:
     weaponCritProbUpgradeCnt: 0
     weaponCritDmgUpgradeCnt: 0
     weaponAttackSpeed: 0
+  isMultiPlayer: 0
 --- !u!114 &7718799050016782552
 MonoBehaviour:
   m_ObjectHideFlags: 0

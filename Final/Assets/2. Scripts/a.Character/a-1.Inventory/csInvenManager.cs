@@ -41,7 +41,7 @@ public class csInvenManager : MonoBehaviour
         {
             pv = GameObject.Find("Player").GetComponent<PhotonView>();
         }
-        if (pv.isMine)
+        if (pv.isMine || !PhotonNetwork.inRoom)
         {
             float weaponIndex = value.Get<float>();
 

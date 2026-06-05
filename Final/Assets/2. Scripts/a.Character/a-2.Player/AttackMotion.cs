@@ -71,37 +71,33 @@ public class AttackMotion : MonoBehaviour
                 float weaponIndex = value.Get<float>();
                 if (weaponIndex == 0) return;
                 Debug.Log(weaponIndex);
-                switch ((int)weaponIndex)
+
+                ItemData hotbarItem = csInvenManager.Instance.GetHotbarItem((int)weaponIndex - 1);
+                if (hotbarItem == null || hotbarItem.itemPrefab == null) return;
+
+                int prefabIndex = -1;
+
+                for (int i = 0; i < weaponPrefabs.Length; i++)
                 {
-                    case 1:
-                        if (PhotonNetwork.inRoom)
-                        {
-                            pv.RPC("EquipWeapon", PhotonTargets.All, 0);
-                        }
-                        else EquipWeapon(0);
+                    if (weaponPrefabs[i] == hotbarItem.itemPrefab)
+                    {
+                        prefabIndex = i;
                         break;
-                    case 2:
-                        if (PhotonNetwork.inRoom)
-                        {
-                            pv.RPC("EquipWeapon", PhotonTargets.All, 1);
-                        }
-                        else EquipWeapon(1);
-                        break;
-                    case 3:
-                        if (PhotonNetwork.inRoom)
-                        {
-                            pv.RPC("EquipWeapon", PhotonTargets.All, 2);
-                        }
-                        else EquipWeapon(2);
-                        break;
-                    case 4:
-                        if (PhotonNetwork.inRoom)
-                        {
-                            pv.RPC("EquipWeapon", PhotonTargets.All, 3);
-                        }
-                        else EquipWeapon(3);
-                        break;
+                    }
                 }
+
+                if (prefabIndex == -1)
+                {
+                    Debug.LogError("weaponPrefabs 배열에 등록되지 않은 무기 프리팹입니다!");
+                    return;
+                }
+
+                if (PhotonNetwork.inRoom)
+                {
+                    pv.RPC("EquipWeapon", PhotonTargets.AllBuffered, prefabIndex);
+                }
+                else EquipWeapon(prefabIndex);
+
             }
         }
     }
@@ -144,6 +140,7 @@ public class AttackMotion : MonoBehaviour
     [PunRPC]
     void EquipWeapon(int index)
     {
+        if (index < 0 || index > weaponPrefabs.Length) return;
         if (csInvenManager.Instance == null) return;
 
         ItemData hotbarItem = csInvenManager.Instance.GetHotbarItem(index);
@@ -213,7 +210,7 @@ public class AttackMotion : MonoBehaviour
         }
 
         Transform spawnPoint = weaponPoint != null ? weaponPoint : transform;
-        currentWeapon = Instantiate(hotbarItem.itemPrefab, spawnPoint.position, spawnPoint.rotation, spawnPoint);
+        currentWeapon = Instantiate(weaponPrefabs[index], spawnPoint.position, spawnPoint.rotation, spawnPoint);
         trail = currentWeapon.GetComponentInChildren<TrailRenderer>(true).gameObject;
         sound.ChangeWeapon(hotbarItem);
     }
