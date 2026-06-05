@@ -64,7 +64,7 @@ public class AttackMotion : MonoBehaviour
 
     public void OnWeaponChange(InputValue value)
     {
-        if (pv.isMine)
+        if (pv.isMine || !PhotonNetwork.inRoom)
         {
             if (GameObject.FindWithTag("Player").GetComponent<PlayerCtrl>().isAttacking == false)
             {
