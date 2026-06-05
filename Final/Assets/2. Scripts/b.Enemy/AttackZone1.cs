@@ -11,15 +11,17 @@ public class AttackZone1 : MonoBehaviour
     public float warningDuration = 2.0f;
     public float activeDuration  = 2.0f;
 
+    [Header("스폰 오프셋")]
+    public float spawnRadius    = 3.0f;   // 플레이어 기준 랜덤 반경
+    public float minDistance    = 1.5f;   // 플레이어와 최소 거리
+
     [Header("이펙트 프리팹")]
     public GameObject warningEffectPrefab; // 경고 단계 이펙트
     public GameObject activeEffectPrefab;  // 활성화 단계 이펙트
 
     private bool  _isActive       = false;
-    private float _lastDamageTime = -999f;
-
-    // 생성된 이펙트 인스턴스 (단계 전환 시 제거용)
-    private GameObject _currentEffect;
+    private bool  _hasDealtDamage = false;
+    private GameObject  _currentEffect;
 
     void Start()
     {
@@ -27,21 +29,48 @@ public class AttackZone1 : MonoBehaviour
         col.isTrigger = true;
         col.enabled   = false;
 
+        RepositionAroundPlayer();
+
         StartCoroutine(ZoneRoutine());
     }
+    // ────────────────────────────────────────────
+    //  플레이어 주변 랜덤 위치 계산
+    // ────────────────────────────────────────────
+    void RepositionAroundPlayer()
+    {
+        GameObject player = GameObject.FindWithTag("Player");
+        if (player == null) return;
 
+        Vector3 offset;
+        int     safetyLimit = 20;
+
+        do
+        {
+            // XZ 평면에서 랜덤 방향 + 반경
+            Vector2 rand2D = Random.insideUnitCircle.normalized
+                             * Random.Range(minDistance, spawnRadius);
+
+            offset = new Vector3(rand2D.x, 0f, rand2D.y);
+            safetyLimit--;
+        }
+        while (offset.magnitude < minDistance && safetyLimit > 0);
+
+        transform.position = player.transform.position + offset;
+    }
+
+    // ────────────────────────────────────────────
+    //  장판예고 > 활성화 > 제거
+    // ────────────────────────────────────────────
     IEnumerator ZoneRoutine()
     {
-        // ── 1단계: 경고 이펙트 ──
         _isActive = false;
         SpawnEffect(warningEffectPrefab);
 
         yield return new WaitForSeconds(warningDuration);
 
-        // ── 2단계: 활성화 이펙트 ──
         _isActive = true;
         GetComponent<Collider>().enabled = true;
-        SpawnEffect(activeEffectPrefab); // 경고 이펙트 제거 후 활성 이펙트 생성
+        SpawnEffect(activeEffectPrefab);
 
         yield return new WaitForSeconds(activeDuration);
 
@@ -50,26 +79,27 @@ public class AttackZone1 : MonoBehaviour
 
     void SpawnEffect(GameObject prefab)
     {
-        // 이전 이펙트 제거
         if (_currentEffect != null)
             Destroy(_currentEffect);
 
         if (prefab == null) return;
 
-        // 자신의 위치/회전에 맞춰 생성, 자식으로 붙임
         _currentEffect = Instantiate(prefab, transform.position, transform.rotation);
         _currentEffect.transform.SetParent(transform);
     }
 
-    void OnTriggerStay(Collider other)
+    // ────────────────────────────────────────────
+    //  피격 판정
+    // ────────────────────────────────────────────
+    void OnTriggerEnter(Collider other)          
     {
-        if (!_isActive) return;
+        if (!_isActive)        return;
+        if (_hasDealtDamage)   return;           // 이미 피격했으면 무시
         if (!other.CompareTag("Player")) return;
-        if (Time.time - _lastDamageTime < damageCooldown) return;
 
         if (other.TryGetComponent<ITakeDamage>(out var target))
         {
-            _lastDamageTime = Time.time;
+            _hasDealtDamage = true;        
             target.TakeDamage(damage);
         }
     }

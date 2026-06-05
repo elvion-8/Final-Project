@@ -47,8 +47,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 5
   damageCooldown: 0.5
-  warningDuration: 2
+  warningDuration: 3
   activeDuration: 2
+  spawnRadius: 20
+  minDistance: 5
   warningEffectPrefab: {fileID: 4294256530792526687, guid: 45e845da15e253643bd649a698cd5407, type: 3}
   activeEffectPrefab: {fileID: 7478731271839673279, guid: 4d3c8045dd8857a4b8d34c2361c61045, type: 3}
 --- !u!136 &7745875324249030467
@@ -70,7 +72,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 4.46
-  m_Height: 13
+  m_Radius: 4.6
+  m_Height: 9.78
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}

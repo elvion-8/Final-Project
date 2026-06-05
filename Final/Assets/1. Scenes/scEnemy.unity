@@ -328,6 +328,14 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2606199624365376920, guid: cefa34030b7b5824fadfa099f90e0df5, type: 3}
+      propertyPath: attack1GroupMax
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2606199624365376920, guid: cefa34030b7b5824fadfa099f90e0df5, type: 3}
+      propertyPath: attack1GroupMin
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2606199624365376920, guid: cefa34030b7b5824fadfa099f90e0df5, type: 3}
       propertyPath: attack2Duration
       value: 3
       objectReference: {fileID: 0}
@@ -341,7 +349,7 @@ PrefabInstance:
       objectReference: {fileID: 821440896887892579, guid: 5b2a6370b348c614ca3dff770659cce8, type: 3}
     - target: {fileID: 2606199624365376920, guid: cefa34030b7b5824fadfa099f90e0df5, type: 3}
       propertyPath: attack1SpawnCount
-      value: 5
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2818843278200713534, guid: cefa34030b7b5824fadfa099f90e0df5, type: 3}
       propertyPath: m_TagString
