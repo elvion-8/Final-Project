@@ -1120,6 +1120,7 @@ GameObject:
   - component: {fileID: 3732099660719114264}
   - component: {fileID: 7289982040298558050}
   - component: {fileID: 2750776541547440957}
+  - component: {fileID: 7251807429124964429}
   m_Layer: 0
   m_Name: PlayerSource2
   m_TagString: Untagged
@@ -1178,6 +1179,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemData: {fileID: 0}
+--- !u!114 &7251807429124964429
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4071470060088365730}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5983bfb5479ae94eb70b1d6d377559b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rockParticle: {fileID: 8632185362001501516, guid: 0b151bec2223fa74fb5765f2a26a1c6c, type: 3}
+  usPoint: {fileID: 0}
 --- !u!1 &4097337451633891910
 GameObject:
   m_ObjectHideFlags: 0
