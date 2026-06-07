@@ -6,6 +6,7 @@ using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 using Rand = UnityEngine.Random;
 
 public class EnemyCtrl : MonoBehaviour, ITakeDamage
@@ -27,6 +28,14 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
     [Range(0, 1000)] public int hp = 1000;
     [Range(10f, 30f)][SerializeField] float findDist   = 20.0f;
     [Range(1f,  30f)][SerializeField] float attackDist = 5.0f;
+    [Range(10f, 100f)][SerializeField] float hpBarShowDist = 40.0f;
+
+
+    [Header("HP바 UI")]
+    public GameObject hpBarObject;
+    public GameObject hpBarRoot;
+    private Image _hpBarImage;
+    private int maxHp;
 
 
     [Header("Attack1 패턴 - 장판")]
@@ -60,6 +69,36 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
         _anim = GetComponentInChildren<Animator>();
         myTr  = GetComponent<Transform>();
         rbody = GetComponent<Rigidbody>();
+
+        if (hpBarObject == null)
+        {
+            GameObject found = GameObject.FindWithTag("EnemyHpBar");
+            if (found != null)
+            {
+                hpBarObject = found;
+                _hpBarImage = found.GetComponent<Image>();
+                // ✅ 부모(EnemyHP UI)를 hpBarRoot로 설정
+                hpBarRoot = found.transform.parent.gameObject;
+            }
+            else
+            {
+                Debug.LogWarning("[EnemyCtrl] EnemyHpBar 태그 오브젝트를 찾지 못했습니다!");
+            }
+        }
+        else
+        {
+            _hpBarImage = hpBarObject.GetComponent<Image>();
+            hpBarRoot = hpBarObject.transform.parent.gameObject;
+        }
+
+        if (hpBarRoot == null)
+            hpBarRoot = hpBarObject;
+
+        maxHp = hp;
+        UpdateHpBar();
+        SetHpBarVisible(false);
+        Debug.Log($"[EnemyCtrl] hpBarRoot = {hpBarRoot?.name}, hpBarObject = {hpBarObject?.name}");
+
     }
 
     void Update()
@@ -116,6 +155,8 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
 
         float dist = Vector3.Distance(myTr.position, traceTarget.position);
 
+        SetHpBarVisible(dist <= hpBarShowDist);
+
         if (dist <= attackDist)
         {
             hasPlayedAggro = true;
@@ -137,7 +178,7 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
     // =============================================
     void ChangeState(MODE_STATE newState)
     {
-        if (enemyMode == newState) return; // ✅ 동일 상태면 무시
+        if (enemyMode == newState) return; // 동일 상태면 무시
 
         enemyMode = newState;
         isActing  = false; // 상태 바뀌면 진행 중 액션 초기화
@@ -299,9 +340,30 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
     public void TakeDamage(int damage)
     {
         hp -= damage;
+        hp = Mathf.Max(hp, 0);
+
+        UpdateHpBar();
+        
         isHit       = true;
         isHitEndTime = Time.time + hitDuration;
         if (hp <= 0) StartCoroutine(DieCoroutine());
+    }
+    void UpdateHpBar()
+    {
+        if (_hpBarImage == null) return;
+        _hpBarImage.fillAmount = (float)hp / maxHp;
+    }
+
+    void SetHpBarVisible(bool visible)
+    {
+        if (hpBarRoot != null)
+        {
+            hpBarRoot.SetActive(visible);
+        }
+        else if (hpBarObject != null)
+        {
+            hpBarObject.SetActive(visible);
+        }
     }
 
     IEnumerator DieCoroutine()
