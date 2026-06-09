@@ -2,11 +2,12 @@
 //#define RELEASE_MODE
 
 using System.Collections;
-using TMPro;
-using UnityEditor;
+using System.Collections.Generic;
+using TMPro;      
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
+//using UnityEditor;
 using Rand = UnityEngine.Random;
 
 public class EnemyCtrl : MonoBehaviour, ITakeDamage
@@ -18,7 +19,12 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
     public float attack1Duration = 1.0f;
     public float attack2Duration = 1.0f;
     public float attack3Duration = 1.0f;
-    public float hitDuration    = 0.5f;
+
+    [Header("Hit Duration")]
+    [Tooltip("피격 무적 / 상태 유지 시간")]
+    public float hitStateDuration = 0.5f;
+    [Tooltip("Hit 애니메이션 재생 대기 시간")]
+    public float hitAnimDuration  = 0.5f;
 
     [Header("STATE")]
     public MODE_STATE enemyMode = MODE_STATE.IDLE;
@@ -32,10 +38,10 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
 
 
     [Header("HP바 UI")]
-    public GameObject hpBarObject;
+    [Tooltip("HP바 Image")]
+    public Image    hpBarImage;
+    [Tooltip("HP바 루트 오브젝트")]
     public GameObject hpBarRoot;
-    private Image _hpBarImage;
-    private int maxHp;
 
 
     [Header("Attack1 패턴 - 장판")]
@@ -47,58 +53,46 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
     [Range(1, 10)] public int attack1GroupMax      = 5;   // 그룹당 최대 개수
     public LayerMask groundLayer;                         // 바닥 감지
 
+    [Header("References")]
+    [Tooltip("태그 해제 대상 자식 오브젝트 (EnemyBody)")]
+    public GameObject enemyBodyObject;
+
     public enum MODE_STATE { IDLE, TRACE, SURPRISE, ATTACK, HIT, DIE }
 
-    private Animator    _anim;
-    private Transform   myTr;
-    private Transform   traceTarget;
-    private Rigidbody   rbody;
+    private Animator     _anim;
+    private Transform    myTr;
+    private NavMeshAgent _agent;
+    private Transform    traceTarget;
+    private Rigidbody    rbody;
 
     // 상태 플래그
     private bool isActing       = false; // 애니메이션 진행 중 여부 (단일 플래그로 통합)
     private bool hasPlayedAggro = false;
     private bool isHit          = false;
     private float isHitEndTime;
+    private int   maxHp;
 
     // 타겟 탐색 주기 조절
     private float targetSearchInterval = 0.3f;
     private float lastTargetSearchTime;
+
+    private readonly List<GameObject> _activeAttackZones = new List<GameObject>();
 
     void Awake()
     {
         _anim = GetComponentInChildren<Animator>();
         myTr  = GetComponent<Transform>();
         rbody = GetComponent<Rigidbody>();
+        _agent = GetComponent<NavMeshAgent>();
 
-        if (hpBarObject == null)
-        {
-            GameObject found = GameObject.FindWithTag("EnemyHpBar");
-            if (found != null)
-            {
-                hpBarObject = found;
-                _hpBarImage = found.GetComponent<Image>();
-                // ✅ 부모(EnemyHP UI)를 hpBarRoot로 설정
-                hpBarRoot = found.transform.parent.gameObject;
-            }
-            else
-            {
-                Debug.LogWarning("[EnemyCtrl] EnemyHpBar 태그 오브젝트를 찾지 못했습니다!");
-            }
-        }
-        else
-        {
-            _hpBarImage = hpBarObject.GetComponent<Image>();
-            hpBarRoot = hpBarObject.transform.parent.gameObject;
-        }
-
+        if (hpBarImage == null)
+            Debug.LogWarning($"[EnemyCtrl] {gameObject.name}: hpBarImage가 연결되지 않았습니다.");
         if (hpBarRoot == null)
-            hpBarRoot = hpBarObject;
+            Debug.LogWarning($"[EnemyCtrl] {gameObject.name}: hpBarRoot가 연결되지 않았습니다.");
 
         maxHp = hp;
         UpdateHpBar();
         SetHpBarVisible(false);
-        Debug.Log($"[EnemyCtrl] hpBarRoot = {hpBarRoot?.name}, hpBarObject = {hpBarObject?.name}");
-
     }
 
     void Update()
@@ -154,7 +148,6 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
         if (traceTarget == null) { ChangeState(MODE_STATE.IDLE); return; }
 
         float dist = Vector3.Distance(myTr.position, traceTarget.position);
-
         SetHpBarVisible(dist <= hpBarShowDist);
 
         if (dist <= attackDist)
@@ -176,11 +169,15 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
     // =============================================
     // 상태 전환 — 같은 상태면 중복 전환 방지
     // =============================================
-    void ChangeState(MODE_STATE newState)
+     void ChangeState(MODE_STATE newState)
     {
-        if (enemyMode == newState) return; // 동일 상태면 무시
+        if (enemyMode == newState) return;
+        // 상태 전환 시 활성 AttackZone 정리
+        if (enemyMode == MODE_STATE.ATTACK)
+            CleanupAttackZones();
+
         StopAllCoroutines();
-        isActing  = false; // 상태 바뀌면 진행 중 액션 초기화
+        isActing  = false; // 코루틴 중단 완료 후 리셋 → 새 액션 진입 허용
         enemyMode = newState;
     }
 
@@ -194,6 +191,7 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
 
         Vector3 dir = traceTarget.position - myTr.position;
         dir.y = 0;
+        if (dir.sqrMagnitude < 0.001f) return;
         myTr.rotation = Quaternion.Slerp(
             myTr.rotation, Quaternion.LookRotation(dir), Time.deltaTime * 10f);
     }
@@ -215,12 +213,27 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
         }
     }
 
+    void UpdateTrace()
+    {
+        if (_agent == null || traceTarget == null) return;
+        if (!_agent.isOnNavMesh) return;
+
+        _agent.isStopped = false;
+        _agent.SetDestination(traceTarget.position);
+        _anim.SetBool("IsMoving", true);
+    }
+
     // =============================================
     // 애니메이션 코루틴 — 대기 목적으로만 사용
     // =============================================
     IEnumerator IdleCoroutine()
     {
         isActing = true;
+        if (_agent != null && _agent.isOnNavMesh)
+        {
+            _agent.isStopped = true;
+            _anim.SetBool("IsMoving", false);
+        }
         int rand = Rand.Range(1, 3);
         _anim.SetTrigger("Idle" + rand);
         yield return new WaitForSeconds(rand == 1 ? idle1Duration : idle2Duration);
@@ -230,23 +243,23 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
     IEnumerator AggroCoroutine()
     {
         isActing = true;
+        if (_agent != null && _agent.isOnNavMesh) _agent.isStopped = true;
         _anim.SetTrigger("Aggro");
         yield return new WaitForSeconds(aggroDuration);
         hasPlayedAggro = true;
         isActing = false;
     }
-    
 
     IEnumerator AttackCoroutine()
     {
         isActing = true;
+        if (_agent != null && _agent.isOnNavMesh) _agent.isStopped = true;
+
         int rand = Rand.Range(1, 4);
         _anim.SetTrigger("Attack" + rand);
 
         if (rand == 1)
-        {
-            yield return StartCoroutine(Attack1PatternCoroutine()); // 1번 패턴
-        }
+            yield return StartCoroutine(Attack1PatternCoroutine());
         else
         {
             float duration = rand switch { 2 => attack2Duration, _ => attack3Duration };
@@ -274,14 +287,11 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
         {
             while (nextSpawn < attack1SpawnCount && elapsed >= spawnTimes[nextSpawn])
             {
-                // 한 타이밍에 4~5개 동시 소환
                 int groupCount = Rand.Range(attack1GroupMin, attack1GroupMax + 1);
                 for (int i = 0; i < groupCount; i++)
                     SpawnAttackZone();
-
                 nextSpawn++;
             }
-
             elapsed += Time.deltaTime;
             yield return null;
         }
@@ -322,7 +332,17 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
             Debug.LogWarning($"[{gameObject.name}] 바닥을 찾지 못했습니다. GroundLayer 설정을 확인하세요.");
         }
 
-        Instantiate(attackZonePrefab, spawnPos, Quaternion.identity);
+        GameObject zone = Instantiate(attackZonePrefab, spawnPos, Quaternion.identity);
+        _activeAttackZones.Add(zone);
+    }
+
+     void CleanupAttackZones()
+    {
+        foreach (GameObject zone in _activeAttackZones)
+        {
+            if (zone != null) Destroy(zone);
+        }
+        _activeAttackZones.Clear();
     }
 
     // =============================================
@@ -332,50 +352,61 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
     {
         isActing = true;
         _anim.SetTrigger("Hit");
-        yield return new WaitForSeconds(hitDuration);
+        yield return new WaitForSeconds(hitAnimDuration); // 분리된 필드 사용
         isActing = false;
-    }
-
-    public void TakeDamage(int damage)
-    {
-        hp -= damage;
-        hp = Mathf.Max(hp, 0);
-
-        UpdateHpBar();
-        
-        isHit       = true;
-        isHitEndTime = Time.time + hitDuration;
-        if (hp <= 0) StartCoroutine(DieCoroutine());
-    }
-    void UpdateHpBar()
-    {
-        if (_hpBarImage == null) return;
-        _hpBarImage.fillAmount = (float)hp / maxHp;
-    }
-
-    void SetHpBarVisible(bool visible)
-    {
-        if (hpBarRoot != null)
-        {
-            hpBarRoot.SetActive(visible);
-        }
-        else if (hpBarObject != null)
-        {
-            hpBarObject.SetActive(visible);
-        }
     }
 
     IEnumerator DieCoroutine()
     {
+        CleanupAttackZones(); // 사망 시에도 장판 정리
         ChangeState(MODE_STATE.DIE);
         _anim.SetTrigger("Die");
-        this.gameObject.tag = "Untagged";
-        this.gameObject.transform.Find("EnemyBody").tag = "Untagged";
-        foreach (Collider c in gameObject.GetComponentsInChildren<Collider>())
+
+        gameObject.tag = "Untagged";
+        if (enemyBodyObject != null)
+            enemyBodyObject.tag = "Untagged";
+        else
+            Debug.LogWarning($"[EnemyCtrl] {gameObject.name}: enemyBodyObject가 연결되지 않았습니다.");
+
+        foreach (Collider c in GetComponentsInChildren<Collider>())
             c.enabled = false;
+
+        if (_agent != null && _agent.isOnNavMesh)
+            _agent.isStopped = true;
+
         yield return new WaitForSeconds(4.5f);
         Destroy(gameObject);
     }
 
-    void OnDestroy() => StopAllCoroutines();
+    // ──────────────────────────────────────────
+    //  데미지 / HP바
+    // ──────────────────────────────────────────
+    public void TakeDamage(int damage)
+    {
+        hp -= damage;
+        hp  = Mathf.Max(hp, 0);
+
+        UpdateHpBar();
+
+        isHit        = true;
+        isHitEndTime = Time.time + hitStateDuration; // [변경 4] 분리된 필드 사용
+        if (hp <= 0) StartCoroutine(DieCoroutine());
+    }
+
+    void UpdateHpBar()
+    {
+        if (hpBarImage == null) return;
+        hpBarImage.fillAmount = (float)hp / maxHp;
+    }
+
+    void SetHpBarVisible(bool visible)
+    {
+        if (hpBarRoot != null) hpBarRoot.SetActive(visible);
+    }
+
+    void OnDestroy()
+    {
+        CleanupAttackZones(); // [변경 6] Destroy 직전에도 정리
+        StopAllCoroutines();
+    }
 }
