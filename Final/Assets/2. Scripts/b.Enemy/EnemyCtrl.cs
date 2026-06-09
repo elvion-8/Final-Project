@@ -179,10 +179,9 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
     void ChangeState(MODE_STATE newState)
     {
         if (enemyMode == newState) return; // 동일 상태면 무시
-
-        enemyMode = newState;
-        isActing  = false; // 상태 바뀌면 진행 중 액션 초기화
         StopAllCoroutines();
+        isActing  = false; // 상태 바뀌면 진행 중 액션 초기화
+        enemyMode = newState;
     }
 
     // =============================================
