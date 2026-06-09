@@ -12,6 +12,12 @@ public class StageManager : MonoBehaviour
     //���� �α׸� ǥ���� Text UI �׸� ���� ���۷��� ����
     public Text txtLogMsg;
 
+    //채팅을 표시할 Text UI 항목 연결 레퍼런스
+    
+    public InputField chatInputField;
+
+    private bool isChatting = false; // 현재 채팅 입력 중인지 체크
+
     //RPC ȣ���� ���� PhotonView ���� ���۷���
     PhotonView pv;
 
@@ -65,6 +71,7 @@ public class StageManager : MonoBehaviour
 
         yield return new WaitForSeconds(1.0f);
 
+        chatInputField.onEndEdit.AddListener(delegate { OnEndEditChat(); });
     }
 
     // ���� �߰�
@@ -161,6 +168,15 @@ public class StageManager : MonoBehaviour
 
     }
 
+    void OnEndEditChat()
+    {
+        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+        {
+            Chatting();
+        }
+    }
+
+    
     // ���� �߰�
     //��Ʈ��ũ �÷��̾ ���� �����ų� ������ �������� ��� ȣ��Ǵ� �ݹ� �Լ�
     void OnPhotonPlayerDisconnected(PhotonPlayer outPlayer)
@@ -189,13 +205,42 @@ public class StageManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        if (Input.GetKeyDown(KeyCode.Return) && !chatInputField.isFocused)
+        {
+            chatInputField.ActivateInputField();
+        }
     }
-
-
-
     void OnConnectionFail(DisconnectCause cause)
     {
         Debug.LogError("���� ���� ����: " + cause);
     }
+
+    void Chatting()
+    {
+        // 1. 네트워크 연결 상태 확인
+        if (!PhotonNetwork.inRoom)
+        {
+            Debug.Log("방에 연결되어 있지 않습니다! 로비로 돌아갑니다.");
+            return;
+        }
+        if (string.IsNullOrEmpty(chatInputField.text.Trim())) return;
+
+        // 로그 메시지에 출력할 문자열 생성
+        string msg = "\n\t<color=#0000ff>["
+                     + PhotonNetwork.player.NickName
+                     + ":" + chatInputField.text
+                     + "] </color>";
+
+        // [수정] pv.RPC 대신 PhotonNetwork 전체 혹은 권한 체크 후 전송
+        if (pv != null)
+        {
+            // 씬 오브젝트일 경우를 대비해 모두에게 전송 가능하도록 설정되어 있는지 확인
+            pv.RPC("LogMsg", PhotonTargets.AllBuffered, msg);
+        }
+
+        chatInputField.text = "";
+        chatInputField.DeactivateInputField(); // 커서가 다시 깜빡이게 만듦
+    }
+
+
 }
