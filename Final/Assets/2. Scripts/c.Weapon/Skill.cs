@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Skill : MonoBehaviour
@@ -6,6 +7,8 @@ public class Skill : MonoBehaviour
     public ParticleSystem rockParticle;
 
     public Transform playerPoint;
+
+    
 
     public void PlayRockParticle()
     {
@@ -22,4 +25,5 @@ public class Skill : MonoBehaviour
 
         }
     }
+
 }

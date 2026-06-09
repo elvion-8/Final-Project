@@ -154,7 +154,7 @@ public class AttackMotion : MonoBehaviour
         }
 
         // 애니메이션 레이어 조절 (임시: 무기 종류에 따라 레이어를 설정을 위해 ItemData에 속성을 추가해 구분 예정)
-        if (index == 0)
+        if (index == 0) //Axe
         {
             anim.SetLayerWeight(3, 0f);
             anim.SetLayerWeight(4, 1f);
@@ -163,16 +163,7 @@ public class AttackMotion : MonoBehaviour
             anim.SetLayerWeight(7, 0f);
             anim.SetLayerWeight(8, 0f);
         }
-        else if (index == 1)
-        {
-            anim.SetLayerWeight(3, 0f);
-            anim.SetLayerWeight(4, 0f);
-            anim.SetLayerWeight(5, 1f);
-            anim.SetLayerWeight(6, 0f);
-            anim.SetLayerWeight(7, 0f);
-            anim.SetLayerWeight(8, 0f);
-        }
-        else if (index == 2)
+        else if (index == 1) // Dagger
         {
             anim.SetLayerWeight(3, 1f);
             anim.SetLayerWeight(4, 0f);
@@ -181,7 +172,7 @@ public class AttackMotion : MonoBehaviour
             anim.SetLayerWeight(7, 0f);
             anim.SetLayerWeight(8, 0f);
         }
-        else if (index == 3)
+        else if (index == 2) // Spear
         {
             anim.SetLayerWeight(3, 0f);
             anim.SetLayerWeight(4, 0f);
@@ -190,7 +181,16 @@ public class AttackMotion : MonoBehaviour
             anim.SetLayerWeight(7, 0f);
             anim.SetLayerWeight(8, 0f);
         }
-        else if (index == 4)
+        else if (index == 3) // Sword
+        {
+            anim.SetLayerWeight(3, 0f);
+            anim.SetLayerWeight(4, 0f);
+            anim.SetLayerWeight(5, 1f);
+            anim.SetLayerWeight(6, 0f);
+            anim.SetLayerWeight(7, 0f);
+            anim.SetLayerWeight(8, 0f);
+        }
+        else if (index == 4) //Hammer
         {
             anim.SetLayerWeight(3, 0f);
             anim.SetLayerWeight(4, 0f);
@@ -199,7 +199,7 @@ public class AttackMotion : MonoBehaviour
             anim.SetLayerWeight(7, 1f);
             anim.SetLayerWeight(8, 0f);
         }
-        else if (index == 5)
+        else if (index == 5) //Scythe
         {
             anim.SetLayerWeight(3, 0f);
             anim.SetLayerWeight(4, 0f);

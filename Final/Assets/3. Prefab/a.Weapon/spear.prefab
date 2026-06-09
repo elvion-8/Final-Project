@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 2869976864720822880}
   m_Layer: 0
   m_Name: Spear
-  m_TagString: Untagged
+  m_TagString: Weapon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -53,6 +53,15 @@ MonoBehaviour:
   baseCritDmg: 12
   baseAttackSpeed: 8
   baseDurability: 1
+  pS:
+    cost: 0
+    hpUpgrade: 0
+    weaponDmgUpgradeCnt: 0
+    weaponCritProbUpgradeCnt: 0
+    weaponCritDmgUpgradeCnt: 0
+    weaponAttackSpeed: 0
+  anim: {fileID: 0}
+  z35: {x: 0, y: 0, z: 35}
 --- !u!65 &1044184267722594723
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -72,8 +81,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.1, y: 0.4, z: 0.1}
-  m_Center: {x: 0, y: -0.3, z: 0}
+  m_Size: {x: 0.22, y: 0.82, z: -0.3}
+  m_Center: {x: 0.05, y: 0.87, z: -0.06}
 --- !u!54 &2869976864720822880
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -213,31 +222,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b155e441db4c5b64db2fe72a2b211108, type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.13701205
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b155e441db4c5b64db2fe72a2b211108, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.9872204
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b155e441db4c5b64db2fe72a2b211108, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.07672567
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b155e441db4c5b64db2fe72a2b211108, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.027142696
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b155e441db4c5b64db2fe72a2b211108, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: -195.448
+      value: 180
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b155e441db4c5b64db2fe72a2b211108, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 4.4400024
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b155e441db4c5b64db2fe72a2b211108, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 9.490997
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b155e441db4c5b64db2fe72a2b211108, type: 3}
       propertyPath: m_ConstrainProportionsScale

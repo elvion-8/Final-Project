@@ -1192,7 +1192,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rockParticle: {fileID: 8632185362001501516, guid: 0b151bec2223fa74fb5765f2a26a1c6c, type: 3}
-  usPoint: {fileID: 0}
+  playerPoint: {fileID: 0}
 --- !u!1 &4097337451633891910
 GameObject:
   m_ObjectHideFlags: 0
