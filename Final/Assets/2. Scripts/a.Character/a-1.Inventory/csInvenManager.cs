@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
-using Unity.VisualScripting;
 
 public class csInvenManager : MonoBehaviour
 {
@@ -26,6 +25,13 @@ public class csInvenManager : MonoBehaviour
     private csInvSlot _selectedSlot;
     private bool onInven;
 
+    //================input system==============================
+    private int _currentSelect = 0;         //선택된 슬롯 번호
+    private bool _selectInv;            //엔터, 컨트롤러 a
+    private Vector2 _moveInputX;        //인벤토리 좌 우 이동
+    private bool movingInv = false;
+    //==========================================================
+
     bool one;
     bool two;
     bool three;
@@ -34,10 +40,18 @@ public class csInvenManager : MonoBehaviour
     ///////////// Photon View /////////////
     PhotonView pv;
 
-    public void OnInventory(InputValue value) { if (value.isPressed) onInven = true; }
+//========================================================input system
+    public void OnInventory(InputValue value)
+    {
+        if (value.isPressed)
+        {
+            if(!onInven)onInven = true;
+            else if(pnlInven.activeSelf){CloseInventory();}
+        }
+    }
     public void OnWeaponChange(InputValue value)
     {
-        if(pv == null)
+        if (pv == null)
         {
             pv = GameObject.Find("Player").GetComponent<PhotonView>();
         }
@@ -65,6 +79,33 @@ public class csInvenManager : MonoBehaviour
             }
         }
     }
+    public void OnMove(InputValue value)
+    {
+        if (!pnlInven.activeSelf) return;
+        _moveInputX.x = value.Get<Vector2>().x;
+        if (Mathf.Abs(_moveInputX.x) > 0.7f)
+        {
+            HandleInventorySelect(_selectedSlot);
+        }
+        else if (_moveInputX.x < 0.2f)
+        {
+            movingInv = false;
+        }
+    }
+    public void OnSelect(InputValue value)
+    {
+        if (!pnlInven.activeSelf) return;
+        if (value.isPressed) { _selectInv = true; }
+    }
+    public void OnRolling(InputValue value)
+    {
+        if(value.isPressed) CloseInventory();
+    }
+    // public void OnEscape(InputValue value)
+    // {
+    //     if(value.isPressed) CloseInventory();
+    // }
+    //===========================================================
     void ResetTriggers()
     {
         onInven = false;
@@ -100,17 +141,18 @@ public class csInvenManager : MonoBehaviour
 
         if (pnlInven.activeSelf)
         {
-            if (one){one=false; AssignToHotbarDirectly(0);}
-            else if (two){two=false; AssignToHotbarDirectly(1);}
-            else if (three){three=false; AssignToHotbarDirectly(2);}
-            else if (four){four=false; AssignToHotbarDirectly(3);}
+            //HandleInventorySelect(_selectedSlot);
+            if (one) { one = false; AssignToHotbarDirectly(0); }
+            else if (two) { two = false; AssignToHotbarDirectly(1); }
+            else if (three) { three = false; AssignToHotbarDirectly(2); }
+            else if (four) { four = false; AssignToHotbarDirectly(3); }
         }
         else
         {
-            if (one){one=false; SelectActiveHotbar(0);}
-            else if (two){two=false; SelectActiveHotbar(1);}
-            else if (three){three=false; SelectActiveHotbar(2);}
-            else if (four){four=false; SelectActiveHotbar(3);}
+            if (one) { one = false; SelectActiveHotbar(0); }
+            else if (two) { two = false; SelectActiveHotbar(1); }
+            else if (three) { three = false; SelectActiveHotbar(2); }
+            else if (four) { four = false; SelectActiveHotbar(3); }
         }
 
         if (Input.GetKeyDown(KeyCode.Escape) || Input.GetMouseButtonDown(1))
@@ -146,6 +188,41 @@ public class csInvenManager : MonoBehaviour
         _selectedSlot = clickedSlot;
         _selectedSlot.SetSelected(true);
         UpdateInfoPnl(_selectedSlot.GetData());
+    }
+
+    private void HandleInventorySelect(csInvSlot clickedSlot)
+    {
+        //if(clickedSlot.IsEmpty) return;
+        if (!pnlInven.activeSelf) return;
+
+        if (!movingInv)
+        {
+            if (_selectedSlot != null)
+            {
+                _selectedSlot.SetSelected(false);
+            }
+            if (Mathf.Abs(_moveInputX.x) > 0.5f)
+            {
+                if (_moveInputX.x > 0.5f)        //right
+                {
+                    _currentSelect = (_currentSelect + 1) % _inventorySlots.Count;
+                }
+                else if (_moveInputX.x < 0.5f)   //left
+                {
+                    _currentSelect = (_currentSelect - 1 + _inventorySlots.Count) % _inventorySlots.Count;
+                }
+                _selectedSlot = _inventorySlots[_currentSelect];
+                if (_selectedSlot != null && !_selectedSlot.IsEmpty)
+                {
+                    HandleInventorySlotClicked(_selectedSlot);
+                }
+                movingInv = true;
+            }
+            else if (Mathf.Abs(_moveInputX.x) < 0.2f)
+            {
+                movingInv = false;
+            }
+        }
     }
 
     private void AssignToHotbarDirectly(int hotbarIndex)

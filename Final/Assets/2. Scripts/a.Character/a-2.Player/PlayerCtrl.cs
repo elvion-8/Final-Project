@@ -464,7 +464,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         Vector3 rollDir = transform.forward * rollPower;
         MoveDir.x = rollDir.x;
         MoveDir.z = rollDir.z;
-        yield return new WaitForSeconds(0.8f);
+        yield return new WaitForSecondsRealtime(0.8f);
         isRolling = false;
     }
 
