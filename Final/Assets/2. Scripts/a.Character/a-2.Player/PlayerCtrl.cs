@@ -1,7 +1,6 @@
 using System.Collections;
 using UnityEngine.UI;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class PlayerCtrl : MonoBehaviour, ITakeDamage
 {
@@ -34,6 +33,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     public Image hpBar;
 
     scPlayerStat stat;
+    InputManager input;
 
     [Space(10)]
     private CharacterController charCon;
@@ -97,20 +97,11 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     int animD;
     int animDie;
 
-    //InputSystem용 변수
-    #region Input Variables
-    private Vector2 moveInput;
-    public bool isRunHeld;
-    private bool isJumpTriggered;
-    public bool isJumpHeld;
-    private bool isAttackTriggered;
-    private bool isRollTriggered;
-    #endregion
-
     void Awake()
 
     {
         stat = Managers.Data.stat;
+        input = Managers.Input;
         charCon = GetComponent<CharacterController>();
         anim = GetComponentInChildren<Animator>();
         cmTr = GameObject.FindGameObjectWithTag("MainCamera").transform;
@@ -178,7 +169,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
             GetInput();
 
             // 벽타기
-            if (Climb()) {ResetInputTriggers();return;}
+            if (Climb()) {input.ResetKey();return;}
 
             // 공격
             Attack();
@@ -194,7 +185,8 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
             ExecuteMove();
 
             anim.SetFloat("Speed", inputDir.magnitude);
-            ResetInputTriggers();
+            //ResetInputTriggers();
+            input.ResetKey();
         }
         else   //내가 아닌 플레이어
         {
@@ -215,31 +207,12 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         }
 
     }
-    #region Input Callbacks
-    public void OnMove(InputValue value) { moveInput = value.Get<Vector2>(); }
-    public void OnRun(InputValue value) { isRunHeld = value.isPressed; }
-    public void OnJump(InputValue value)
-    {
-        if (value.isPressed) isJumpTriggered = true;
-        isJumpHeld = value.isPressed;
-    }
-    public void OnAttack(InputValue value) { if (value.isPressed) isAttackTriggered = true; }
-    public void OnRolling(InputValue value) { if (value.isPressed) isRollTriggered = true; }
-
-    private void ResetInputTriggers()
-    {
-        isJumpTriggered = false;
-        isAttackTriggered = false;
-        isRollTriggered = false;
-    }
-    #endregion
-
 
     //입력
     void GetInput()
     {
-        h = moveInput.x;
-        v = moveInput.y;
+        h = input.move.x;
+        v = input.move.y;
         inputDir = new Vector3(h, 0, v);
 
         if (cmTr != null)
@@ -266,7 +239,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
 
         if (!charCon.isGrounded && !isRolling && !isAttacking)
         {
-            if (v > 0.1f && (isJumpTriggered || isJumpHeld))
+            if (v > 0.1f && (input.jumpKey/*isJumpTriggered || isJumpHeld*/))
             {
                 RaycastHit wallHit;
                 Vector3 rayOrigin = transform.position + Vector3.up * 1.0f;
@@ -296,7 +269,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
 
     void Attack()
     {
-        if (isAttackTriggered)
+        if (input.attackKey)
         {
 
             if (!isAttacking) 
@@ -322,7 +295,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     // 구르기
     void Roll()
     {
-        if (isRollTriggered && !isRolling)
+        if (input.rollingKey && !isRolling)
         {
             if (PhotonNetwork.inRoom)
             {
@@ -344,13 +317,13 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     {
         if (charCon.isGrounded)
         {
-            isJumpHeld = false;
+            input.isJumpHeld = false;
             isMultiJump = false;
             tempJumpCnt = 0;
         }
 
         // 점프
-        if (charCon.isGrounded && !isRolling && isJumpTriggered)
+        if (charCon.isGrounded && !isRolling && input.jumpKey)
         {
             MoveDir.y = jumpPower;
 
@@ -363,7 +336,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
             isMultiJump = true;
         }
         // 추가 점프
-        else if (isJumpTriggered && !charCon.isGrounded && tempJumpCnt < jumpCnt && isMultiJump)
+        else if (input.jumpKey && !charCon.isGrounded && tempJumpCnt < jumpCnt && isMultiJump)
         {
             tempJumpCnt++;
             MoveDir.y = jumpPower;
@@ -404,7 +377,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
                     stopTimer = 0f;
                     Quaternion targetRotation = Quaternion.LookRotation(MoveDir);
                     transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-                    if (isRunHeld)
+                    if (input.runKey)
                     {
                         anim.SetBool("Run", true);
                         moveSpeed = runningSpeed;
@@ -425,7 +398,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
                         anim.SetBool("RightSide", false);
                         anim.SetBool("LeftSide", false);
                         anim.SetBool("Run", false);
-                        isRunHeld = false;
+                        input.runKey = false;
                     }
                 }
             }

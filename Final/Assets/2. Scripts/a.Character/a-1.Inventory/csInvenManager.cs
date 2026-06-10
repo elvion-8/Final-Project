@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 public class csInvenManager : MonoBehaviour
 {
     public static csInvenManager Instance;
+    InputManager input;
 
     public GameObject pnlInven;
 
@@ -22,63 +23,63 @@ public class csInvenManager : MonoBehaviour
     public List<ItemData> startingItems = new List<ItemData>();
 
     private List<csInvSlot> _inventorySlots = new List<csInvSlot>();
-    private csInvSlot _selectedSlot;
-    private bool onInven;
+    public csInvSlot _selectedSlot;
+    //public bool onInven;
 
     //================input system==============================
     private int _currentSelect = 0;         //선택된 슬롯 번호
     private bool _selectInv;            //엔터, 컨트롤러 a
     private Vector2 _moveInputX;        //인벤토리 좌 우 이동
-    private bool movingInv = false;
+    public bool movingInv = false;
     //==========================================================
 
-    bool one;
-    bool two;
-    bool three;
-    bool four;
+    // bool one;
+    // bool two;
+    // bool three;
+    // bool four;
 
     ///////////// Photon View /////////////
     PhotonView pv;
 
 //========================================================input system
-    public void OnInventory(InputValue value)
-    {
-        if (value.isPressed)
-        {
-            if(!onInven)onInven = true;
-            else if(pnlInven.activeSelf){CloseInventory();}
-        }
-    }
-    public void OnWeaponChange(InputValue value)
-    {
-        if (pv == null)
-        {
-            pv = GameObject.Find("Player").GetComponent<PhotonView>();
-        }
-        if (pv.isMine || !PhotonNetwork.inRoom)
-        {
-            float weaponIndex = value.Get<float>();
+    // public void OnInventory(InputValue value)
+    // {
+    //     if (value.isPressed)
+    //     {
+    //         if(!onInven)onInven = true;
+    //         else if(pnlInven.activeSelf){CloseInventory();}
+    //     }
+    // }
+    // public void OnWeaponChange(InputValue value)
+    // {
+    //     if (pv == null)
+    //     {
+    //         pv = GameObject.Find("Player").GetComponent<PhotonView>();
+    //     }
+    //     if (pv.isMine || !PhotonNetwork.inRoom)
+    //     {
+    //         float weaponIndex = value.Get<float>();
 
-            switch (weaponIndex)
-            {
-                case 1:
-                    one = true;
-                    break;
+    //         switch (weaponIndex)
+    //         {
+    //             case 1:
+    //                 one = true;
+    //                 break;
 
-                case 2:
-                    two = true;
-                    break;
+    //             case 2:
+    //                 two = true;
+    //                 break;
 
-                case 3:
-                    three = true;
-                    break;
+    //             case 3:
+    //                 three = true;
+    //                 break;
 
-                case 4:
-                    four = true;
-                    break;
-            }
-        }
-    }
+    //             case 4:
+    //                 four = true;
+    //                 break;
+    //         }
+    //     }
+    // }
     public void OnMove(InputValue value)
     {
         if (!pnlInven.activeSelf) return;
@@ -108,7 +109,7 @@ public class csInvenManager : MonoBehaviour
     //===========================================================
     void ResetTriggers()
     {
-        onInven = false;
+        input.onInven = false;
     }
     [Header("text")]
     [SerializeField] private Text txtWType;
@@ -127,12 +128,12 @@ public class csInvenManager : MonoBehaviour
             return;
         }
         BuildSlots();
-
+        input = Managers.Input;
     }
 
     void Update()
     {
-        if (onInven)
+        if (input.onInven)
         {
             SystemBtn systemBtn = FindObjectOfType<SystemBtn>();
             if (systemBtn != null)
@@ -142,17 +143,17 @@ public class csInvenManager : MonoBehaviour
         if (pnlInven.activeSelf)
         {
             //HandleInventorySelect(_selectedSlot);
-            if (one) { one = false; AssignToHotbarDirectly(0); }
-            else if (two) { two = false; AssignToHotbarDirectly(1); }
-            else if (three) { three = false; AssignToHotbarDirectly(2); }
-            else if (four) { four = false; AssignToHotbarDirectly(3); }
+            if (input.one) { input.one = false; AssignToHotbarDirectly(0); }
+            else if (input.two) { input.two = false; AssignToHotbarDirectly(1); }
+            else if (input.three) { input.three = false; AssignToHotbarDirectly(2); }
+            else if (input.four) { input.four = false; AssignToHotbarDirectly(3); }
         }
         else
         {
-            if (one) { one = false; SelectActiveHotbar(0); }
-            else if (two) { two = false; SelectActiveHotbar(1); }
-            else if (three) { three = false; SelectActiveHotbar(2); }
-            else if (four) { four = false; SelectActiveHotbar(3); }
+            if (input.one) { input.one = false; SelectActiveHotbar(0); }
+            else if (input.two) { input.two = false; SelectActiveHotbar(1); }
+            else if (input.three) { input.three = false; SelectActiveHotbar(2); }
+            else if (input.four) { input.four = false; SelectActiveHotbar(3); }
         }
 
         if (Input.GetKeyDown(KeyCode.Escape) || Input.GetMouseButtonDown(1))
@@ -190,7 +191,7 @@ public class csInvenManager : MonoBehaviour
         UpdateInfoPnl(_selectedSlot.GetData());
     }
 
-    private void HandleInventorySelect(csInvSlot clickedSlot)
+    public void HandleInventorySelect(csInvSlot clickedSlot)
     {
         //if(clickedSlot.IsEmpty) return;
         if (!pnlInven.activeSelf) return;

@@ -1,4 +1,5 @@
 using UnityEngine;
+//using UnityEngine.InputSystem;
 
 public class Managers : MonoBehaviour
 {
@@ -7,8 +8,10 @@ public class Managers : MonoBehaviour
 
     private SoundManager _sound;
     private DataManager _data;
+    private InputManager _input;
     public static SoundManager Sound => Instance._sound;
     public static DataManager Data => Instance._data;
+    public static InputManager Input => Instance._input;
 
     void Awake()
     {
@@ -37,8 +40,14 @@ public class Managers : MonoBehaviour
             {
                 _instance._sound = go.AddComponent<SoundManager>();
             }
+            _instance._input = go.GetComponent<InputManager>();
+            if(_instance._input == null)
+            {
+                _instance._input = go.AddComponent<InputManager>();
+            }
             _instance._data.Init();
             _instance._sound.Init();
+            _instance._input.Init();
         }
     }
 }
