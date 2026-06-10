@@ -26,6 +26,10 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
     [Tooltip("Hit 애니메이션 재생 대기 시간")]
     public float hitAnimDuration  = 0.5f;
 
+    [Header("Death")]
+    [Tooltip("사망 애니메이션 후 오브젝트 제거까지 대기 시간")]
+    public float deathDestroyDelay = 4.5f;
+
     [Header("STATE")]
     public MODE_STATE enemyMode = MODE_STATE.IDLE;
 
@@ -144,8 +148,18 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
     // =============================================
     void UpdateModeState()
     {
-        if (isHit) { ChangeState(MODE_STATE.HIT); return; }
-        if (traceTarget == null) { ChangeState(MODE_STATE.IDLE); return; }
+        if (isHit)
+        {
+            ChangeState(MODE_STATE.HIT);
+            return;
+        }
+
+        if (traceTarget == null)
+        {
+            SetHpBarVisible(false);
+            ChangeState(MODE_STATE.IDLE);
+            return;
+        }
 
         float dist = Vector3.Distance(myTr.position, traceTarget.position);
         SetHpBarVisible(dist <= hpBarShowDist);
@@ -177,7 +191,7 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
             CleanupAttackZones();
 
         StopAllCoroutines();
-        isActing  = false; // 코루틴 중단 완료 후 리셋 → 새 액션 진입 허용
+        isActing  = false; // 코루틴 중단 완료 후 리셋 > 새 액션 진입 허용
         enemyMode = newState;
     }
 
@@ -201,15 +215,15 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
     // =============================================
     void UpdateAction()
     {
-        if (isActing) return; // 애니메이션 진행 중이면 스킵
+        if (isActing) return;
 
         switch (enemyMode)
         {
-            case MODE_STATE.IDLE:     StartCoroutine(IdleCoroutine());    break;
-            case MODE_STATE.SURPRISE: StartCoroutine(AggroCoroutine());   break;
-            case MODE_STATE.ATTACK:   StartCoroutine(AttackCoroutine());  break;
-            case MODE_STATE.HIT:      StartCoroutine(HitCoroutine());     break;
-            case MODE_STATE.TRACE:    /* 이동 로직 */                      break;
+            case MODE_STATE.IDLE:     StartCoroutine(IdleCoroutine());   break;
+            case MODE_STATE.SURPRISE: StartCoroutine(AggroCoroutine());  break;
+            case MODE_STATE.ATTACK:   StartCoroutine(AttackCoroutine()); break;
+            case MODE_STATE.HIT:      StartCoroutine(HitCoroutine());    break;
+            case MODE_STATE.TRACE:    UpdateTrace();                     break;
         }
     }
 
@@ -315,10 +329,9 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
                            * Rand.Range(1.5f, attack1SpawnRadius);
 
         Vector3 rayOrigin = new Vector3(
-        center.x + randCircle.x,
-        center.y + 50f,             // 충분히 높은 곳에서 쏨
-        center.z + randCircle.y
-        );
+            center.x + randCircle.x,
+            center.y + 50f,             // 충분히 높은 곳에서 쏨
+            center.z + randCircle.y);
 
         Vector3 spawnPos;
         if (Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit hit, 100f, groundLayer))
@@ -346,7 +359,7 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
     }
 
     // =============================================
-    // 데미지 / 사망
+    // 데미지
     // =============================================
     IEnumerator HitCoroutine()
     {
@@ -356,10 +369,50 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
         isActing = false;
     }
 
+    // ──────────────────────────────────────────
+    //  데미지 / HP바
+    // ──────────────────────────────────────────
+     public void TakeDamage(int damage)
+    {
+        if (enemyMode == MODE_STATE.DIE) return; // 사망 후 재진입 방지
+
+        hp -= damage;
+        hp  = Mathf.Max(hp, 0);
+
+        UpdateHpBar();
+
+        isHit        = true;
+        isHitEndTime = Time.time + hitStateDuration;
+
+        if (hp <= 0) Die();
+    }
+
+    void UpdateHpBar()
+    {
+        if (hpBarImage == null) return;
+        hpBarImage.fillAmount = (float)hp / maxHp;
+    }
+
+    void SetHpBarVisible(bool visible)
+    {
+        if (hpBarRoot != null) hpBarRoot.SetActive(visible);
+    }
+
+    // =============================================
+    // 데미지 / 사망
+    // =============================================
+
+    void Die()
+    {
+        StopAllCoroutines();        // 진행 중인 다른 코루틴 정리
+        enemyMode = MODE_STATE.DIE; // ChangeState 우회
+        isActing  = false;
+        StartCoroutine(DieCoroutine());
+    }
+
     IEnumerator DieCoroutine()
     {
-        CleanupAttackZones(); // 사망 시에도 장판 정리
-        ChangeState(MODE_STATE.DIE);
+        CleanupAttackZones();
         _anim.SetTrigger("Die");
 
         gameObject.tag = "Untagged";
@@ -374,39 +427,14 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
         if (_agent != null && _agent.isOnNavMesh)
             _agent.isStopped = true;
 
-        yield return new WaitForSeconds(4.5f);
+        SetHpBarVisible(false);
+
+        yield return new WaitForSeconds(deathDestroyDelay);
         Destroy(gameObject);
-    }
-
-    // ──────────────────────────────────────────
-    //  데미지 / HP바
-    // ──────────────────────────────────────────
-    public void TakeDamage(int damage)
-    {
-        hp -= damage;
-        hp  = Mathf.Max(hp, 0);
-
-        UpdateHpBar();
-
-        isHit        = true;
-        isHitEndTime = Time.time + hitStateDuration; // [변경 4] 분리된 필드 사용
-        if (hp <= 0) StartCoroutine(DieCoroutine());
-    }
-
-    void UpdateHpBar()
-    {
-        if (hpBarImage == null) return;
-        hpBarImage.fillAmount = (float)hp / maxHp;
-    }
-
-    void SetHpBarVisible(bool visible)
-    {
-        if (hpBarRoot != null) hpBarRoot.SetActive(visible);
     }
 
     void OnDestroy()
     {
-        CleanupAttackZones(); // [변경 6] Destroy 직전에도 정리
-        StopAllCoroutines();
+        CleanupAttackZones();
     }
 }
