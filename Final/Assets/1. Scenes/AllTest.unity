@@ -1220,6 +1220,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 242603857}
   m_CullTransparentMesh: 1
+--- !u!114 &288534115 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8368360077687792136, guid: 133c6ca5c57ec014bb38daedd340744f, type: 3}
+  m_PrefabInstance: {fileID: 618779458}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d199490a83bb2b844b9695cbf13b01ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &302788658
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2763,17 +2774,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 923341186}
   m_CullTransparentMesh: 1
---- !u!114 &958714222 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8368360077687792136, guid: 133c6ca5c57ec014bb38daedd340744f, type: 3}
-  m_PrefabInstance: {fileID: 618779458}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d199490a83bb2b844b9695cbf13b01ef, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1004565347
 GameObject:
   m_ObjectHideFlags: 0
@@ -6285,7 +6285,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   txtConnect: {fileID: 618779461}
   txtLogMsg: {fileID: 618779460}
-  chatInputField: {fileID: 958714222}
+  chatInputField: {fileID: 288534115}
 --- !u!4 &1978859971
 Transform:
   m_ObjectHideFlags: 0

@@ -60,4 +60,5 @@ MonoBehaviour:
   - NetworkJump
   - NetworkDie
   - EquipWeapon
+  - WeaponSikll1
   DisableAutoOpenWizard: 1
