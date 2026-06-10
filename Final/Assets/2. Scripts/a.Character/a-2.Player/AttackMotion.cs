@@ -43,22 +43,25 @@ public class AttackMotion : MonoBehaviour
 
     void Update()
     {
-        // if (GameObject.FindWithTag("Player").GetComponent<PlayerCtrl>().isAttacking == false)
-        // {
-        //     WeaponSwap();
-        // }
-        if (trail != null)
+        if (pv.isMine || !PhotonNetwork.inRoom)
         {
-            if (player.isAttacking && !isTrailing)
+            if (trail != null)
             {
-                isTrailing = false;
-                //Debug.Log("trail");
-                StartCoroutine(TrailWeapon());
+                if (player.isAttacking && !isTrailing)
+                {
+                    isTrailing = false;
+                    //Debug.Log("trail");
+                    StartCoroutine(TrailWeapon());
+                }
             }
-        }
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            WeaponSikll1();
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                if (PhotonNetwork.inRoom)
+                {
+                    pv.RPC("WeaponSikll1", PhotonTargets.All);
+                }
+                else WeaponSikll1();
+            }
         }
     }
 
@@ -66,7 +69,7 @@ public class AttackMotion : MonoBehaviour
     {
         if (pv.isMine || !PhotonNetwork.inRoom)
         {
-            if (GameObject.FindWithTag("Player").GetComponent<PlayerCtrl>().isAttacking == false)
+            if (player.isAttacking == false)
             {
                 float weaponIndex = value.Get<float>();
                 if (weaponIndex == 0) return;
@@ -117,35 +120,18 @@ public class AttackMotion : MonoBehaviour
         //isTrailing = false;
     }
 
-    // void WeaponSwap()
-    // {
-    //     if (Input.GetKeyDown(KeyCode.Alpha1))
-    //     {
-    //         EquipWeapon(0);
-    //     }
-    //     else if (Input.GetKeyDown(KeyCode.Alpha2))
-    //     {
-    //         EquipWeapon(1);
-    //     }
-    //     else if (Input.GetKeyDown(KeyCode.Alpha3))
-    //     {
-    //         EquipWeapon(2);
-    //     }
-    //     else if (Input.GetKeyDown(KeyCode.Alpha4))
-    //     {
-    //         EquipWeapon(3);
-    //     }
-    // }
-
+    
     [PunRPC]
     void EquipWeapon(int index)
     {
         if (index < 0 || index > weaponPrefabs.Length) return;
-        if (csInvenManager.Instance == null) return;
+        //if (csInvenManager.Instance == null) return;
 
-        ItemData hotbarItem = csInvenManager.Instance.GetHotbarItem(index);
+        //ItemData hotbarItem = csInvenManager.Instance.GetHotbarItem(index);
 
-        if (hotbarItem == null || hotbarItem.itemType != ItemType.Weapon || hotbarItem.itemPrefab == null) return;
+        //if (hotbarItem == null || hotbarItem.itemType != ItemType.Weapon || hotbarItem.itemPrefab == null) return;
+
+        
 
         // 기존 무기 제거
         if (currentWeapon != null)
@@ -154,71 +140,46 @@ public class AttackMotion : MonoBehaviour
         }
 
         // 애니메이션 레이어 조절 (임시: 무기 종류에 따라 레이어를 설정을 위해 ItemData에 속성을 추가해 구분 예정)
-        if (index == 0) //Axe
-        {
-            anim.SetLayerWeight(3, 0f);
-            anim.SetLayerWeight(4, 1f);
-            anim.SetLayerWeight(5, 0f);
-            anim.SetLayerWeight(6, 0f);
-            anim.SetLayerWeight(7, 0f);
-            anim.SetLayerWeight(8, 0f);
-        }
-        else if (index == 1) // Dagger
-        {
-            anim.SetLayerWeight(3, 1f);
-            anim.SetLayerWeight(4, 0f);
-            anim.SetLayerWeight(5, 0f);
-            anim.SetLayerWeight(6, 0f);
-            anim.SetLayerWeight(7, 0f);
-            anim.SetLayerWeight(8, 0f);
-        }
-        else if (index == 2) // Spear
-        {
-            anim.SetLayerWeight(3, 0f);
-            anim.SetLayerWeight(4, 0f);
-            anim.SetLayerWeight(5, 0f);
-            anim.SetLayerWeight(6, 1f);
-            anim.SetLayerWeight(7, 0f);
-            anim.SetLayerWeight(8, 0f);
-        }
-        else if (index == 3) // Sword
-        {
-            anim.SetLayerWeight(3, 0f);
-            anim.SetLayerWeight(4, 0f);
-            anim.SetLayerWeight(5, 1f);
-            anim.SetLayerWeight(6, 0f);
-            anim.SetLayerWeight(7, 0f);
-            anim.SetLayerWeight(8, 0f);
-        }
-        else if (index == 4) //Hammer
-        {
-            anim.SetLayerWeight(3, 0f);
-            anim.SetLayerWeight(4, 0f);
-            anim.SetLayerWeight(5, 0f);
-            anim.SetLayerWeight(6, 0f);
-            anim.SetLayerWeight(7, 1f);
-            anim.SetLayerWeight(8, 0f);
-        }
-        else if (index == 5) //Scythe
-        {
-            anim.SetLayerWeight(3, 0f);
-            anim.SetLayerWeight(4, 0f);
-            anim.SetLayerWeight(5, 0f);
-            anim.SetLayerWeight(6, 0f);
-            anim.SetLayerWeight(7, 0f);
-            anim.SetLayerWeight(8, 1f);
-        }
+        SetAnimationLayer(index);
 
         Transform spawnPoint = weaponPoint != null ? weaponPoint : transform;
         currentWeapon = Instantiate(weaponPrefabs[index], spawnPoint.position, spawnPoint.rotation, spawnPoint);
+
         trail = currentWeapon.GetComponentInChildren<TrailRenderer>(true).gameObject;
-        sound.ChangeWeapon(hotbarItem);
+        if (pv.isMine || !PhotonNetwork.inRoom)
+        {
+            ItemData hotbarItem = csInvenManager.Instance.GetHotbarItem(index);
+            if (hotbarItem != null && sound != null)
+            {
+                sound.ChangeWeapon(hotbarItem);
+            }
+        }
     }
 
+    void SetAnimationLayer(int index)
+    {
+        for (int i = 3; i <= 8; i++) anim.SetLayerWeight(i, 0f); // 우선 전부 0으로 초기화
+
+        if (index == 0) anim.SetLayerWeight(4, 1f);      // Axe
+        else if (index == 1) anim.SetLayerWeight(3, 1f); // Dagger
+        else if (index == 2) anim.SetLayerWeight(6, 1f); // Spear
+        else if (index == 3) anim.SetLayerWeight(5, 1f); // Sword
+        else if (index == 4) anim.SetLayerWeight(7, 1f); // Hammer
+        else if (index == 5) anim.SetLayerWeight(8, 1f); // Scythe
+    }
+
+    [PunRPC]
     void WeaponSikll1()
     {
         charCon.enabled = false;
-        GameObject.FindWithTag("Weapon").GetComponent<scWeaponBase>().Skill1();
+        if (currentWeapon != null)
+        {
+            currentWeapon.GetComponent<scWeaponBase>().Skill1();
+        }
+        else
+        {
+            Debug.LogError("현재 장착된 무기(currentWeapon)가 없어 스킬을 실행할 수 없습니다.");
+        }
         Debug.Log("스킬사용");
         charCon.enabled = true;
     }
