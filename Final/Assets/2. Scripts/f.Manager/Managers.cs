@@ -22,7 +22,7 @@ public class Managers : MonoBehaviour
         Init();
     }
 
-    static void Init()
+    static public void Init()
     {
         if (_instance == null)
         {

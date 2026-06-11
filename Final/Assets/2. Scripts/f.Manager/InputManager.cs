@@ -33,16 +33,19 @@ public class InputManager : MonoBehaviour
     #region Input callback
     public void OnMove(InputValue value)
     {
-        move = value.Get<Vector2>();
-        if (!inven.pnlInven.activeSelf) return;
-        _moveInputX.x = value.Get<Vector2>().x;
-        if (Mathf.Abs(_moveInputX.x) > 0.7f)
+        if (inven != null)
         {
-            inven.HandleInventorySelect(inven._selectedSlot);
-        }
-        else if (_moveInputX.x < 0.2f)
-        {
-            inven.movingInv = false;
+            move = value.Get<Vector2>();
+            if (!inven.pnlInven.activeSelf) return;
+            _moveInputX.x = value.Get<Vector2>().x;
+            if (Mathf.Abs(_moveInputX.x) > 0.7f)
+            {
+                inven.HandleInventorySelect(inven._selectedSlot);
+            }
+            else if (_moveInputX.x < 0.2f)
+            {
+                inven.movingInv = false;
+            }
         }
     }
 

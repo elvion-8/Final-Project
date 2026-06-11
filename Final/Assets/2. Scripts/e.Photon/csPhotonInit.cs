@@ -4,6 +4,7 @@ using UnityEngine;
 //(UI 버전에서 사용)
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using ExitGames.Client.Photon.StructWrapping;
 
 /*
     포톤 네트워크 게임 엔진
@@ -446,6 +447,8 @@ public class csPhotonInit : Photon.MonoBehaviour
 
         //룸 씬으로 전환하는 코루틴 실행 (UI 버전에서 사용)
         StartCoroutine(this.LoadStage());
+
+    
     }
 
     /*
@@ -512,6 +515,10 @@ public class csPhotonInit : Photon.MonoBehaviour
         */
 
         // 씬 로딩이 완료 될때까기 대기...
+        yield return ao;
+
+        var dummy = Managers.Instance;
+
         yield return ao;
 
         Debug.Log("로딩 완료");
