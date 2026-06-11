@@ -1,7 +1,7 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.InputSystem;
 
 public class SystemBtn : MonoBehaviour
 {
@@ -49,14 +49,6 @@ public class SystemBtn : MonoBehaviour
 
     // 현재 열린 팝업 추적
     private PopupEntry currentOpenEntry = null;
-    // ────────────────────────────────────────────
-    // InputSystem
-    // ────────────────────────────────────────────
-    private bool escapeBtn=false;
-    public void OnEscape(InputValue value)
-    {
-        if(value.isPressed) escapeBtn=true;
-    }
 
     // ────────────────────────────────────────────
     // 초기화
@@ -78,9 +70,8 @@ public class SystemBtn : MonoBehaviour
 
     void Update()
     {
-        if (closeAllOnEsc && escapeBtn)
+        if (closeAllOnEsc && Input.GetKeyDown(KeyCode.Escape))
         {
-            escapeBtn = false;
             if (currentOpenEntry != null)
             {
                 CloseAllPopups(); // 패널 닫기
