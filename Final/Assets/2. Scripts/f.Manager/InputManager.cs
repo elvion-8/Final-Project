@@ -173,6 +173,12 @@ public class InputManager : MonoBehaviour
         //selectKey = false;
         //escapeKey = false;
     }
+
+    public void ReseAwake()
+    {
+        GameObject temp2 = GameObject.Find("Inventory");
+        if (temp2 != null) inven = temp2.GetComponent<csInvenManager>();
+    }
     void Awake()
     {
         GameObject temp = GameObject.Find("Inventory");

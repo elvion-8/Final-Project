@@ -519,7 +519,8 @@ public class csPhotonInit : Photon.MonoBehaviour
 
         var dummy = Managers.Instance;
 
-        yield return ao;
+        
+
 
         Debug.Log("로딩 완료");
     }
