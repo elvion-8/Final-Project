@@ -141,7 +141,7 @@ public class InputManager : MonoBehaviour
     public void OnRun(InputValue value) { runKey = value.isPressed; }
     public void OnLockOn(InputValue value) { }
     public void OnSelect(InputValue value) { }
-    public void OnEscape(InputValue value) { }
+    public void OnEscape(InputValue value) { if(value.isPressed)escapeKey = true; }
     #endregion
 
     public void Init()
@@ -171,7 +171,7 @@ public class InputManager : MonoBehaviour
         //runKey = false;
         //lockOnKey = false;
         //selectKey = false;
-        //escapeKey = false;
+        escapeKey = false;
     }
 
     public void ReseAwake()

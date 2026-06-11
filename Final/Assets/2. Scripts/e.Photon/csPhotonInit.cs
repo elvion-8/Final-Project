@@ -517,8 +517,6 @@ public class csPhotonInit : Photon.MonoBehaviour
         // 씬 로딩이 완료 될때까기 대기...
         yield return ao;
 
-        var dummy = Managers.Instance;
-
         
 
 

@@ -60,8 +60,6 @@ public class Managers : MonoBehaviour
             if(_instance.onDataManager)_instance._data.Init();
             if(_instance.onSoundManager)_instance._sound.Init();
             if(_instance.onInputManager)_instance._input.Init();
-            Debug.Log("매니저 호출");
-            if (_instance.onInputManager) _instance._input.ReseAwake();
         }
     }
 }
