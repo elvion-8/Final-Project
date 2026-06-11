@@ -3,8 +3,12 @@ using UnityEngine;
 
 public class Managers : MonoBehaviour
 {
+    public bool onInvenManager = true;
+    public bool onSoundManager = true;
+    public bool onInputManager = true;
+    public bool onDataManager = true;
     private static Managers _instance;
-    public static Managers Instance {get{Init(); return _instance;}}
+    public static Managers Instance { get { Init(); return _instance; } }
 
     private SoundManager _sound;
     private DataManager _data;
@@ -20,34 +24,42 @@ public class Managers : MonoBehaviour
 
     static void Init()
     {
-        if(_instance == null)
+        if (_instance == null)
         {
             GameObject go = GameObject.Find("@Managers");
-            if(go==null)
+            if (go == null)
             {
-                go=new GameObject{name="@Managers"};
+                go = new GameObject { name = "@Managers" };
                 go.AddComponent<Managers>();
             }
             DontDestroyOnLoad(go);
             _instance = go.GetComponent<Managers>();
-            if(_instance._data == null)
+            if (_instance.onDataManager)
             {
-                _instance._data = new DataManager();
+                if (_instance._data == null)
+                {
+                    _instance._data = new DataManager();
+                }
             }
-
-            _instance._sound = go.GetComponent<SoundManager>();
-            if (_instance._sound == null)
+            if (_instance.onSoundManager)
             {
-                _instance._sound = go.AddComponent<SoundManager>();
+                _instance._sound = go.GetComponent<SoundManager>();
+                if (_instance._sound == null)
+                {
+                    _instance._sound = go.AddComponent<SoundManager>();
+                }
             }
-            _instance._input = go.GetComponent<InputManager>();
-            if(_instance._input == null)
+            if (_instance.onInputManager)
             {
-                _instance._input = go.AddComponent<InputManager>();
+                _instance._input = go.GetComponent<InputManager>();
+                if (_instance._input == null)
+                {
+                    _instance._input = go.AddComponent<InputManager>();
+                }
             }
-            _instance._data.Init();
-            _instance._sound.Init();
-            _instance._input.Init();
+            if(_instance.onDataManager)_instance._data.Init();
+            if(_instance.onSoundManager)_instance._sound.Init();
+            if(_instance.onInputManager)_instance._input.Init();
         }
     }
 }

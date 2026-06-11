@@ -172,7 +172,8 @@ public class InputManager : MonoBehaviour
     }
     void Awake()
     {
-        inven = GameObject.Find("Inventory").GetComponent<csInvenManager>();
+        GameObject temp = GameObject.Find("Inventory");
+        if(temp!=null)inven = temp.GetComponent<csInvenManager>();
 
     }
     // Start is called before the first frame update

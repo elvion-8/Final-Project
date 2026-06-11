@@ -49,10 +49,17 @@ public class SystemBtn : MonoBehaviour
 
     // 현재 열린 팝업 추적
     private PopupEntry currentOpenEntry = null;
-
+    // ────────────────────────────────────────────
+    // input Manager
+    // ────────────────────────────────────────────
+    InputManager input;
     // ────────────────────────────────────────────
     // 초기화
     // ────────────────────────────────────────────
+    void Awake()
+    {
+        input = Managers.Input;
+    }
     void Start()
     {
         // 모든 팝업 닫힌 상태로 초기화
@@ -70,7 +77,7 @@ public class SystemBtn : MonoBehaviour
 
     void Update()
     {
-        if (closeAllOnEsc && Input.GetKeyDown(KeyCode.Escape))
+        if (closeAllOnEsc && input.escapeKey)
         {
             if (currentOpenEntry != null)
             {
