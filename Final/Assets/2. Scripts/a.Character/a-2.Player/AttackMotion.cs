@@ -58,9 +58,9 @@ public class AttackMotion : MonoBehaviour
             {
                 if (PhotonNetwork.inRoom)
                 {
-                    pv.RPC("WeaponSikll1", PhotonTargets.All);
+                    pv.RPC("WeaponSikll1", PhotonTargets.All,pv.viewID);
                 }
-                else WeaponSikll1();
+                else WeaponSikll1(-1);
             }
         }
     }
@@ -169,12 +169,18 @@ public class AttackMotion : MonoBehaviour
     }
 
     [PunRPC]
-    void WeaponSikll1()
+    void WeaponSikll1(int senderViewID)
     {
+        if (PhotonNetwork.inRoom && senderViewID != -1)
+        {
+            if (pv.viewID != senderViewID) return;
+        }
+
         charCon.enabled = false;
+
         if (currentWeapon != null)
         {
-            currentWeapon.GetComponent<scWeaponBase>().Skill1();
+            currentWeapon.GetComponentInChildren<scWeaponBase>().Skill1();
         }
         else
         {

@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 
 public class Weapon_Spear: scWeaponBase
@@ -20,10 +21,10 @@ public class Weapon_Spear: scWeaponBase
 
     private void Awake()
     {
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerCtrl>();
-        pTr = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
+        player = transform.root.GetComponentInChildren<PlayerCtrl>();
+        pTr = player.transform;
 
-        anim = GameObject.Find("Player").GetComponentInChildren<Animator>();
+        anim = transform.root.GetComponentInChildren<Animator>();
     }
 
     public override void Skill1()

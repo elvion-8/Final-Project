@@ -8,7 +8,7 @@ public class Weapon_Sword : scWeaponBase
     public override void Skill1()
     {
         Debug.Log("스킬애니1");
-        anim = GameObject.Find("Player").GetComponentInChildren<Animator>();
+        anim = transform.root.GetComponentInChildren<Animator>();
 
         anim.SetTrigger("Skill1");
     }

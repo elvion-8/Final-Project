@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Skill : MonoBehaviour
 {
@@ -12,7 +13,7 @@ public class Skill : MonoBehaviour
 
     public void PlayRockParticle()
     {
-        playerPoint = GameObject.Find("Player").transform;
+        playerPoint = transform.root.GetComponentInChildren<PlayerCtrl>().transform;
 
         if(rockParticle != null && playerPoint != null)
         {

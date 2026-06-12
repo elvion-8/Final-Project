@@ -6,13 +6,12 @@ public class Weapon_Dagger : scWeaponBase
     PlayerCtrl player;
     private int tempJumpCnt;
     Transform pTr;
-    
-    
 
+    
     void Awake()
     {
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerCtrl>();
-        pTr = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
+        player = transform.root.GetComponentInChildren<PlayerCtrl>();
+        pTr = player.transform;
         
     }
     void Start()
