@@ -3321,6 +3321,53 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!1 &1140689617
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1140689619}
+  - component: {fileID: 1140689618}
+  m_Layer: 0
+  m_Name: weaponEffectManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1140689618
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1140689617}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e3b0e847e4c7654a861246d4bc5c908, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponVFXList:
+  - weaponID: Axe
+    vfxPrefab: {fileID: 6260243036576056154, guid: 76bb3d17b5383044583f32f9055114d0, type: 3}
+--- !u!4 &1140689619
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1140689617}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1163865038 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7304360515331946900, guid: bf1cae6505235694d8e61a7c7a596728, type: 3}
@@ -6853,6 +6900,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Managers
       objectReference: {fileID: 0}
+    - target: {fileID: 2707626499351102869, guid: 32673cfe9c9dc2b4e8b7d78819723f3d, type: 3}
+      propertyPath: onWeaponEffectManager
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4328155231692318523, guid: 32673cfe9c9dc2b4e8b7d78819723f3d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -7063,4 +7114,5 @@ SceneRoots:
   - {fileID: 1429538359}
   - {fileID: 791722890}
   - {fileID: 2121198162}
+  - {fileID: 1140689619}
   - {fileID: 1221517723108681518}

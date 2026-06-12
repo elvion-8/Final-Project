@@ -24,21 +24,21 @@ public class InputManager : MonoBehaviour
     public bool three;
     public bool four;
     private csInvenManager inven;
-    public Vector2 _moveInputX;
+    //public Vector2 _moveInputX;
     public bool onInven;
     public AttackMotion atm;
+    public Vector2 _moveInputX;
 
     //-=---------------------------
     #endregion
     #region Input callback
     public void OnMove(InputValue value)
     {
-        if (inven != null)
+        if (inven.pnlInven.activeSelf)
         {
-            move = value.Get<Vector2>();
-            if (!inven.pnlInven.activeSelf) return;
+            Debug.Log("[InputManager]Inven select move test");
             _moveInputX.x = value.Get<Vector2>().x;
-            if (Mathf.Abs(_moveInputX.x) > 0.7f)
+            if (Mathf.Abs(_moveInputX.x) > 0.6f)
             {
                 inven.HandleInventorySelect(inven._selectedSlot);
             }
@@ -47,6 +47,21 @@ public class InputManager : MonoBehaviour
                 inven.movingInv = false;
             }
         }
+        else move = value.Get<Vector2>();
+        // if (inven != null)
+        // {
+        //     move = value.Get<Vector2>();
+        //     if (!inven.pnlInven.activeSelf) return;
+        //     _moveInputX.x = value.Get<Vector2>().x;
+        //     if (Mathf.Abs(_moveInputX.x) > 0.7f)
+        //     {
+        //         inven.HandleInventorySelect(inven._selectedSlot);
+        //     }
+        //     else if (_moveInputX.x < 0.2f)
+        //     {
+        //         inven.movingInv = false;
+        //     }
+        // }
     }
 
     public void OnJump(InputValue value)
@@ -61,7 +76,8 @@ public class InputManager : MonoBehaviour
     }
     public void OnRolling(InputValue value)
     {
-        if (value.isPressed) rollingKey = true;
+        if (value.isPressed&&!inven.pnlInven.activeSelf) rollingKey = true;
+        if (value.isPressed&&inven.pnlInven.activeSelf){inven.CloseInventory();}
     }
     public void OnWeaponChange(InputValue value)
     {
@@ -141,7 +157,7 @@ public class InputManager : MonoBehaviour
     public void OnRun(InputValue value) { runKey = value.isPressed; }
     public void OnLockOn(InputValue value) { }
     public void OnSelect(InputValue value) { }
-    public void OnEscape(InputValue value) { if(value.isPressed)escapeKey = true; }
+    public void OnEscape(InputValue value) { if (value.isPressed) escapeKey = true; }
     #endregion
 
     public void Init()
@@ -184,7 +200,7 @@ public class InputManager : MonoBehaviour
     void Awake()
     {
         GameObject temp = GameObject.Find("Inventory");
-        if(temp!=null)inven = temp.GetComponent<csInvenManager>();
+        if (temp != null) inven = temp.GetComponent<csInvenManager>();
 
     }
     // Start is called before the first frame update

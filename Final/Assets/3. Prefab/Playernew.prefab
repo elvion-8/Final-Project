@@ -129,6 +129,7 @@ MonoBehaviour:
     weaponCritProbUpgradeCnt: 0
     weaponCritDmgUpgradeCnt: 0
     weaponAttackSpeed: 0
+  isMultiPlayer: 0
 --- !u!114 &5505050113769101738
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -414,13 +415,37 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8285514357520237591, guid: 5dc7f807f808b0f448accc980b1a9fdf, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5118152902448183569}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5dc7f807f808b0f448accc980b1a9fdf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3020926859483229841}
   m_SourcePrefab: {fileID: 100100000, guid: 5dc7f807f808b0f448accc980b1a9fdf, type: 3}
 --- !u!4 &3732099660719114264 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 5dc7f807f808b0f448accc980b1a9fdf, type: 3}
   m_PrefabInstance: {fileID: 3765481680412454899}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &4071470060088365730 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 5dc7f807f808b0f448accc980b1a9fdf, type: 3}
+  m_PrefabInstance: {fileID: 3765481680412454899}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3020926859483229841
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4071470060088365730}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b2766e216626bf4f81cdb1504efa6a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  vfxPrefab: {fileID: 0}
+  targetTransform: {fileID: 0}
+  positionOffset: {x: 0, y: 0, z: 0}
+  rotationOffset: {x: 0, y: 0, z: 0}
 --- !u!4 &5097409348370246628 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8285514357520237591, guid: 5dc7f807f808b0f448accc980b1a9fdf, type: 3}

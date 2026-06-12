@@ -1088,6 +1088,7 @@ GameObject:
   - component: {fileID: 7289982040298558050}
   - component: {fileID: 2750776541547440957}
   - component: {fileID: 7251807429124964429}
+  - component: {fileID: 1568352493998772527}
   m_Layer: 0
   m_Name: PlayerSource2
   m_TagString: Untagged
@@ -1160,6 +1161,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rockParticle: {fileID: 8632185362001501516, guid: 0b151bec2223fa74fb5765f2a26a1c6c, type: 3}
   playerPoint: {fileID: 0}
+--- !u!114 &1568352493998772527
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4071470060088365730}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b2766e216626bf4f81cdb1504efa6a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  selectedWeaponID: test
+  targetTransform: {fileID: 5118152902448183569}
+  positionOffset: {x: 0, y: 1, z: 0}
+  rotationOffset: {x: 0, y: 0, z: 0}
 --- !u!1 &4097337451633891910
 GameObject:
   m_ObjectHideFlags: 0

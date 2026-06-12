@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 //using UnityEngine.InputSystem;
 
@@ -7,15 +8,18 @@ public class Managers : MonoBehaviour
     public bool onSoundManager = true;
     public bool onInputManager = true;
     public bool onDataManager = true;
+    public bool onWeaponEffectManager = true;
     private static Managers _instance;
     public static Managers Instance { get { Init(); return _instance; } }
 
     private SoundManager _sound;
     private DataManager _data;
     private InputManager _input;
+    private WeaponEffectManager _weaponEffect;
     public static SoundManager Sound => Instance._sound;
     public static DataManager Data => Instance._data;
     public static InputManager Input => Instance._input;
+    public static WeaponEffectManager weaponEffect => Instance._weaponEffect;
 
     void Awake()
     {
@@ -57,9 +61,20 @@ public class Managers : MonoBehaviour
                     _instance._input = go.AddComponent<InputManager>();
                 }
             }
+            if(_instance.onWeaponEffectManager)
+            {
+                _instance._weaponEffect = go.GetComponent<WeaponEffectManager>();
+                {
+                    if(_instance._weaponEffect == null)
+                    {
+                        _instance._weaponEffect = go.AddComponent<WeaponEffectManager>();
+                    }
+                }
+            }
             if(_instance.onDataManager)_instance._data.Init();
             if(_instance.onSoundManager)_instance._sound.Init();
             if(_instance.onInputManager)_instance._input.Init();
+            //if(_instance.onWeaponEffectManager)_instance._weaponEffect.Init();
         }
     }
 }

@@ -6265,6 +6265,7 @@ GameObject:
   - component: {fileID: 1978859971}
   - component: {fileID: 1978859970}
   - component: {fileID: 1978859972}
+  - component: {fileID: 1978859973}
   m_Layer: 0
   m_Name: StageManager
   m_TagString: Untagged
@@ -6286,6 +6287,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   txtConnect: {fileID: 618779461}
   txtLogMsg: {fileID: 618779460}
+  chatInputField: {fileID: 0}
 --- !u!4 &1978859971
 Transform:
   m_ObjectHideFlags: 0
@@ -6328,6 +6330,18 @@ MonoBehaviour:
   instantiationId: 1
   currentMasterID: -1
   isRuntimeInstantiated: 0
+--- !u!114 &1978859973
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1978859969}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b16d573f1e11d6e489fa0db60433caa0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1999637350
 GameObject:
   m_ObjectHideFlags: 0

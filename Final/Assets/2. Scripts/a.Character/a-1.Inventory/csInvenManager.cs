@@ -29,7 +29,7 @@ public class csInvenManager : MonoBehaviour
     //================input system==============================
     private int _currentSelect = 0;         //선택된 슬롯 번호
     private bool _selectInv;            //엔터, 컨트롤러 a
-    private Vector2 _moveInputX;        //인벤토리 좌 우 이동
+    //public Vector2 _moveInputX;        //인벤토리 좌 우 이동
     public bool movingInv = false;
     //==========================================================
 
@@ -80,28 +80,32 @@ public class csInvenManager : MonoBehaviour
     //         }
     //     }
     // }
-    public void OnMove(InputValue value)
-    {
-        if (!pnlInven.activeSelf) return;
-        _moveInputX.x = value.Get<Vector2>().x;
-        if (Mathf.Abs(_moveInputX.x) > 0.7f)
-        {
-            HandleInventorySelect(_selectedSlot);
-        }
-        else if (_moveInputX.x < 0.2f)
-        {
-            movingInv = false;
-        }
-    }
-    public void OnSelect(InputValue value)
-    {
-        if (!pnlInven.activeSelf) return;
-        if (value.isPressed) { _selectInv = true; }
-    }
-    public void OnRolling(InputValue value)
-    {
-        if(value.isPressed) CloseInventory();
-    }
+    // public void OnMove(InputValue value)
+    // {
+    //     _moveInputX = input._moveInputX;
+    // }
+    // public void OnMove(InputValue value)
+    // {
+    //     if (!pnlInven.activeSelf) return;
+    //     _moveInputX.x = value.Get<Vector2>().x;
+    //     if (Mathf.Abs(_moveInputX.x) > 0.7f)
+    //     {
+    //         HandleInventorySelect(_selectedSlot);
+    //     }
+    //     else if (_moveInputX.x < 0.2f)
+    //     {
+    //         movingInv = false;
+    //     }
+    // }
+    // public void OnSelect(InputValue value)
+    // {
+    //     if (!pnlInven.activeSelf) return;
+    //     if (value.isPressed) { _selectInv = true; }
+    // }
+    // public void OnRolling(InputValue value)
+    // {
+    //     if(value.isPressed) CloseInventory();
+    // }
     // public void OnEscape(InputValue value)
     // {
     //     if(value.isPressed) CloseInventory();
@@ -202,13 +206,13 @@ public class csInvenManager : MonoBehaviour
             {
                 _selectedSlot.SetSelected(false);
             }
-            if (Mathf.Abs(_moveInputX.x) > 0.5f)
+            if (Mathf.Abs(input._moveInputX.x) > 0.5f)
             {
-                if (_moveInputX.x > 0.5f)        //right
+                if (input._moveInputX.x > 0.5f)        //right
                 {
                     _currentSelect = (_currentSelect + 1) % _inventorySlots.Count;
                 }
-                else if (_moveInputX.x < 0.5f)   //left
+                else if (input._moveInputX.x < 0.5f)   //left
                 {
                     _currentSelect = (_currentSelect - 1 + _inventorySlots.Count) % _inventorySlots.Count;
                 }
@@ -219,7 +223,7 @@ public class csInvenManager : MonoBehaviour
                 }
                 movingInv = true;
             }
-            else if (Mathf.Abs(_moveInputX.x) < 0.2f)
+            else if (Mathf.Abs(input._moveInputX.x) < 0.2f)
             {
                 movingInv = false;
             }
