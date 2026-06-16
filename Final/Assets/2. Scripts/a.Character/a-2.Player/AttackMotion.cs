@@ -107,6 +107,7 @@ public class AttackMotion : MonoBehaviour
 
     IEnumerator TrailWeapon()
     {
+        
         //isTrailing = true;
         if (GameObject.FindWithTag("Weapon") != null)
         {

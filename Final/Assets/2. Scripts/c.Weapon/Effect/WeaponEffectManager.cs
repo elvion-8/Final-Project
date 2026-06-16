@@ -39,4 +39,5 @@ public class WeaponEffectManager : MonoBehaviour
         }
         return ids;
     }
+
 }

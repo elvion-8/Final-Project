@@ -55,7 +55,7 @@ public abstract class scWeaponBase : MonoBehaviour, IWeaponStats
                     // 아직 무적 시간 중이라면 데미지 무시
                     return;
                 }
-                other.GetComponent<EnemyCtrl>().TakeDamage(Damage());
+                other.GetComponentInParent<EnemyCtrl>().TakeDamage(Damage());
 
                 //내구도 감소
                 Durability -= 10;
