@@ -9,13 +9,13 @@ public class csButtonManager : MonoBehaviour
     public GameObject pnlOption;
     public void NewGame()
     {
-        SceneManager.LoadScene("scstartpoint");
+        Managers.loadingManager.LoadScene("scstartpoint",LoadingType.MenuToGame);
     }
 
     public void LoadGame()
     {
         Managers.Data.LoadGame();
-        SceneManager.LoadScene("scstartpoint");
+        Managers.loadingManager.LoadScene("scstartpoint",LoadingType.MenuToGame);
     }
 
     public void Option()

@@ -507,7 +507,8 @@ public class csPhotonInit : Photon.MonoBehaviour
         PhotonNetwork.isMessageQueueRunning = false;
 
         //백그라운드로 씬 로딩
-        AsyncOperation ao = SceneManager.LoadSceneAsync("AllTest");
+        //AsyncOperation ao = SceneManager.LoadSceneAsync("AllTest");
+        Managers.loadingManager.LoadScene("AllTest",LoadingType.GameToGame);
 
         /*
             참고) PhotonNetwork.LoadLevelAsync =>  PhotonNetwork.isMessageQueueRunning = false 로 
@@ -515,7 +516,7 @@ public class csPhotonInit : Photon.MonoBehaviour
         */
 
         // 씬 로딩이 완료 될때까기 대기...
-        yield return ao;
+        yield return null;
 
         
 

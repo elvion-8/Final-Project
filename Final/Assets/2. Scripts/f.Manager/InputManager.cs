@@ -34,6 +34,7 @@ public class InputManager : MonoBehaviour
     #region Input callback
     public void OnMove(InputValue value)
     {
+        if(inven==null) return;
         if (inven.pnlInven.activeSelf)
         {
             Debug.Log("[InputManager]Inven select move test");
