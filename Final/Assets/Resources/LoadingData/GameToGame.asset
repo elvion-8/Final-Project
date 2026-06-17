@@ -13,8 +13,15 @@ MonoBehaviour:
   m_Name: GameToGame
   m_EditorClassIdentifier: 
   loadingImg:
-  - {fileID: 21300000, guid: 31954ead3ffa9634dba905a0e74d925a, type: 3}
-  - {fileID: 21300000, guid: e1dec728c3f595543a8785724b196cd2, type: 3}
+  - {fileID: 21300000, guid: 7328b8dcf5be4024091f908906cd446a, type: 3}
+  - {fileID: 21300000, guid: 44da269816f9952449ec9630486e8cb0, type: 3}
+  - {fileID: 21300000, guid: 39286a6e48223ef49a8f1975055019d9, type: 3}
+  - {fileID: 21300000, guid: 78512c4a353ee5e459c8f9c6414f85ca, type: 3}
+  - {fileID: 21300000, guid: 29c7e22d0f511c546bd39736897f8548, type: 3}
+  - {fileID: 21300000, guid: 021c79bcc47b84d4a909453d6867c8a1, type: 3}
+  - {fileID: 21300000, guid: 143575f930ff6d040b4e7ec8d7a5d169, type: 3}
+  - {fileID: 21300000, guid: 73e416f99cdc1944a9d0b4d1442f6515, type: 3}
+  - {fileID: 21300000, guid: 52f0fdbbedcac624f8b26260ec40a171, type: 3}
   loadingType: 1
   loadingTip:
   - gametogame test1
