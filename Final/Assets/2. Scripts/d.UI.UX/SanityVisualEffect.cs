@@ -9,7 +9,7 @@ using UnityEngine.UI;
 public class SanityVisualEffect : MonoBehaviour
 {
     [Header("UI References")]
-    public Image portraitImage;       // 효과를 입힐 초상화 UI Image
+    public MeshRenderer portraitRenderer;       // 효과를 입힐 초상화
     public Material sanityMaterial;    // SanityUI_Shader로 만든 "원본" 머티리얼 에셋
 
     [Header("Shader Properties (최대치 설정)")]
@@ -18,6 +18,10 @@ public class SanityVisualEffect : MonoBehaviour
     [Tooltip("흔들림 강도 (0.05~0.1)")] public float shakeAmp = 0.05f;
     [Tooltip("지직거림 선명도")] public float fizzIntensity = 1f;
     [Tooltip("지직거림 노이즈 크기")] public float fizzCrackleScale = 20f;
+
+    [Header("디버그용 (정신력 붙이면 나중에 끄기)")]
+    [Range(0f, 1f)] public float debugSanity = 1f;
+    public bool useDebugSanity = true;
 
     // 원본 머티리얼(sanityMaterial)을 직접 수정하면 프로젝트의 에셋 파일까지 바뀌고,
     // 같은 머티리얼을 쓰는 다른 오브젝트에도 영향이 간다.
@@ -49,14 +53,18 @@ public class SanityVisualEffect : MonoBehaviour
         {
             instancedMaterial = new Material(sanityMaterial);
 
-            // 복제한 머티리얼을 Image에 연결한다.
-            // 이 시점부터 이 Image는 SanityUI_Shader의 효과로 렌더링된다.
-            if (portraitImage != null)
-                portraitImage.material = instancedMaterial;
+            if (portraitRenderer != null)
+            portraitRenderer.material = instancedMaterial;
 
             // 3) 인스펙터에서 설정한 기본 효과 강도 값들을 셰이더로 한 번 전달한다.
             ApplyBaseShaderProperties();
         }
+    }
+
+    void Update()
+    {
+        if (useDebugSanity && instancedMaterial != null)
+            instancedMaterial.SetFloat(sanityID, debugSanity);
     }
 
     /// <summary>
