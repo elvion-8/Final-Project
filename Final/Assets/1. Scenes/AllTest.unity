@@ -3225,7 +3225,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 3064608185382679046, guid: e29ee4204c13b864d9d035d9411d02e6, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -4522,6 +4523,59 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 4.74, z: 53.6}
   m_LocalScale: {x: 6.3652, y: 6.3652, z: 6.3652}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1441941019
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1441941021}
+  - component: {fileID: 1441941020}
+  m_Layer: 0
+  m_Name: WeaponEffactManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1441941020
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1441941019}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e3b0e847e4c7654a861246d4bc5c908, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponVFXList:
+  - weaponID: Axe
+    vfxPrefab: {fileID: 274761310258684839, guid: 8f2bec3f27b76c14182b7a5414797940, type: 3}
+  - weaponID: Dagger
+    vfxPrefab: {fileID: 6260243036576056154, guid: 76bb3d17b5383044583f32f9055114d0, type: 3}
+  - weaponID: Spaer
+    vfxPrefab: {fileID: 3651685925575709812, guid: 5b1d9a3d4638c8c4e97531085317de66, type: 3}
+  - weaponID: Sword
+    vfxPrefab: {fileID: 5061498029215849979, guid: f4de5688d453a1d44be3c607c4f5a230, type: 3}
+--- !u!4 &1441941021
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1441941019}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.5807457, y: 4.7639112, z: 13.038008}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -7269,3 +7323,4 @@ SceneRoots:
   - {fileID: 2121198162}
   - {fileID: 1221517723108681518}
   - {fileID: 1021848939}
+  - {fileID: 1441941021}
