@@ -1173,7 +1173,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b2766e216626bf4f81cdb1504efa6a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  selectedWeaponID: sw
+  selectedWeaponID: d
   targetTransform: {fileID: 5118152902448183569}
   positionOffset: {x: 1, y: 1, z: 1}
   rotationOffset: {x: 0, y: 0, z: 0}

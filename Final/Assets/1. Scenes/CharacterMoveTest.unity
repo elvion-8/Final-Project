@@ -492,11 +492,23 @@ PrefabInstance:
       value: '@Managers'
       objectReference: {fileID: 0}
     - target: {fileID: 3064608185382679046, guid: e29ee4204c13b864d9d035d9411d02e6, type: 3}
+      propertyPath: weaponVFXList.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3064608185382679046, guid: e29ee4204c13b864d9d035d9411d02e6, type: 3}
+      propertyPath: weaponVFXList.Array.data[4].weaponID
+      value: s
+      objectReference: {fileID: 0}
+    - target: {fileID: 3064608185382679046, guid: e29ee4204c13b864d9d035d9411d02e6, type: 3}
       propertyPath: weaponVFXList.Array.data[0].vfxPrefab
       value: 
       objectReference: {fileID: 274761310258684839, guid: 8f2bec3f27b76c14182b7a5414797940, type: 3}
     - target: {fileID: 3064608185382679046, guid: e29ee4204c13b864d9d035d9411d02e6, type: 3}
       propertyPath: weaponVFXList.Array.data[3].vfxPrefab
+      value: 
+      objectReference: {fileID: 3651685925575709812, guid: 5b1d9a3d4638c8c4e97531085317de66, type: 3}
+    - target: {fileID: 3064608185382679046, guid: e29ee4204c13b864d9d035d9411d02e6, type: 3}
+      propertyPath: weaponVFXList.Array.data[4].vfxPrefab
       value: 
       objectReference: {fileID: 3651685925575709812, guid: 5b1d9a3d4638c8c4e97531085317de66, type: 3}
     - target: {fileID: 6444314905732286132, guid: e29ee4204c13b864d9d035d9411d02e6, type: 3}

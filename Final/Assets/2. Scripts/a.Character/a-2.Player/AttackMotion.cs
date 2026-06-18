@@ -15,6 +15,7 @@ public class AttackMotion : MonoBehaviour
     CharacterController charCon;
     AttackSound sound;
 
+    private VFXEventModifier vfxModifier;
     // Photon view //////////
     PhotonView pv;
 
@@ -26,6 +27,7 @@ public class AttackMotion : MonoBehaviour
         charCon = GetComponent<CharacterController>();
         pv = GetComponent<PhotonView>();
         sound = GetComponentInChildren<AttackSound>();
+        vfxModifier = GetComponentInChildren<VFXEventModifier>();
 
         if (weaponPoint == null)
         {
@@ -132,7 +134,7 @@ public class AttackMotion : MonoBehaviour
 
         //if (hotbarItem == null || hotbarItem.itemType != ItemType.Weapon || hotbarItem.itemPrefab == null) return;
 
-        
+        vfxModifier.ChangeWeaponByIndex(index);
 
         // 기존 무기 제거
         if (currentWeapon != null)
@@ -189,5 +191,19 @@ public class AttackMotion : MonoBehaviour
         }
         Debug.Log("스킬사용");
         charCon.enabled = true;
+    }
+
+    public int WeaponNume()
+    {
+        string name = GameObject.FindWithTag("Weapon").name;
+        for (int i = 0; i < weaponPrefabs.Length; i++)
+        {
+            if(weaponPrefabs[i].name == name)
+            {
+                return i;
+            }
+            
+        }
+        return -1;
     }
 }
