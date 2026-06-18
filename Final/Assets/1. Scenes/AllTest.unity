@@ -3169,6 +3169,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: '@Managers'
       objectReference: {fileID: 0}
+    - target: {fileID: 3064608185382679046, guid: e29ee4204c13b864d9d035d9411d02e6, type: 3}
+      propertyPath: weaponVFXList.Array.data[2].weaponID
+      value: s
+      objectReference: {fileID: 0}
+    - target: {fileID: 3064608185382679046, guid: e29ee4204c13b864d9d035d9411d02e6, type: 3}
+      propertyPath: weaponVFXList.Array.data[3].weaponID
+      value: sw
+      objectReference: {fileID: 0}
+    - target: {fileID: 3064608185382679046, guid: e29ee4204c13b864d9d035d9411d02e6, type: 3}
+      propertyPath: weaponVFXList.Array.data[2].vfxPrefab
+      value: 
+      objectReference: {fileID: 3651685925575709812, guid: 5b1d9a3d4638c8c4e97531085317de66, type: 3}
+    - target: {fileID: 3064608185382679046, guid: e29ee4204c13b864d9d035d9411d02e6, type: 3}
+      propertyPath: weaponVFXList.Array.data[3].vfxPrefab
+      value: 
+      objectReference: {fileID: 5061498029215849979, guid: f4de5688d453a1d44be3c607c4f5a230, type: 3}
     - target: {fileID: 6444314905732286132, guid: e29ee4204c13b864d9d035d9411d02e6, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

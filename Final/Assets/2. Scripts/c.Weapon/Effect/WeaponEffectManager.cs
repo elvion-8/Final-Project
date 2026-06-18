@@ -27,6 +27,16 @@ public class WeaponEffectManager : MonoBehaviour
         return null;
     }
 
+    public GameObject GetVFXPrefabByIndex(int index)
+    {
+        if (index < 0 || index >= weaponVFXList.Count)
+        {
+            Debug.LogWarning($"[WeaponEffectManager] 인덱스 {index}가 범위를 벗어났습니다.");
+            return null;
+        }
+        return weaponVFXList[index].vfxPrefab;
+    }
+
     // 에디터 스크립트용 ID 배열 반환 함수
     public string[] GetWeaponIDList()
     {

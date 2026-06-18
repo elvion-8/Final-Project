@@ -82,7 +82,7 @@ public class VFXEventModifierEditor : Editor
     {
         EditorGUI.BeginChangeCheck();
         DrawDefaultInspector();
-        bool offsetChanged = EditorGUI.EndChangeCheck();
+        bool offsetChanged = EditorGUI.EndChangeCheck(); 
 
         if (effectManager == null)
         {
@@ -126,12 +126,14 @@ public class VFXEventModifierEditor : Editor
         EditorGUILayout.LabelField("★ VFX 애니메이션 이벤트 매니저 (데이터 복원 지원)", EditorStyles.boldLabel);
         EditorGUILayout.BeginVertical("box");
 
+        int weaponNum = GameObject.FindWithTag("Player").GetComponent<AttackMotion>().WeaponNume();
+
         // 무기 목록 선택
         EditorGUI.BeginChangeCheck();
         selectedWeaponIndex = EditorGUILayout.Popup("적용할 무기 VFX ID", selectedWeaponIndex, weaponIDs);
         if (EditorGUI.EndChangeCheck() || string.IsNullOrEmpty(targetScript.selectedWeaponID))
         {
-            targetScript.selectedWeaponID = weaponIDs[selectedWeaponIndex];
+            targetScript.selectedWeaponID = weaponIDs[weaponNum];
             EditorUtility.SetDirty(targetScript);
             if (isPreviewing) RecreatePreviewInstance();
         }
