@@ -9,8 +9,10 @@ public class GameOver : MonoBehaviour
     public GameObject gameOverPnl;
     public Image gameOverImg;
     public float alpha = 0f;
-    public GameObject reStartBtn;
-    public GameObject menuBtn;
+    public GameObject reStartGO;
+    public GameObject menuGO;
+    private Button reStartBtn;
+    private Button menuBtn;
 
     void Awake()
     {
@@ -42,24 +44,16 @@ public class GameOver : MonoBehaviour
         // 알파가 1이 될 때까지 반복
         while (alpha < 1f)
         {
-            // 중요: 값을 더해줍니다(+=). 
-            // 0.1f를 곱하면 대략 10초 동안 서서히 밝아집니다. (속도를 높이려면 숫자를 키우세요. 예: * 2.0f)
             alpha += Time.deltaTime * 1.0f;
 
-            // 1.0f을 넘지 않도록 방지
             if (alpha > 1f) alpha = 1f;
 
-            // 알파값 적용
             currentColor.a = alpha;
             gameOverImg.color = currentColor;
-
-            // 핵심: 한 프레임을 쉬어갑니다. 화면이 갱신되면서 애니메이션이 연출됩니다.
             yield return null;
         }
-
-        // 페이드 인이 완전히 끝난 후 버튼들을 활성화
-        reStartBtn.SetActive(true);
-        menuBtn.SetActive(true);
+        reStartGO.SetActive(true);
+        menuGO.SetActive(true);
     }
     public void OnGameOver()
     {
@@ -71,22 +65,28 @@ public class GameOver : MonoBehaviour
     }
     public void ReStart()
     {
-        Managers.loadingManager.LoadScene(("ScStartPoint"), LoadingType.GameToGame);
+        Managers.loadingManager.LoadScene("ScStartPoint", LoadingType.GameToGame);
     }
     public void Menu()
     {
-        Managers.loadingManager.LoadScene(("ScOpen"), LoadingType.MenuToGame);
+        Managers.loadingManager.LoadScene("ScOpen", LoadingType.MenuToGame);
     }
     public void Init()
     {
         GameObject playerOb = GameObject.FindGameObjectWithTag("Player");
         if (playerOb != null) player = playerOb.GetComponent<PlayerCtrl>();
-        gameOverPnl = GameObject.FindGameObjectWithTag("GameOver").transform.Find("GameOverPnl").gameObject;
+        GameObject gameOverOb = GameObject.FindGameObjectWithTag("GameOver");
+        if (gameOverOb != null) gameOverPnl = gameOverOb.transform.Find("GameOverPnl").gameObject;
         if (gameOverPnl != null)
         {
             gameOverImg = gameOverPnl.GetComponent<Image>();
+            reStartGO = GameObject.FindGameObjectWithTag("GameOver").transform.Find("ReStartBtn").gameObject;
+            menuGO = GameObject.FindGameObjectWithTag("GameOver").transform.Find("MenuBtn").gameObject;
+            reStartBtn = reStartGO.GetComponent<Button>();
+            menuBtn = menuGO.GetComponent<Button>();
         }
-        reStartBtn = GameObject.FindGameObjectWithTag("GameOver").transform.Find("ReStartBtn").gameObject;
-        menuBtn = GameObject.FindGameObjectWithTag("GameOver").transform.Find("MenuBtn").gameObject;
+
+        if (reStartBtn != null) reStartBtn.onClick.AddListener(ReStart);
+        if (menuBtn != null) menuBtn.onClick.AddListener(Menu);
     }
 }
