@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine.UI;
 using UnityEngine;
+using Unity.VisualScripting;
 
 public class PlayerCtrl : MonoBehaviour, ITakeDamage
 {
@@ -269,6 +270,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
 
     void Attack()
     {
+        if(isAttacking)return;
         if (input.attackKey)
         {
 
@@ -588,6 +590,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         charCon.enabled = false;
         anim.SetTrigger("Die");
         anim.SetLayerWeight(animDie, 1f);
+        Managers.gameOver.OnGameOver();
         Debug.Log("you die");
 
     }

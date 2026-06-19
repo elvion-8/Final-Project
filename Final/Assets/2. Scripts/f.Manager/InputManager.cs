@@ -191,12 +191,13 @@ public class InputManager : MonoBehaviour
         escapeKey = false;
     }
 
-    public void ReseAwake()
+    public void ResetAwake()
     {
         GameObject temp2 = GameObject.Find("Inventory");
         if (temp2 != null) inven = temp2.GetComponent<csInvenManager>();
         atm = GameObject.FindGameObjectWithTag("Player").GetComponent<AttackMotion>();
         pv = GameObject.FindGameObjectWithTag("Player").GetComponent<PhotonView>();
+        //Managers.Input.Init();
     }
     void Awake()
     {

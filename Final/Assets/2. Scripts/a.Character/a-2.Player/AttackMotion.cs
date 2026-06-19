@@ -127,6 +127,7 @@ public class AttackMotion : MonoBehaviour
     [PunRPC]
     public void EquipWeapon(int index)
     {
+        if(player.isAttacking) return;
         if (index < 0 || index > weaponPrefabs.Length) return;
         //if (csInvenManager.Instance == null) return;
 

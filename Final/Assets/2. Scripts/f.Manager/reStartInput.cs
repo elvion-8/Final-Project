@@ -10,7 +10,8 @@ public class reStartInput : MonoBehaviour
     }
     void Start()
     {
-        input.ReseAwake();
+        input.ResetAwake();
+        Managers.Instance.ReStartInit();
     }
 
     // Update is called once per frame

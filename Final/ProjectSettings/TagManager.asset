@@ -13,6 +13,7 @@ TagManager:
   - ROOM_ITEM
   - PlayerSpawnPoint
   - EnemyHpBar
+  - GameOver
   layers:
   - Default
   - TransparentFX

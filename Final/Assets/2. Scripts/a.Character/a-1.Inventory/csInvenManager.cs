@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 
 public class csInvenManager : MonoBehaviour
 {
+    private PlayerCtrl player;
     public static csInvenManager Instance;
     InputManager input;
 
@@ -111,6 +112,8 @@ public class csInvenManager : MonoBehaviour
     //     if(value.isPressed) CloseInventory();
     // }
     //===========================================================
+
+
     void ResetTriggers()
     {
         input.onInven = false;
@@ -133,6 +136,7 @@ public class csInvenManager : MonoBehaviour
         }
         BuildSlots();
         input = Managers.Input;
+        //player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerCtrl>();
     }
 
     void Update()
@@ -154,6 +158,7 @@ public class csInvenManager : MonoBehaviour
         }
         else
         {
+            //if(player.isAttacking) return;
             if (input.one) { input.one = false; SelectActiveHotbar(0); }
             else if (input.two) { input.two = false; SelectActiveHotbar(1); }
             else if (input.three) { input.three = false; SelectActiveHotbar(2); }

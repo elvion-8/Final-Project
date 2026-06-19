@@ -1,6 +1,4 @@
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class Managers : MonoBehaviour
 {
@@ -17,11 +15,13 @@ public class Managers : MonoBehaviour
     private InputManager _input;
     private WeaponEffectManager _weaponEffect;
     private LoadingManager _loading;
+    private GameOver _gameOver;
     public static SoundManager Sound => Instance._sound;
     public static DataManager Data => Instance._data;
     public static InputManager Input => Instance._input;
     public static WeaponEffectManager weaponEffect => Instance._weaponEffect;
     public static LoadingManager loadingManager => Instance._loading;
+    public static GameOver gameOver => Instance._gameOver;
 
     void Awake()
     {
@@ -63,27 +63,38 @@ public class Managers : MonoBehaviour
                     _instance._input = go.AddComponent<InputManager>();
                 }
             }
-            if(_instance.onWeaponEffectManager)
+            if (_instance.onWeaponEffectManager)
             {
                 _instance._weaponEffect = go.GetComponent<WeaponEffectManager>();
                 {
-                    if(_instance._weaponEffect == null)
+                    if (_instance._weaponEffect == null)
                     {
                         _instance._weaponEffect = go.AddComponent<WeaponEffectManager>();
                     }
                 }
             }
             _instance._loading = go.GetComponent<LoadingManager>();
-            if(_instance._loading==null)
+            if (_instance._loading == null)
             {
                 _instance._loading = go.AddComponent<LoadingManager>();
             }
-            
-            if(_instance.onDataManager)_instance._data.Init();
-            if(_instance.onSoundManager)_instance._sound.Init();
-            if(_instance.onInputManager)_instance._input.Init();
+            _instance._gameOver = go.GetComponent<GameOver>();
+            if (_instance._gameOver == null)
+            {
+                _instance._gameOver = go.AddComponent<GameOver>();
+            }
+
+            if (_instance.onDataManager) _instance._data.Init();
+            if (_instance.onSoundManager) _instance._sound.Init();
+            if (_instance.onInputManager) _instance._input.Init();
             //if(_instance.onWeaponEffectManager)_instance._weaponEffect.Init();
             _instance._loading.Init();
+            _instance._gameOver.Init();
         }
+    }
+    public void ReStartInit()
+    {
+        if (_instance.onInputManager) _instance._input.Init();
+        _instance._gameOver.Init();
     }
 }
