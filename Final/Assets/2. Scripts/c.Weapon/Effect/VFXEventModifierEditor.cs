@@ -107,13 +107,18 @@ public class VFXEventModifierEditor : Editor
             return;
         }
 
-        selectedWeaponIndex = Mathf.Max(0, System.Array.IndexOf(weaponIDs, targetScript.selectedWeaponID));
+        //현재 타겟 스크립트의 ID를 기반으로 안전하게 인덱스 매칭
+        int currentIndex = System.Array.IndexOf(weaponIDs, targetScript.selectedWeaponID);
+        selectedWeaponIndex = Mathf.Max(currentIndex, 0, weaponIDs.Length - 1);
 
         if (clips == null || clips.Length == 0)
         {
             LoadAnimationClips();
             if (clips == null || clips.Length == 0) return;
         }
+
+        // 혹시 몰라 clips 인덱스도 범위를 검사합니다.
+        if (selectedClipIndex < 0 || selectedClipIndex >= clips.Length) selectedClipIndex = 0;
 
         // 최초 1회 로드 시 현재 지정된 클립의 이벤트를 파싱
         if (isFirstLoad && clips.Length > 0)
@@ -128,19 +133,34 @@ public class VFXEventModifierEditor : Editor
 
         int weaponNum = GameObject.FindWithTag("Player").GetComponent<AttackMotion>().WeaponNume();
 
+        // Player 무기 번호가 전체 VFX 리스트 범위를 벗어나지 않도록 제한
+        weaponNum = Mathf.Clamp(weaponNum, 0, weaponIDs.Length - 1);
+
         // 무기 목록 선택
         EditorGUI.BeginChangeCheck();
-        selectedWeaponIndex = EditorGUILayout.Popup("적용할 무기 VFX ID", selectedWeaponIndex, weaponIDs);
+        int nextWeaponIndex = EditorGUILayout.Popup("적용할 무기 VFX ID", selectedWeaponIndex, weaponIDs);
+
+        // 팝업 값이 바뀌었거나, 타겟 스크립트의 ID가 비어있을 때 처리
         if (EditorGUI.EndChangeCheck() || string.IsNullOrEmpty(targetScript.selectedWeaponID))
         {
-            targetScript.selectedWeaponID = weaponIDs[weaponNum];
+            // 사용자가 직접 선택했다면 선택한 인덱스를 쓰고, 비어있어서 초기화하는 거라면 weaponNum을 씁니다.
+            int finalIndex = (nextWeaponIndex != selectedWeaponIndex) ? nextWeaponIndex : weaponNum;
+
+            selectedWeaponIndex = finalIndex;
+            targetScript.selectedWeaponID = weaponIDs[finalIndex];
+            targetScript.selectedWeaponIndex = finalIndex; // 인덱스 제어용 변수도 함께 동기화
+
             EditorUtility.SetDirty(targetScript);
             if (isPreviewing) RecreatePreviewInstance();
         }
 
+        
         // [개선] 애니메이션 클립 선택 변경 감지
         EditorGUI.BeginChangeCheck();
         selectedClipIndex = EditorGUILayout.Popup("애니메이션 클립 선택", selectedClipIndex, clipNames);
+        
+        // 안전한 클립 참조를 위해 인덱스 재고정
+        selectedClipIndex = Mathf.Clamp(selectedClipIndex, 0, clips.Length - 1);
         AnimationClip selectedClip = clips[selectedClipIndex];
         
         if (EditorGUI.EndChangeCheck())

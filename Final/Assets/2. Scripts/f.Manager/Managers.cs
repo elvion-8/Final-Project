@@ -65,11 +65,11 @@ public class Managers : MonoBehaviour
             }
             if (_instance.onWeaponEffectManager)
             {
-                _instance._weaponEffect = go.GetComponent<WeaponEffectManager>();
+                _instance._weaponEffect = GameObject.Find("WeaponEffactManager").GetComponent<WeaponEffectManager>();
                 {
                     if (_instance._weaponEffect == null)
                     {
-                        _instance._weaponEffect = go.AddComponent<WeaponEffectManager>();
+                        _instance._weaponEffect = GameObject.Find("WeaponEffactManager").GetComponent<WeaponEffectManager>(); ;
                     }
                 }
             }
