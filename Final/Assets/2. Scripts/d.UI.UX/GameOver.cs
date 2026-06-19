@@ -35,13 +35,11 @@ public class GameOver : MonoBehaviour
     }
     IEnumerator GameOverView()
     {
-        // 시작할 때 알파값을 0으로 초기화 (원하는 시작 값이 있다면 생략 가능)
         float alpha = 0f;
         Color currentColor = gameOverImg.color;
         currentColor.a = alpha;
         gameOverImg.color = currentColor;
 
-        // 알파가 1이 될 때까지 반복
         while (alpha < 1f)
         {
             alpha += Time.deltaTime * 1.0f;

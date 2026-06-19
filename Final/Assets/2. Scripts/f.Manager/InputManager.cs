@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 public class InputManager : MonoBehaviour
 {
     PhotonView pv;
-    private PlayerInput _playerInput;
+    public PlayerInput _playerInput;
     #region 키 조작을 위한 변수
     public Vector2 move;
     public bool jumpKey = false;
@@ -34,7 +34,7 @@ public class InputManager : MonoBehaviour
     #region Input callback
     public void OnMove(InputValue value)
     {
-        if(inven==null) return;
+        if (inven == null){Debug.Log("inven null");return;}
         if (inven.pnlInven.activeSelf)
         {
             Debug.Log("[InputManager]Inven select move test");
@@ -77,8 +77,8 @@ public class InputManager : MonoBehaviour
     }
     public void OnRolling(InputValue value)
     {
-        if (value.isPressed&&!inven.pnlInven.activeSelf) rollingKey = true;
-        if (value.isPressed&&inven.pnlInven.activeSelf){inven.CloseInventory();}
+        if (value.isPressed && !inven.pnlInven.activeSelf) rollingKey = true;
+        if (value.isPressed && inven.pnlInven.activeSelf) { inven.CloseInventory(); }
     }
     public void OnWeaponChange(InputValue value)
     {
@@ -178,6 +178,10 @@ public class InputManager : MonoBehaviour
         {
             Debug.Log("[InputManager]Resources 폴더에 액션에셋 없음.");
         }
+        GameObject temp2 = GameObject.Find("Inventory");
+        if (temp2 != null) inven = temp2.GetComponent<csInvenManager>();
+        if(atm!=null)atm = GameObject.FindGameObjectWithTag("Player").GetComponent<AttackMotion>();
+        if(pv!=null)pv = GameObject.FindGameObjectWithTag("Player").GetComponent<PhotonView>();
     }
     public void ResetKey()
     {

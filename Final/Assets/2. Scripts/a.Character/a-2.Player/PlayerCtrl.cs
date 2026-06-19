@@ -1,8 +1,6 @@
 using System.Collections;
 using UnityEngine.UI;
 using UnityEngine;
-using Unity.VisualScripting;
-
 public class PlayerCtrl : MonoBehaviour, ITakeDamage
 {
     [Header("Player Move")]
@@ -103,6 +101,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     {
         stat = Managers.Data.stat;
         input = Managers.Input;
+        Debug.Log(input.ToString());
         charCon = GetComponent<CharacterController>();
         anim = GetComponentInChildren<Animator>();
         cmTr = GameObject.FindGameObjectWithTag("MainCamera").transform;
@@ -125,7 +124,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
             //메인 카메라에 추가된 추적 대상을 연결
             Camera.main.GetComponent<CameraMove>().playerPos = myTr;
         }
-        else if(PhotonNetwork.inRoom == false)
+        else if (PhotonNetwork.inRoom == false)
         {
             Camera.main.GetComponent<CameraMove>().playerPos = myTr;
         }
@@ -170,7 +169,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
             GetInput();
 
             // 벽타기
-            if (Climb()) {input.ResetKey();return;}
+            if (Climb()) { input.ResetKey(); return; }
 
             // 공격
             Attack();
@@ -179,6 +178,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
 
             // 이동
             Movement();
+            
             // 점프
             Jump();
 
@@ -270,11 +270,11 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
 
     void Attack()
     {
-        if(isAttacking)return;
+        if (isAttacking) return;
         if (input.attackKey)
         {
 
-            if (!isAttacking) 
+            if (!isAttacking)
             {
                 if (PhotonNetwork.inRoom)
                 {
@@ -282,7 +282,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
                 }
                 else NetworkAttack();
             }
-            
+
         }
     }
 
@@ -429,7 +429,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         charCon.Move(MoveDir * Time.deltaTime);
     }
 
-    
+
     IEnumerator Rolling()
     {
         isRolling = true;
@@ -475,7 +475,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         invincibility = false;
     }
 
-    
+
     void UpdateWallClimbing(float verticalInput)
     {
         if (verticalInput <= 0.1f)
@@ -527,7 +527,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         }
     }
 
-    
+
     IEnumerator LedgeClimbRoutine(Vector3 ledgeSurfacePoint, Vector3 wallNormal)
     {
         isLedgeClimbing = true;
@@ -574,7 +574,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         MoveDir = Vector3.zero;
     }
 
-    
+
     void Die()
     {
         if (PhotonNetwork.inRoom)

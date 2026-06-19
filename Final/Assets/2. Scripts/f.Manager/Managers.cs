@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Managers : MonoBehaviour
 {
@@ -44,7 +45,7 @@ public class Managers : MonoBehaviour
             {
                 if (_instance._data == null)
                 {
-                    _instance._data = new DataManager();
+                    _instance._data = go.AddComponent<DataManager>();
                 }
             }
             if (_instance.onSoundManager)
@@ -95,6 +96,14 @@ public class Managers : MonoBehaviour
     public void ReStartInit()
     {
         if (_instance.onInputManager) _instance._input.Init();
+        PlayerInput playerInput = GetComponent<PlayerInput>();
+        if(playerInput !=null)
+        {
+            playerInput.enabled =false;
+            playerInput.enabled = true;
+            //playerInput.SwitchCurrentActionMap("Player");
+            Debug.Log("재시작 완료");
+        }
         _instance._gameOver.Init();
     }
 }

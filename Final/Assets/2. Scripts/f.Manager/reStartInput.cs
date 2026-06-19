@@ -1,4 +1,6 @@
+using System.Linq;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class reStartInput : MonoBehaviour
 {
@@ -7,16 +9,15 @@ public class reStartInput : MonoBehaviour
     void Awake()
     {
         input = GameObject.Find("@Managers").GetComponent<InputManager>();
+
     }
     void Start()
     {
+        if (EventSystem.current != null)
+        {
+            EventSystem.current.SetSelectedGameObject(null);
+        }
         input.ResetAwake();
         Managers.Instance.ReStartInit();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 }
