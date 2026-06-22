@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Sword
   m_EditorClassIdentifier: 
   itemType: 0
+  weaponType: 1
   itemName: Sword
   itemDesc: "\uC2A4\uC6CC\uB4DC\uC784"
   itemIcon: {fileID: 21300000, guid: 11933ea62d87c4c46b94daf82ba75761, type: 3}

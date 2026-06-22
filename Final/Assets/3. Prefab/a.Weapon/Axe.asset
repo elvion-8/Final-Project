@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Axe
   m_EditorClassIdentifier: 
   itemType: 0
+  weaponType: 2
   itemName: Axe
   itemDesc: "\uB3C4\uB07C\uC784"
   itemIcon: {fileID: 21300000, guid: 3d293f358e5ca0547aa3e1daa18d7450, type: 3}

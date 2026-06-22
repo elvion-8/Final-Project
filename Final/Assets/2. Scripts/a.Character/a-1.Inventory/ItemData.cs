@@ -6,10 +6,16 @@ public enum ItemType
     Buff
 }
 
+public enum WeaponType
+{
+    Dagger,Sword,Axe,Spear,Scythe,Hammer
+}
+
 [CreateAssetMenu(fileName = "New Item", menuName = "Inventory/Item")]
 public class ItemData : ScriptableObject
 {
     public ItemType itemType;   //아이템 유형
+    public WeaponType weaponType; //무기 유형(ItemType가 Weapon일 경우)
     public string itemName;     //아이템 이름
     [TextArea(3, 5)]
     public string itemDesc;     //아이템 설명

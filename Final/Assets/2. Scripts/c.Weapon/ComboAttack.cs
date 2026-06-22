@@ -8,11 +8,14 @@ public class ComboAttack : MonoBehaviour
     public float comboTime = 0.8f;
     PlayerCtrl player;
     Animator anim;
+    AttackMotion attackMotion;
+    //어택모션 내에 currentWeapon 변수의 데이터를 가져와서 그 값 중 weaponType를 가져오는 방향으로
     private Coroutine comboResetCor;
 
     bool comboAttack = false;
 
     private readonly int hashComboCount = Animator.StringToHash("ComboCount");
+    private readonly int hashWeaponType = Animator.StringToHash("WeaponType");
     private readonly int hashAttackTrigger = Animator.StringToHash("Attack");
 
     void Awake()
@@ -25,8 +28,10 @@ public class ComboAttack : MonoBehaviour
     {
         if(player.isAttacking==true)
         {
+            if(comboResetCor != null) StopCoroutine(comboResetCor);
             comboAttack = true;
             comboCount+=1;
+            if(comboCount>maxCombo)comboCount = 1;
             anim.SetInteger(hashComboCount,comboCount);
             anim.SetTrigger(hashAttackTrigger);
             comboResetCor = StartCoroutine(ResetComboTimer());
