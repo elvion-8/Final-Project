@@ -14,6 +14,7 @@ TagManager:
   - PlayerSpawnPoint
   - EnemyHpBar
   - GameOver
+  - WeaponEffectManager
   layers:
   - Default
   - TransparentFX

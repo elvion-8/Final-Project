@@ -1176,7 +1176,7 @@ MonoBehaviour:
   selectedWeaponID: d
   selectedWeaponIndex: -1
   targetTransform: {fileID: 5118152902448183569}
-  positionOffset: {x: 1, y: 1, z: 1}
+  positionOffset: {x: 0, y: 1.3, z: 0}
   rotationOffset: {x: 0, y: 0, z: 0}
   instantiatedVFX: {fileID: 0}
 --- !u!1 &4097337451633891910

@@ -5047,7 +5047,7 @@ GameObject:
   - component: {fileID: 1441941020}
   m_Layer: 0
   m_Name: WeaponEffactManager
-  m_TagString: Untagged
+  m_TagString: WeaponEffectManager
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5070,9 +5070,9 @@ MonoBehaviour:
   - weaponID: Dagger
     vfxPrefab: {fileID: 6260243036576056154, guid: 76bb3d17b5383044583f32f9055114d0, type: 3}
   - weaponID: Spaer
-    vfxPrefab: {fileID: 3651685925575709812, guid: 5b1d9a3d4638c8c4e97531085317de66, type: 3}
+    vfxPrefab: {fileID: 4994997792314849709, guid: 3dd50886582244645be87adb42aa8528, type: 3}
   - weaponID: Sword
-    vfxPrefab: {fileID: 5061498029215849979, guid: f4de5688d453a1d44be3c607c4f5a230, type: 3}
+    vfxPrefab: {fileID: 3651685925575709812, guid: 5b1d9a3d4638c8c4e97531085317de66, type: 3}
 --- !u!4 &1441941021
 Transform:
   m_ObjectHideFlags: 0
