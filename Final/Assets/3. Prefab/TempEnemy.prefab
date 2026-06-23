@@ -181,13 +181,15 @@ MonoBehaviour:
   attack1Duration: 3
   attack2Duration: 3
   attack3Duration: 4
-  hitDuration: 0.5
+  hitStateDuration: 0.5
+  hitAnimDuration: 0.5
+  deathDestroyDelay: 4.5
   enemyMode: 0
   hp: 1000
   findDist: 30
   attackDist: 30
   hpBarShowDist: 60
-  hpBarObject: {fileID: 0}
+  hpBarImage: {fileID: 0}
   hpBarRoot: {fileID: 0}
   attackZonePrefab: {fileID: 821440896887892579, guid: 5b2a6370b348c614ca3dff770659cce8, type: 3}
   attack1SpawnRadius: 4.9
@@ -197,7 +199,8 @@ MonoBehaviour:
   attack1GroupMax: 5
   groundLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
+  enemyBodyObject: {fileID: 0}
 --- !u!1 &6982967072352499708
 GameObject:
   m_ObjectHideFlags: 0
