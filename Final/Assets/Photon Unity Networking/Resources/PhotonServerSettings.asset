@@ -61,4 +61,5 @@ MonoBehaviour:
   - NetworkDie
   - EquipWeapon
   - WeaponSikll1
+  - RPC_SetBoundTarget
   DisableAutoOpenWizard: 1
