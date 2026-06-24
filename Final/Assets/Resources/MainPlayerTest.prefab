@@ -452,8 +452,9 @@ GameObject:
   - component: {fileID: 6817033599759912610}
   - component: {fileID: 7718799050016782552}
   - component: {fileID: 7468465819994353796}
+  - component: {fileID: 3334778340758473174}
   m_Layer: 0
-  m_Name: MainPlayer
+  m_Name: MainPlayerTest
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -644,6 +645,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxCombo: 3
   comboTime: 1.5
+--- !u!95 &3334778340758473174
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1226331344322202821}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: 5dc7f807f808b0f448accc980b1a9fdf, type: 3}
+  m_Controller: {fileID: 9100000, guid: 243b10b14637dda4db895aac87beae82, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 1
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1484445931561779259
 GameObject:
   m_ObjectHideFlags: 0
@@ -1104,8 +1126,6 @@ GameObject:
   - component: {fileID: 7289982040298558050}
   - component: {fileID: 2750776541547440957}
   - component: {fileID: 7251807429124964429}
-  - component: {fileID: 1568352493998772527}
-  - component: {fileID: 2369360284815441385}
   m_Layer: 0
   m_Name: PlayerSource2
   m_TagString: Untagged
@@ -1178,36 +1198,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rockParticle: {fileID: 8632185362001501516, guid: 0b151bec2223fa74fb5765f2a26a1c6c, type: 3}
   playerPoint: {fileID: 0}
---- !u!114 &1568352493998772527
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4071470060088365730}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b2766e216626bf4f81cdb1504efa6a2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  selectedWeaponID: d
-  selectedWeaponIndex: -1
-  targetTransform: {fileID: 5118152902448183569}
-  positionOffset: {x: 1, y: 1, z: 1}
-  rotationOffset: {x: 0, y: 0, z: 0}
-  instantiatedVFX: {fileID: 0}
---- !u!114 &2369360284815441385
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4071470060088365730}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 523f2caf676eaa7448f19954a8505cae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &4097337451633891910
 GameObject:
   m_ObjectHideFlags: 0

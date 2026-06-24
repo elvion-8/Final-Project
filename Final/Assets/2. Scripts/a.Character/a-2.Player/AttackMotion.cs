@@ -7,6 +7,7 @@ public class AttackMotion : MonoBehaviour
     public GameObject[] weaponPrefabs;
     public Transform weaponPoint;
     private GameObject currentWeapon;
+    public ItemData currentWeaponData;
     public Animator anim;
     private PlayerCtrl player;
     public GameObject trail;
@@ -97,6 +98,8 @@ public class AttackMotion : MonoBehaviour
                     return;
                 }
 
+                currentWeaponData = hotbarItem;
+
                 if (PhotonNetwork.inRoom)
                 {
                     pv.RPC("EquipWeapon", PhotonTargets.AllBuffered, prefabIndex);
@@ -152,10 +155,9 @@ public class AttackMotion : MonoBehaviour
         trail = currentWeapon.GetComponentInChildren<TrailRenderer>(true).gameObject;
         if (pv.isMine || !PhotonNetwork.inRoom)
         {
-            ItemData hotbarItem = csInvenManager.Instance.GetHotbarItem(index);
-            if (hotbarItem != null && sound != null)
+            if (currentWeaponData != null && sound != null)
             {
-                sound.ChangeWeapon(hotbarItem);
+                sound.ChangeWeapon(currentWeaponData);
             }
         }
     }
@@ -164,12 +166,54 @@ public class AttackMotion : MonoBehaviour
     {
         for (int i = 3; i <= 8; i++) anim.SetLayerWeight(i, 0f); // 우선 전부 0으로 초기화
 
-        if (index == 0) anim.SetLayerWeight(4, 1f);      // Axe
-        else if (index == 1) anim.SetLayerWeight(3, 1f); // Dagger
-        else if (index == 2) anim.SetLayerWeight(6, 1f); // Spear
-        else if (index == 3) anim.SetLayerWeight(5, 1f); // Sword
-        else if (index == 4) anim.SetLayerWeight(7, 1f); // Hammer
-        else if (index == 5) anim.SetLayerWeight(8, 1f); // Scythe
+        // 테스트용 통합 Attack 레이어가 있는지 확인
+        int attackLayerIndex = anim.GetLayerIndex("Attack");
+        Debug.Log($"[AttackMotion] GetLayerIndex('Attack') 결과: {attackLayerIndex}");
+
+        if (attackLayerIndex != -1)
+        {
+            // Attack 레이어 활성화
+            anim.SetLayerWeight(attackLayerIndex, 1f);
+            
+            // 제대로 적용되었는지 더블 체크 로그
+            float currentWeight = anim.GetLayerWeight(attackLayerIndex);
+            Debug.Log($"[AttackMotion] Attack 레이어 가중치 설정 시도 후 실제 값: {currentWeight}");
+
+            // WeaponType 파라미터 업데이트
+            int weaponTypeVal = GetWeaponTypeFromIndex(index);
+            anim.SetInteger("WeaponType", weaponTypeVal);
+            Debug.Log($"[AttackMotion] 통합 Attack 레이어 활성화 및 WeaponType 설정: {weaponTypeVal}");
+        }
+        else
+        {
+            Debug.LogWarning("[AttackMotion] 'Attack' 레이어를 찾을 수 없어 기존 개별 레이어 방식을 사용합니다. 아래는 현재 등록된 레이어 목록입니다:");
+            for (int i = 0; i < anim.layerCount; i++)
+            {
+                Debug.Log($"[AttackMotion] Layer {i}: {anim.GetLayerName(i)}");
+            }
+
+            // 기존 방식 유지 (백업용)
+            if (index == 0) anim.SetLayerWeight(4, 1f);      // Axe
+            else if (index == 1) anim.SetLayerWeight(3, 1f); // Dagger
+            else if (index == 2) anim.SetLayerWeight(6, 1f); // Spear
+            else if (index == 3) anim.SetLayerWeight(5, 1f); // Sword
+            else if (index == 4) anim.SetLayerWeight(7, 1f); // Hammer
+            else if (index == 5) anim.SetLayerWeight(8, 1f); // Scythe
+        }
+    }
+
+    private int GetWeaponTypeFromIndex(int index)
+    {
+        switch (index)
+        {
+            case 0: return 2; // Axe (WeaponType.Axe = 2)
+            case 1: return 0; // Dagger (WeaponType.Dagger = 0)
+            case 2: return 3; // Spear (WeaponType.Spear = 3)
+            case 3: return 1; // Sword (WeaponType.Sword = 1)
+            case 4: return 5; // Hammer (WeaponType.Hammer = 5)
+            case 5: return 4; // Scythe (WeaponType.Scythe = 4)
+            default: return 0;
+        }
     }
 
     [PunRPC]
@@ -194,16 +238,34 @@ public class AttackMotion : MonoBehaviour
         charCon.enabled = true;
     }
 
+    public int GetCurrentWeaponType()
+    {
+        if (currentWeaponData != null && currentWeaponData.itemType == ItemType.Weapon)
+        {
+            return (int)currentWeaponData.weaponType;
+        }
+
+        int index = WeaponNume();
+        if (index != -1)
+        {
+            return GetWeaponTypeFromIndex(index);
+        }
+
+        return -1;
+    }
+
     public int WeaponNume()
     {
-        string name = GameObject.FindWithTag("Weapon").name;
+        GameObject weaponObj = GameObject.FindWithTag("Weapon");
+        if (weaponObj == null) return -1;
+
+        string name = weaponObj.name;
         for (int i = 0; i < weaponPrefabs.Length; i++)
         {
-            if(weaponPrefabs[i].name == name)
+            if (name.Contains(weaponPrefabs[i].name))
             {
                 return i;
             }
-            
         }
         return -1;
     }

@@ -52,6 +52,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
 
 
     private bool isRolling;
+    private Coroutine attackRoutineCor;
 
     // Poton Viow /////////////////////////////////
 
@@ -95,6 +96,10 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     [SerializeField] private csGamePadVibMng gpV;
     int animD;
     int animDie;
+    int attackLayerIndex;
+    int activeWeaponLayerIndex = -1;
+    ComboAttack combo;
+    AttackMotion attackMotion;
 
     void Awake()
 
@@ -139,7 +144,8 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
 
         currPos = myTr.position;
         currRot = myTr.rotation;
-
+        combo = GetComponent<ComboAttack>();
+        attackMotion = GetComponent<AttackMotion>();
     }
 
     void Start()
@@ -156,6 +162,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         }
         animD = anim.GetLayerIndex("Hit");
         animDie = anim.GetLayerIndex("Die");
+        attackLayerIndex = anim.GetLayerIndex("Attack");
     }
 
 
@@ -270,28 +277,45 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
 
     void Attack()
     {
-        if (isAttacking) return;
         if (input.attackKey)
         {
-
-            if (!isAttacking)
+            if(attackMotion.GetCurrentWeaponType() <= -1) return;
+            if (combo != null)
             {
+                combo.IsComboAttack();
+            }
+            else
+            {
+                if (isAttacking) return;
                 if (PhotonNetwork.inRoom)
                 {
                     pv.RPC("NetworkAttack", PhotonTargets.All);
                 }
                 else NetworkAttack();
             }
-
         }
     }
 
     [PunRPC]
-    void NetworkAttack()
+    public void NetworkAttack(int combo, int weaponType)
     {
         isAttacking = true;
+        anim.applyRootMotion = true; // 루트 모션 활성화
+        anim.SetInteger("ComboCount", combo);
+        anim.SetInteger("WeaponType", weaponType);
         anim.SetTrigger("Attack");
-        StartCoroutine(AttackRoutine());
+        if (attackRoutineCor != null) StopCoroutine(attackRoutineCor);
+        attackRoutineCor = StartCoroutine(AttackRoutine());
+    }
+
+    [PunRPC]
+    public void NetworkAttack()
+    {
+        isAttacking = true;
+        anim.applyRootMotion = true; // 루트 모션 활성화
+        anim.SetTrigger("Attack");
+        if (attackRoutineCor != null) StopCoroutine(attackRoutineCor);
+        attackRoutineCor = StartCoroutine(AttackRoutine());
     }
 
     // 구르기
@@ -369,6 +393,13 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     // 이동
     void Movement()
     {
+        if (isAttacking)
+        {
+            MoveDir.x = 0;
+            MoveDir.z = 0;
+            return;
+        }
+
         if (charCon.isGrounded)
         {
             if (!isRolling)
@@ -429,25 +460,105 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         charCon.Move(MoveDir * Time.deltaTime);
     }
 
+    void ResetAttackLayer(bool isReset)
+    {
+        if (isReset)
+        {
+            if (attackLayerIndex != -1)
+            {
+                anim.SetLayerWeight(attackLayerIndex, 0f);
+            }
+            else
+            {
+                activeWeaponLayerIndex = -1;
+                for (int i = 3; i <= 8; i++)
+                {
+                    if (anim.GetLayerWeight(i) > 0.5f)
+                    {
+                        activeWeaponLayerIndex = i;
+                        anim.SetLayerWeight(i, 0f);
+                        break;
+                    }
+                }
+            }
+        }
+        else
+        {
+            if (attackLayerIndex != -1)
+            {
+                anim.SetLayerWeight(attackLayerIndex, 1f);
+            }
+            else if (activeWeaponLayerIndex != -1)
+            {
+                anim.SetLayerWeight(activeWeaponLayerIndex, 1f);
+            }
+        }
+    }
 
     IEnumerator Rolling()
     {
+        anim.applyRootMotion = false;
+        isAttacking = false;
         isRolling = true;
+        ResetAttackLayer(true);
         anim.SetTrigger("Roll");
         gpV.TriggerVib(0.2f, 0.3f, 0.3f);
         gpV.TriggerVib(0.5f, 0.5f, 0.5f);
-        Vector3 rollDir = transform.forward * rollPower;
+
+        Vector3 rollDir;
+        if (moveDir.sqrMagnitude > 0.01f)
+        {
+            rollDir = moveDir.normalized;
+            transform.rotation = Quaternion.LookRotation(rollDir);
+        }
+        else
+        {
+            rollDir = transform.forward;
+        }
+
+        rollDir *= rollPower;
         MoveDir.x = rollDir.x;
         MoveDir.z = rollDir.z;
+
         yield return new WaitForSecondsRealtime(0.8f);
         isRolling = false;
+        ResetAttackLayer(false);
     }
 
 
     IEnumerator AttackRoutine()
     {
-        yield return new WaitForSeconds(1f);
+        yield return null;
+
+        attackLayerIndex = anim.GetLayerIndex("Attack");
+        if (attackLayerIndex == -1)
+        {
+            for (int i = 1; i < anim.layerCount; i++)
+            {
+                if (anim.GetLayerWeight(i) > 0.5f)
+                {
+                    attackLayerIndex = i;
+                    break;
+                }
+            }
+            if (attackLayerIndex == -1) attackLayerIndex = 0;
+        }
+
+        AnimatorStateInfo stateInfo;
+        if (anim.IsInTransition(attackLayerIndex))
+        {
+            stateInfo = anim.GetNextAnimatorStateInfo(attackLayerIndex);
+        }
+        else
+        {
+            stateInfo = anim.GetCurrentAnimatorStateInfo(attackLayerIndex);
+        }
+
+        float duration = stateInfo.length > 0f ? stateInfo.length : 1f;
+        yield return new WaitForSeconds(duration);
+
         isAttacking = false;
+        anim.applyRootMotion = false;
     }
 
     public int TakeDamage(int damage)
@@ -520,7 +631,6 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
             RaycastHit ledgeHit;
             if (Physics.Raycast(ledgeCheckStart, Vector3.down, out ledgeHit, ledgeUpperHeightOffset + 1.0f, obstacleLayer))
             {
-                // 착지 시 캐릭터가 벽 안쪽으로 충분히 진입하도록 위치 조정
                 Vector3 landingPoint = ledgeHit.point - chestHit.normal * 0.25f;
                 StartCoroutine(LedgeClimbRoutine(landingPoint, chestHit.normal));
             }
