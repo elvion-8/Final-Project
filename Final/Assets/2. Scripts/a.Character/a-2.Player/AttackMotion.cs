@@ -138,7 +138,7 @@ public class AttackMotion : MonoBehaviour
 
         //if (hotbarItem == null || hotbarItem.itemType != ItemType.Weapon || hotbarItem.itemPrefab == null) return;
 
-        vfxModifier.ChangeWeaponByIndex(index);
+        vfxModifier.ChangeActionByIndex(index);
 
         // 기존 무기 제거
         if (currentWeapon != null)

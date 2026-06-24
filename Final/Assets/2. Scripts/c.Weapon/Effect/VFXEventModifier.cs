@@ -1,121 +1,114 @@
 using UnityEngine;
-using System.Collections.Generic;
-
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 
 [RequireComponent(typeof(Animator))]
 public class VFXEventModifier : MonoBehaviour
 {
-    [Header("연동 설정")]
-    //[HideInInspector]
-    public string selectedWeaponID; 
-    public int selectedWeaponIndex = -1;
+    [Header("기능 활성화 토글")]
+    public bool useVFXSet = true;         // 매니저 세트 이펙트 사용 여부
+    public bool useTrailRenderer = false; // 테일 잔상 사용 여부
 
-    [Header("VFX 스폰 위치 설정")]
-    public Transform targetTransform; 
-    public Vector3 positionOffset = Vector3.zero; 
+    [Header("1. 매니저 이펙트 세트 선택")]
+    public string selectedActionID;
+    public int selectedActionIndex = -1;
+
+    [Header("2. 독립 테일 레너더 설정")]
+    public TrailRenderer targetTrail;
+
+    [Header("VFX 스폰 위치 설정 (공통 적용)")]
+    public Transform targetTransform;
+    public Vector3 positionOffset = Vector3.zero;
     public Vector3 rotationOffset = Vector3.zero;
 
-    [SerializeField]
-    private GameObject instantiatedVFX;
+    // 생성된 인스턴스들 관리
+    [SerializeField] private GameObject instantiatedWeaponVFX;
+    [SerializeField] private GameObject instantiatedParticleVFX;
 
-    // 현재 하이어라키에 생성되어 활성화된 이펙트의 정보 기억
-    private string currentLoadedVFXID;
-    private int currentLoadedVFXIndex = -1;
+    private string currentLoadedActionID;
+    private int currentLoadedActionIndex = -1;
 
-
-    
-    /// 외부에서 '무기 ID(문자열)'로 변경할 때
-    
-    public void ChangeWeaponByID(string newWeaponID)
+    public void ChangeActionByIndex(int newIndex)
     {
-        if (selectedWeaponID == newWeaponID) return;
-
-        selectedWeaponID = newWeaponID;
-        selectedWeaponIndex = -1; // ID 기반이므로 인덱스는 초기화
+        if (selectedActionIndex == newIndex) return;
+        selectedActionIndex = newIndex;
+        selectedActionID = string.Empty;
         ClearCurrentVFX();
     }
 
-    
-    /// 외부에서 '배열 인덱스 번호'로 변경할 때
-    
-    public void ChangeWeaponByIndex(int newIndex)
-    {
-        if (selectedWeaponIndex == newIndex) return;
-
-        selectedWeaponIndex = newIndex;
-        selectedWeaponID = string.Empty; // 인덱스 기반이므로 ID는 초기화
-        ClearCurrentVFX();
-    }
-
-
-
-    // 애니메이션 이벤트에 의해 호출될 런타임 함수 (ON)
+    // 애니메이션 이벤트 ON
     public void TurnOnVFX()
     {
-        if (Managers.weaponEffect == null)
+        // 1. 테일 잔상 처리
+        if (useTrailRenderer && targetTrail != null) targetTrail.emitting = true;
+
+        // 2. 이펙트 세트 동시 처리
+        if (!useVFXSet || Managers.weaponEffect == null) return;
+
+        WeaponEffectManager.VFXSetData activeSet = default;
+
+        if (selectedActionIndex >= 0)
         {
-            Debug.LogError("[VFXEventModifier] Managers에 WeaponEffectManager가 세팅되지 않았습니다.");
-            return;
-        }
-
-
-
-        GameObject vfxPrefab = null;
-        
-        if (selectedWeaponIndex >= 0)
-        {
-            if (instantiatedVFX != null && currentLoadedVFXIndex != selectedWeaponIndex)
-            {
+            if ((instantiatedWeaponVFX != null || instantiatedParticleVFX != null) && currentLoadedActionIndex != selectedActionIndex)
                 ClearCurrentVFX();
-            }
-            vfxPrefab = Managers.weaponEffect.GetVFXPrefabByIndex(selectedWeaponIndex);
+            activeSet = Managers.weaponEffect.GetVFXSetByIndex(selectedActionIndex);
         }
-        else if (!string.IsNullOrEmpty(selectedWeaponID))
+        else if (!string.IsNullOrEmpty(selectedActionID))
         {
-            if (instantiatedVFX != null && currentLoadedVFXID != selectedWeaponID)
-            {
+            if ((instantiatedWeaponVFX != null || instantiatedParticleVFX != null) && currentLoadedActionID != selectedActionID)
                 ClearCurrentVFX();
-            }
-            vfxPrefab = Managers.weaponEffect.GetVFXPrefab(selectedWeaponID);
+            activeSet = Managers.weaponEffect.GetVFXSet(selectedActionID);
         }
 
-        if (vfxPrefab == null) return;
+        Transform parentTransform = targetTransform != null ? targetTransform : transform;
 
-
-        if (instantiatedVFX == null)
+        // [동시 소환 A] 무기 VFX가 세트에 존재하면 생성 및 재생
+        if (activeSet.weaponVFXPrefab != null)
         {
-            Transform parentTransform = targetTransform != null ? targetTransform : transform;
-            instantiatedVFX = Instantiate(vfxPrefab, parentTransform);
-
-            currentLoadedVFXID = selectedWeaponID;
-            currentLoadedVFXIndex = selectedWeaponIndex;
+            if (instantiatedWeaponVFX == null)
+            {
+                instantiatedWeaponVFX = Instantiate(activeSet.weaponVFXPrefab, parentTransform);
+                currentLoadedActionID = selectedActionID;
+                currentLoadedActionIndex = selectedActionIndex;
+            }
+            SetTransformOffset(instantiatedWeaponVFX.transform);
+            instantiatedWeaponVFX.SetActive(true);
         }
 
-        instantiatedVFX.transform.localPosition = positionOffset;
-        instantiatedVFX.transform.localRotation = Quaternion.Euler(rotationOffset);
-        
-        instantiatedVFX.SetActive(true);
+        // [동시 소환 B] 파티클 VFX가 세트에 존재하면 생성 및 재생
+        if (activeSet.particleVFXPrefab != null)
+        {
+            if (instantiatedParticleVFX == null)
+            {
+                instantiatedParticleVFX = Instantiate(activeSet.particleVFXPrefab, parentTransform);
+                currentLoadedActionID = selectedActionID;
+                currentLoadedActionIndex = selectedActionIndex;
+            }
+            SetTransformOffset(instantiatedParticleVFX.transform);
+            instantiatedParticleVFX.SetActive(true);
+
+            ParticleSystem ps = instantiatedParticleVFX.GetComponent<ParticleSystem>();
+            if (ps != null) ps.Play();
+        }
     }
 
-    // 애니메이션 이벤트에 의해 호출될 런타임 함수 (OFF)
+    // 애니메이션 이벤트 OFF (동시에 끄기)
     public void TurnOffVFX()
     {
-        if (instantiatedVFX != null)
-        {
-            instantiatedVFX.SetActive(false);
-        }
+        if (useTrailRenderer && targetTrail != null) targetTrail.emitting = false;
+        if (instantiatedWeaponVFX != null) instantiatedWeaponVFX.SetActive(false);
+        if (instantiatedParticleVFX != null) instantiatedParticleVFX.SetActive(false);
     }
+
+    private void SetTransformOffset(Transform target)
+    {
+        target.localPosition = positionOffset;
+        target.localRotation = Quaternion.Euler(rotationOffset);
+    }
+
     public void ClearCurrentVFX()
     {
-        if (instantiatedVFX != null)
-        {
-            Destroy(instantiatedVFX);
-            instantiatedVFX = null;
-        }
-        currentLoadedVFXID = string.Empty;
-        currentLoadedVFXIndex = -1;
+        if (instantiatedWeaponVFX != null) { Destroy(instantiatedWeaponVFX); instantiatedWeaponVFX = null; }
+        if (instantiatedParticleVFX != null) { Destroy(instantiatedParticleVFX); instantiatedParticleVFX = null; }
+        currentLoadedActionID = string.Empty;
+        currentLoadedActionIndex = -1;
     }
 }

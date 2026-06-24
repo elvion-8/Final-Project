@@ -4,50 +4,52 @@ using System.Collections.Generic;
 public class WeaponEffectManager : MonoBehaviour
 {
     [System.Serializable]
-    public struct WeaponVFXData
+    public struct VFXSetData
     {
-        public string weaponID;       
-        public GameObject vfxPrefab;  
+        public string actionID;          // 액션/스킬 이름 (예: "Double_Slash", "Fire_Swing")
+
+        //[Header("동시 재생할 프리팹들 (선택 사항)")]
+        public GameObject weaponVFXPrefab;    // 무기에 붙을 이펙트
+        public GameObject particleVFXPrefab;  // 씬/바닥에 생성될 파티클
     }
 
-    [Header("전체 무기 VFX 데이터 리스트")]
-    public List<WeaponVFXData> weaponVFXList = new List<WeaponVFXData>();
+    [Header("★ 액션별 VFX 세트 관리 리스트")]
+    public List<VFXSetData> vfxSetList = new List<VFXSetData>();
 
-    // 무기 ID로 프리팹을 검색하는 함수 (Managers를 통해 호출됨)
-    public GameObject GetVFXPrefab(string id)
+    /// <summary>
+    /// ID로 해당 액션의 전체 VFX 세트 데이터를 가져옵니다.
+    /// </summary>
+    public VFXSetData GetVFXSet(string id)
     {
-        if (string.IsNullOrEmpty(id)) return null;
+        if (string.IsNullOrEmpty(id)) return default;
 
-        foreach (var data in weaponVFXList)
+        foreach (var data in vfxSetList)
         {
-            if (data.weaponID == id) return data.vfxPrefab;
+            if (data.actionID == id) return data;
         }
-        
-        Debug.LogWarning($"[WeaponEffectManager] {id}에 해당하는 VFX 프리팹을 찾을 수 없습니다.");
-        return null;
+
+        Debug.LogWarning($"[WeaponEffectManager] {id}에 해당하는 VFX 세트를 찾을 수 없습니다.");
+        return default;
     }
 
-    public GameObject GetVFXPrefabByIndex(int index)
+    public VFXSetData GetVFXSetByIndex(int index)
     {
-        if (index < 0 || index >= weaponVFXList.Count)
-        {
-            Debug.LogWarning($"[WeaponEffectManager] 인덱스 {index}가 범위를 벗어났습니다.");
-            return null;
-        }
-        return weaponVFXList[index].vfxPrefab;
+        if (index < 0 || index >= vfxSetList.Count) return default;
+        return vfxSetList[index];
     }
 
-    // 에디터 스크립트용 ID 배열 반환 함수
-    public string[] GetWeaponIDList()
+    /// <summary>
+    /// 에디터 팝업 목록용 ID 배열 반환
+    /// </summary>
+    public string[] GetActionIDList()
     {
-        if (weaponVFXList == null || weaponVFXList.Count == 0) return new string[0];
+        if (vfxSetList == null || vfxSetList.Count == 0) return new string[0];
 
-        string[] ids = new string[weaponVFXList.Count];
-        for (int i = 0; i < weaponVFXList.Count; i++)
+        string[] ids = new string[vfxSetList.Count];
+        for (int i = 0; i < vfxSetList.Count; i++)
         {
-            ids[i] = string.IsNullOrEmpty(weaponVFXList[i].weaponID) ? "Unnamed" : weaponVFXList[i].weaponID;
+            ids[i] = string.IsNullOrEmpty(vfxSetList[i].actionID) ? "Unnamed_Action" : vfxSetList[i].actionID;
         }
         return ids;
     }
-
 }
