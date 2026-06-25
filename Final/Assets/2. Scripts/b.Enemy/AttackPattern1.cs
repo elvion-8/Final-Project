@@ -4,24 +4,35 @@ using UnityEngine;
 using Rand = UnityEngine.Random;
 
 // ============================================================
-//  AttackPattern1 — 장판 패턴
-//  별도 프리팹으로 관리. EnemyCtrl이 Instantiate해서 실행.
+//  AttackPattern1 — 장판 패턴 (AttackZone1 통합)
+//  EnemyCtrl이 Instantiate해서 Execute() 호출
 // ============================================================
 public class AttackPattern1 : MonoBehaviour, IAttackPattern
 {
-    [Header("장판 설정")]
-    public GameObject attackZonePrefab;
+    [Header("장판 생성 설정")]
     [Range(10f, 120f)] public float totalDuration = 60f;
     [Range(1,   20)]   public int   spawnCount    = 10;
-    [Range(1,   20)]   public float spawnRadius   = 8f;
+    [Range(1f,  20f)]  public float spawnRadius   = 8f;
     [Range(1,   10)]   public int   groupMin      = 4;
     [Range(1,   10)]   public int   groupMax      = 5;
     public LayerMask groundLayer;
+
+    [Header("장판 타이밍")]
+    public float warningDuration = 2.0f;
+    public float activeDuration  = 2.0f;
+
+    [Header("장판 데미지")]
+    [Min(1)] public int damage = 20;
+
+    [Header("장판 이펙트 프리팹")]
+    public GameObject warningEffectPrefab;
+    public GameObject activeEffectPrefab;
 
     // EnemyCtrl에서 SetContext()로 주입
     private Transform _enemyTr;
     private Transform _traceTarget;
 
+    // 활성화된 장판 추적 (Cleanup용)
     private readonly List<GameObject> _activeZones = new List<GameObject>();
 
     // ────────────────────────────────────────────
@@ -35,6 +46,7 @@ public class AttackPattern1 : MonoBehaviour, IAttackPattern
 
     public IEnumerator Execute()
     {
+        // 랜덤 시간에 소환될 spawnCount개의 타임스탬프 생성
         float[] spawnTimes = new float[spawnCount];
         for (int i = 0; i < spawnCount; i++)
             spawnTimes[i] = Rand.Range(0f, totalDuration * 0.9f);
@@ -60,24 +72,18 @@ public class AttackPattern1 : MonoBehaviour, IAttackPattern
     }
 
     // ────────────────────────────────────────────
-    //  장판 소환
+    //  장판 소환 + 루틴 시작
     // ────────────────────────────────────────────
     void SpawnZone()
     {
-        if (attackZonePrefab == null)
-        {
-            Debug.LogWarning("[AttackPattern1] AttackZone 프리팹이 없습니다.");
-            return;
-        }
-
-        Vector3 center    = _traceTarget != null ? _traceTarget.position : _enemyTr.position;
-        Vector2 randCircle = Rand.insideUnitCircle.normalized
-                           * Rand.Range(1.5f, spawnRadius);
+        // 위치 계산
+        Vector3 center = _traceTarget != null ? _traceTarget.position : _enemyTr.position;
+        Vector2 rand2D = Rand.insideUnitCircle.normalized * Rand.Range(1.5f, spawnRadius);
 
         Vector3 rayOrigin = new Vector3(
-            center.x + randCircle.x,
+            center.x + rand2D.x,
             center.y + 50f,
-            center.z + randCircle.y);
+            center.z + rand2D.y);
 
         Vector3 spawnPos;
         if (Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit hit, 100f, groundLayer))
@@ -88,10 +94,65 @@ public class AttackPattern1 : MonoBehaviour, IAttackPattern
             Debug.LogWarning("[AttackPattern1] 바닥을 찾지 못했습니다. GroundLayer를 확인하세요.");
         }
 
-        GameObject zone = Instantiate(attackZonePrefab, spawnPos, Quaternion.identity);
+        // 장판 오브젝트 생성
+        GameObject zone = new GameObject("AoEZone");
+        zone.transform.position = spawnPos;
+        zone.transform.SetParent(transform);
+
+        // Collider 추가
+        SphereCollider col = zone.AddComponent<SphereCollider>();
+        col.isTrigger = true;
+        col.enabled   = false;
+
+        // 데미지 처리 컴포넌트 추가
+        AoEZoneDamage dmg = zone.AddComponent<AoEZoneDamage>();
+        dmg.damage = damage;
+
         _activeZones.Add(zone);
+
+        // 경고 → 활성화 → 제거 루틴
+        StartCoroutine(ZoneRoutine(zone, col, dmg));
     }
 
+    // ────────────────────────────────────────────
+    //  장판 루틴 (경고 → 활성화 → 제거)
+    // ────────────────────────────────────────────
+    IEnumerator ZoneRoutine(GameObject zone, SphereCollider col, AoEZoneDamage dmg)
+    {
+        // ── 경고 단계 ──
+        GameObject warningFx = SpawnEffect(warningEffectPrefab, zone.transform);
+        yield return new WaitForSeconds(warningDuration);
+
+        if (zone == null) yield break;
+
+        // ── 활성화 단계 ──
+        if (warningFx != null) Destroy(warningFx);
+        col.enabled = true;
+        dmg.SetActive(true);
+        GameObject activeFx = SpawnEffect(activeEffectPrefab, zone.transform);
+
+        yield return new WaitForSeconds(activeDuration);
+
+        // ── 제거 ──
+        _activeZones.Remove(zone);
+        Destroy(zone);
+    }
+
+    // ────────────────────────────────────────────
+    //  이펙트 소환
+    // ────────────────────────────────────────────
+    GameObject SpawnEffect(GameObject prefab, Transform parent)
+    {
+        if (prefab == null) return null;
+
+        GameObject fx = Instantiate(prefab, parent.position, prefab.transform.rotation);
+        fx.transform.SetParent(parent);
+        return fx;
+    }
+
+    // ────────────────────────────────────────────
+    //  정리
+    // ────────────────────────────────────────────
     void Cleanup()
     {
         foreach (GameObject z in _activeZones)

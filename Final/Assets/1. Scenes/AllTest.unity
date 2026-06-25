@@ -4089,6 +4089,14 @@ PrefabInstance:
       propertyPath: hpBarImage
       value: 
       objectReference: {fileID: 1455325386}
+    - target: {fileID: 2606199624365376920, guid: cefa34030b7b5824fadfa099f90e0df5, type: 3}
+      propertyPath: attackPatternPrefabs.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2606199624365376920, guid: cefa34030b7b5824fadfa099f90e0df5, type: 3}
+      propertyPath: attackPatternPrefabs.Array.data[2]
+      value: 
+      objectReference: {fileID: 5342617459482360968, guid: 3c73c007b4b6f5a48bd9e44b832bb2dc, type: 3}
     - target: {fileID: 4688862856659575060, guid: cefa34030b7b5824fadfa099f90e0df5, type: 3}
       propertyPath: m_Name
       value: TempEnemy (1)
@@ -5064,15 +5072,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e3b0e847e4c7654a861246d4bc5c908, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponVFXList:
-  - weaponID: Axe
-    vfxPrefab: {fileID: 274761310258684839, guid: 8f2bec3f27b76c14182b7a5414797940, type: 3}
-  - weaponID: Dagger
-    vfxPrefab: {fileID: 6260243036576056154, guid: 76bb3d17b5383044583f32f9055114d0, type: 3}
-  - weaponID: Spaer
-    vfxPrefab: {fileID: 4994997792314849709, guid: 3dd50886582244645be87adb42aa8528, type: 3}
-  - weaponID: Sword
-    vfxPrefab: {fileID: 3651685925575709812, guid: 5b1d9a3d4638c8c4e97531085317de66, type: 3}
+  vfxSetList: []
 --- !u!4 &1441941021
 Transform:
   m_ObjectHideFlags: 0

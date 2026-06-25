@@ -279,7 +279,7 @@ public class AttackPattern2 : MonoBehaviour, IAttackPattern
 
         if (prefab == null) return;
 
-        _currentEffect = Instantiate(prefab, position, Quaternion.identity);
+        _currentEffect = Instantiate(prefab, position, prefab.transform.rotation);
         _currentEffect.transform.SetParent(transform);
     }
 

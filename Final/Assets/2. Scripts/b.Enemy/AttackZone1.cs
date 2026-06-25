@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class AttackZone1 : MonoBehaviour
+public class AttackZone1 : MonoBehaviour, IAttackPattern
 {
     [Header("피격 설정")]
     public int   damage         = 20;
@@ -23,16 +23,28 @@ public class AttackZone1 : MonoBehaviour
     private bool  _hasDealtDamage = false;
     private GameObject  _currentEffect;
 
-    void Start()
+    // ────────────────────────────────────────────
+    //  IAttackPattern 구현
+    // ────────────────────────────────────────────
+    public void SetContext(Transform enemyTr, Transform traceTarget)
     {
+        // 필요하면 enemy 정보 받기 (지금은 미사용)
+    }
+
+    public IEnumerator Execute()
+    {
+        // EnemyCtrl에서 호출됨
         Collider col = GetComponent<Collider>();
-        col.isTrigger = true;
-        col.enabled   = false;
+        if (col != null)
+        {
+            col.isTrigger = true;
+            col.enabled   = false;
+        }
 
         RepositionAroundPlayer();
-
-        StartCoroutine(ZoneRoutine());
+        yield return StartCoroutine(ZoneRoutine());
     }
+
     // ────────────────────────────────────────────
     //  플레이어 주변 랜덤 위치 계산
     // ────────────────────────────────────────────
@@ -59,7 +71,7 @@ public class AttackZone1 : MonoBehaviour
     }
 
     // ────────────────────────────────────────────
-    //  장판예고 > 활성화 > 제거
+    //  장판 예고 > 활성화 > 제거
     // ────────────────────────────────────────────
     IEnumerator ZoneRoutine()
     {
@@ -69,7 +81,8 @@ public class AttackZone1 : MonoBehaviour
         yield return new WaitForSeconds(warningDuration);
 
         _isActive = true;
-        GetComponent<Collider>().enabled = true;
+        Collider col = GetComponent<Collider>();
+        if (col != null) col.enabled = true;
         SpawnEffect(activeEffectPrefab);
 
         yield return new WaitForSeconds(activeDuration);
@@ -94,7 +107,7 @@ public class AttackZone1 : MonoBehaviour
     void OnTriggerEnter(Collider other)          
     {
         if (!_isActive)        return;
-        if (_hasDealtDamage)   return;           // 이미 피격했으면 무시
+        if (_hasDealtDamage)   return;
         if (!other.CompareTag("Player")) return;
 
         if (other.TryGetComponent<ITakeDamage>(out var target))
@@ -104,3 +117,4 @@ public class AttackZone1 : MonoBehaviour
         }
     }
 }
+
