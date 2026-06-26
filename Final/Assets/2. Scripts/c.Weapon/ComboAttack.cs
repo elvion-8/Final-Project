@@ -42,6 +42,7 @@ public class ComboAttack : MonoBehaviour
 
         if (player.isAttacking == false)
         {
+            player.isAttacking = true;
             comboCount = 1;
             TriggerAttack(comboCount, weaponTypeVal, currentComboTime);
         }

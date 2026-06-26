@@ -23,6 +23,14 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     [Header("피격 시 무적 시간")]
     [SerializeField] private float hitTime;
     private bool invincibility;     //무적 여부
+    [SerializeField] private groundCheck groundCheck;
+    private bool IsGrounded
+    {
+        get
+        {
+            return groundCheck != null && groundCheck.isGrounded && MoveDir.y <= 0f;
+        }
+    }
 
     [Space(10)]
     [Header("playerStat")]
@@ -146,6 +154,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         currRot = myTr.rotation;
         combo = GetComponent<ComboAttack>();
         attackMotion = GetComponent<AttackMotion>();
+        groundCheck = GetComponentInChildren<groundCheck>();
     }
 
     void Start()
@@ -193,6 +202,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
             ExecuteMove();
 
             anim.SetFloat("Speed", inputDir.magnitude);
+            anim.SetBool("isGrounded", IsGrounded);
             //ResetInputTriggers();
             input.ResetKey();
         }
@@ -245,7 +255,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
             return true;
         }
 
-        if (!charCon.isGrounded && !isRolling && !isAttacking)
+        if (!IsGrounded && !isRolling && !isAttacking)
         {
             if (v > 0.1f && (input.jumpKey/*isJumpTriggered || isJumpHeld*/))
             {
@@ -280,6 +290,23 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         if (input.attackKey)
         {
             if(attackMotion.GetCurrentWeaponType() <= -1) return;
+
+            // 공격 시 화면(카메라)이 바라보는 방향으로 몸 회전
+            Transform cameraTransform = cmTr;
+            if (cameraTransform == null && Camera.main != null)
+            {
+                cameraTransform = Camera.main.transform;
+            }
+            if (cameraTransform != null)
+            {
+                Vector3 lookDir = cameraTransform.forward;
+                lookDir.y = 0f;
+                if (lookDir.sqrMagnitude > 0.001f)
+                {
+                    transform.rotation = Quaternion.LookRotation(lookDir);
+                }
+            }
+
             if (combo != null)
             {
                 combo.IsComboAttack();
@@ -341,7 +368,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
 
     void Jump()
     {
-        if (charCon.isGrounded)
+        if (IsGrounded)
         {
             input.isJumpHeld = false;
             isMultiJump = false;
@@ -349,7 +376,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         }
 
         // 점프
-        if (charCon.isGrounded && !isRolling && input.jumpKey)
+        if (IsGrounded && !isRolling && input.jumpKey)
         {
             MoveDir.y = jumpPower;
 
@@ -362,7 +389,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
             isMultiJump = true;
         }
         // 추가 점프
-        else if (input.jumpKey && !charCon.isGrounded && tempJumpCnt < jumpCnt && isMultiJump)
+        else if (input.jumpKey && !IsGrounded && tempJumpCnt < jumpCnt && isMultiJump)
         {
             tempJumpCnt++;
             MoveDir.y = jumpPower;
@@ -400,15 +427,17 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
             return;
         }
 
-        if (charCon.isGrounded)
+        if (IsGrounded)
         {
             if (!isRolling)
             {
                 MoveDir = moveDir.normalized * moveSpeed;
+                MoveDir.y = -2f;
                 if (inputDir.magnitude > 0.1f)
                 {
                     stopTimer = 0f;
-                    Quaternion targetRotation = Quaternion.LookRotation(MoveDir);
+                    Vector3 lookDir = new Vector3(MoveDir.x, 0f, MoveDir.z);
+                    Quaternion targetRotation = Quaternion.LookRotation(lookDir);
                     transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
                     if (input.runKey)
                     {
