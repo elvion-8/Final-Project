@@ -6,8 +6,8 @@ using UnityEngine;
 //  ① MasterClient가 랜덤 플레이어 1명을 속박
 //  ② 속박된 플레이어 → Sanity 지속 감소 + 이동 불가 (10초)
 //  ③ 속박 대상을 바라보는 다른 플레이어 → 혼란(Sanity감소 + 이동불가)
-//  ④ activeDuration(10초) 후 속박 · 혼란 전부 해제, 컨트롤 복귀
-//  ※ 솔로 플레이(Player 1명)이면 혼란 스킵, 속박만 진행
+//  ④ activeDuration(10초) 후 속박/혼란 전부 해제, 컨트롤 복귀
+//  ※ 솔로 플레이(Player 1명)이면 혼란X, 속박만 진행
 // ============================================================
 public class AttackPattern2 : MonoBehaviour, IAttackPattern
 {
@@ -26,12 +26,16 @@ public class AttackPattern2 : MonoBehaviour, IAttackPattern
     public GameObject warningEffectPrefab;
     public GameObject bindEffectPrefab;
 
-    // EnemyCtrl에서 SetContext()로 주입 (현재 패턴에서는 미사용, 확장 여지)
+    [Header("이펙트 오프셋")]
+    public float bindEffectHeightOffset = 1.5f;  // 플레이어 머리 위 높이
+
+    // EnemyCtrl에서 SetContext()로 주입
     private Transform _enemyTr;
     private Transform _traceTarget;
 
     private bool       _isActive    = false;
-    private GameObject _currentEffect;
+    private GameObject _warningEffect;
+    private GameObject _bindEffect;
 
     private GameObject  _boundPlayer;
     private bool        _iAmBound    = false;
@@ -154,15 +158,17 @@ public class AttackPattern2 : MonoBehaviour, IAttackPattern
     {
         _isActive = false;
 
+        // Warning Effect: 대상자를 따라다니는 이펙트
         if (_boundPlayer != null)
-            SpawnEffect(warningEffectPrefab, _boundPlayer.transform.position);
+            StartCoroutine(TrackingWarningEffectRoutine());
 
         yield return new WaitForSeconds(warningDuration);
 
+        // Bind Effect: 활성화 시작 → 머리 위에 고정된 이펙트
         _isActive = true;
 
         if (_boundPlayer != null)
-            SpawnEffect(bindEffectPrefab, _boundPlayer.transform.position);
+            SpawnBindEffect(_boundPlayer.transform);
 
         if (_iAmBound)
             SetMovementLock(true);
@@ -174,6 +180,56 @@ public class AttackPattern2 : MonoBehaviour, IAttackPattern
 
         _isActive = false;
         EndGimmick();
+    }
+
+    // ────────────────────────────────────────────
+    //  Warning Effect: 대상자 추적 루틴
+    // ────────────────────────────────────────────
+    IEnumerator TrackingWarningEffectRoutine()
+    {
+        if (_boundPlayer == null) yield break;
+
+        // Warning Effect 생성
+        if (warningEffectPrefab != null)
+        {
+            _warningEffect = Instantiate(warningEffectPrefab, 
+                _boundPlayer.transform.position, 
+                warningEffectPrefab.transform.rotation);
+            _warningEffect.transform.SetParent(transform);
+        }
+
+        // warningDuration 동안 계속 따라다니기
+        float elapsed = 0f;
+        while (elapsed < warningDuration && _boundPlayer != null)
+        {
+            if (_warningEffect != null)
+            {
+                _warningEffect.transform.position = _boundPlayer.transform.position;
+            }
+
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        // Warning 종료 후 이펙트 제거
+        if (_warningEffect != null)
+            Destroy(_warningEffect);
+    }
+
+    // ────────────────────────────────────────────
+    //  Bind Effect: 플레이어 머리 위에 스폰
+    // ────────────────────────────────────────────
+    void SpawnBindEffect(Transform boundPlayerTr)
+    {
+        if (bindEffectPrefab == null) return;
+
+        // 플레이어 머리 위 오프셋 위치 계산
+        Vector3 spawnPos = boundPlayerTr.position + Vector3.up * bindEffectHeightOffset;
+
+        _bindEffect = Instantiate(bindEffectPrefab, spawnPos, bindEffectPrefab.transform.rotation);
+        _bindEffect.transform.SetParent(transform);
+
+        // Bind Effect는 고정 위치이므로 추적 안 함
     }
 
     // ────────────────────────────────────────────
@@ -272,17 +328,6 @@ public class AttackPattern2 : MonoBehaviour, IAttackPattern
         return null;
     }
 
-    void SpawnEffect(GameObject prefab, Vector3 position)
-    {
-        if (_currentEffect != null)
-            Destroy(_currentEffect);
-
-        if (prefab == null) return;
-
-        _currentEffect = Instantiate(prefab, position, prefab.transform.rotation);
-        _currentEffect.transform.SetParent(transform);
-    }
-
     void EndGimmick()
     {
         if (_iAmBound)
@@ -297,8 +342,11 @@ public class AttackPattern2 : MonoBehaviour, IAttackPattern
             SetMovementLock(false);
         }
 
-        if (_currentEffect != null)
-            Destroy(_currentEffect);
+        if (_warningEffect != null)
+            Destroy(_warningEffect);
+
+        if (_bindEffect != null)
+            Destroy(_bindEffect);
     }
 
     void OnDestroy()
@@ -307,3 +355,4 @@ public class AttackPattern2 : MonoBehaviour, IAttackPattern
         EndGimmick();
     }
 }
+

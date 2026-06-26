@@ -62,7 +62,7 @@ Material:
     - _EnvironmentReflections: 1
     - _FresnelBias: 0
     - _FresnelPower: 3
-    - _FresnelScale: 1
+    - _FresnelScale: 2.68
     - _HueShift: 1
     - _NoiseDistortionLerp: 0.2
     - _NormalIntensity: 1
@@ -85,8 +85,8 @@ Material:
     - _WPOIntensity: 0.5
     - _WPOIntensity1: 0.05
     - _WPOMax: 0.5
-    - _WPOMin: 0
-    - _WPOSineIntensity: 1
+    - _WPOMin: 0.74
+    - _WPOSineIntensity: 0
     - _WPOSineTime: 3.77
     - _WPOTriplanarContrast: 1
     - __dirty: 0

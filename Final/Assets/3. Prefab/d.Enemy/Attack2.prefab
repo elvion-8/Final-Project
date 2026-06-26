@@ -51,3 +51,4 @@ MonoBehaviour:
   gazeAngleThreshold: 40
   warningEffectPrefab: {fileID: 1091141867756082, guid: 004ba69fc2c82284aafd4f2534f8ad9e, type: 3}
   bindEffectPrefab: {fileID: 8708204271164909051, guid: 116471f2dcfcc7642bb46fc99c6f443c, type: 3}
+  bindEffectHeightOffset: 3
