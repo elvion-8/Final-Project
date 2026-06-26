@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   laserPrefab: {fileID: 1531814124222292, guid: 663161ea4a2607e43aaaf82d0af01055, type: 3}
-  laserRange: 20
+  laserRange: 30
   warningDuration: 2
   fireDuration: 10
   fireInterval: 3
