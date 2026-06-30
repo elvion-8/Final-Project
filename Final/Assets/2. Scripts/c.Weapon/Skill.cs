@@ -17,7 +17,7 @@ public class Skill : MonoBehaviour
 
         if(rockParticle != null && playerPoint != null)
         {
-            Vector3 usPoint = playerPoint.position + (playerPoint.forward * 2.5f);
+            Vector3 usPoint = playerPoint.position + (playerPoint.forward * 3.5f);
 
             ParticleSystem instance = Instantiate(rockParticle, usPoint, playerPoint.rotation);
             instance.Play();

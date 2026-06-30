@@ -59,6 +59,7 @@ public class AttackMotion : MonoBehaviour
             }
             if (Input.GetKeyDown(KeyCode.Q))
             {
+                Debug.Log("-1");
                 if (PhotonNetwork.inRoom)
                 {
                     pv.RPC("WeaponSikll1", PhotonTargets.All,pv.viewID);
