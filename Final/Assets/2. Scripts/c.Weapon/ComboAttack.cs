@@ -40,6 +40,12 @@ public class ComboAttack : MonoBehaviour
             currentComboTime = attackMotion.currentWeaponData.comboTime;
         }
 
+        // Limit combo to 1 if in mid-air
+        if (anim != null && !anim.GetBool("isGrounded"))
+        {
+            currentMaxCombo = 1;
+        }
+
         if (player.isAttacking == false)
         {
             player.isAttacking = true;
@@ -50,11 +56,39 @@ public class ComboAttack : MonoBehaviour
         {
             if (comboResetCor != null)
             {
-                comboCount += 1;
-                if (comboCount > currentMaxCombo) comboCount = 1;
-                TriggerAttack(comboCount, weaponTypeVal, currentComboTime);
+                // Prevent rapid spam-clicking
+                if (CanProgressCombo())
+                {
+                    comboCount += 1;
+                    if (comboCount > currentMaxCombo) comboCount = 1;
+                    TriggerAttack(comboCount, weaponTypeVal, currentComboTime);
+                }
             }
         }
+    }
+
+    private bool CanProgressCombo()
+    {
+        if (anim == null) return true;
+
+        int layer = anim.GetLayerIndex("Attack");
+        if (layer == -1)
+        {
+            for (int i = 1; i < anim.layerCount; i++)
+            {
+                if (anim.GetLayerWeight(i) > 0.5f)
+                {
+                    layer = i;
+                    break;
+                }
+            }
+            if (layer == -1) layer = 0;
+        }
+
+        if (anim.IsInTransition(layer)) return false;
+
+        AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(layer);
+        return (stateInfo.normalizedTime % 1f) >= 0.3f;
     }
 
     private void TriggerAttack(int combo, int weaponType, float customComboTime)
@@ -79,7 +113,7 @@ public class ComboAttack : MonoBehaviour
         ResetCombo();
     }
 
-    void ResetCombo()
+    public void ResetCombo()
     {
         comboCount = 0;
         comboAttack = false;
