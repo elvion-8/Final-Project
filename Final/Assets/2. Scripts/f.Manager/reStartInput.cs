@@ -1,6 +1,7 @@
 using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using System.Collections;
 
 public class reStartInput : MonoBehaviour
 {
@@ -11,8 +12,9 @@ public class reStartInput : MonoBehaviour
         input = GameObject.Find("@Managers").GetComponent<InputManager>();
 
     }
-    void Start()
+    IEnumerator Start()
     {
+        yield return new WaitForSeconds(0.5f);
         if (EventSystem.current != null)
         {
             EventSystem.current.SetSelectedGameObject(null);

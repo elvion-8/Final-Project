@@ -1,15 +1,19 @@
 using UnityEngine;
+using System.Collections;
 
 public class csResetPosition : MonoBehaviour
 {
     public Transform playerPos;
     public Animator playerAnim;
 
-    void Awake()
+    IEnumerator Start()
     {
-        playerPos = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
-        playerAnim = GameObject.FindGameObjectWithTag("Player").GetComponentInChildren<Animator>();
+        yield return new WaitForSeconds(0.5f);
+        playerPos = GameObject.Find("Player").GetComponent<Transform>();
+        playerAnim = GameObject.Find("Player").GetComponentInChildren<Animator>();
+
     }
+
     void OnTriggerEnter(Collider col)
     {
         if(col.CompareTag("Player"))

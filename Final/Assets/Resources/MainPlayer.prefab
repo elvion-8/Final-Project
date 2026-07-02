@@ -3516,7 +3516,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5983bfb5479ae94eb70b1d6d377559b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rockParticle: {fileID: 0}
+  rockParticle: {fileID: 9022464953903284051, guid: b4cd10855e37a1f46be017e90f9362af, type: 3}
   playerPoint: {fileID: 0}
 --- !u!114 &6607498545568184920
 MonoBehaviour:
