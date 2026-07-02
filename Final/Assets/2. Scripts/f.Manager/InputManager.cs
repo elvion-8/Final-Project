@@ -108,38 +108,25 @@ public class InputManager : MonoBehaviour
                     four = true;
                     break;
             }
-            if (GameObject.FindWithTag("Player").GetComponent<PlayerCtrl>().isAttacking == false)
+
+            // Delegate to AttackMotion so weapon swap and post-attack swap buffering is handled there
+            if (atm == null)
             {
-                weaponIndex = value.Get<float>();
-                if (weaponIndex == 0) return;
-                Debug.Log(weaponIndex);
-
-                ItemData hotbarItem = csInvenManager.Instance.GetHotbarItem((int)weaponIndex - 1);
-                if (hotbarItem == null || hotbarItem.itemPrefab == null) return;
-
-                int prefabIndex = -1;
-
-                for (int i = 0; i < atm.weaponPrefabs.Length; i++)
+                GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+                if (playerObj != null)
                 {
-                    if (atm.weaponPrefabs[i] == hotbarItem.itemPrefab)
-                    {
-                        prefabIndex = i;
-                        break;
-                    }
+                    atm = playerObj.GetComponent<AttackMotion>();
+                    pv = playerObj.GetComponent<PhotonView>();
                 }
+            }
 
-                if (prefabIndex == -1)
-                {
-                    Debug.LogError("weaponPrefabs 배열에 등록되지 않은 무기 프리팹입니다!");
-                    return;
-                }
-
-                if (PhotonNetwork.inRoom)
-                {
-                    pv.RPC("EquipWeapon", PhotonTargets.AllBuffered, prefabIndex);
-                }
-                else atm.EquipWeapon(prefabIndex);
-
+            if (atm != null)
+            {
+                atm.OnWeaponChange(value);
+            }
+            else
+            {
+                Debug.LogWarning("[InputManager] AttackMotion (atm) is null and player could not be found.");
             }
         }
     }

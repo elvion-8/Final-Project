@@ -557,7 +557,8 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
 
     IEnumerator AttackRoutine()
     {
-        yield return null;
+        // Wait a short duration for animator state to transition in
+        yield return new WaitForSeconds(0.15f);
 
         attackLayerIndex = anim.GetLayerIndex("Attack");
         if (attackLayerIndex == -1)
@@ -573,18 +574,29 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
             if (attackLayerIndex == -1) attackLayerIndex = 0;
         }
 
-        AnimatorStateInfo stateInfo;
-        if (anim.IsInTransition(attackLayerIndex))
+        if (combo != null)
         {
-            stateInfo = anim.GetNextAnimatorStateInfo(attackLayerIndex);
+            // Dynamically wait as long as we are executing combo attacks
+            while (combo.IsInComboAnimation())
+            {
+                yield return null;
+            }
         }
         else
         {
-            stateInfo = anim.GetCurrentAnimatorStateInfo(attackLayerIndex);
-        }
+            AnimatorStateInfo stateInfo;
+            if (anim.IsInTransition(attackLayerIndex))
+            {
+                stateInfo = anim.GetNextAnimatorStateInfo(attackLayerIndex);
+            }
+            else
+            {
+                stateInfo = anim.GetCurrentAnimatorStateInfo(attackLayerIndex);
+            }
 
-        float duration = stateInfo.length > 0f ? stateInfo.length : 1f;
-        yield return new WaitForSeconds(duration);
+            float duration = stateInfo.length > 0f ? stateInfo.length : 1f;
+            yield return new WaitForSeconds(Mathf.Max(0f, duration - 0.15f));
+        }
 
         isAttacking = false;
         anim.applyRootMotion = false;
@@ -596,6 +608,11 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         hpBar.fillAmount = (float)hp / (float)fullHp;
         Debug.Log("takeDamage : " + damage);
         gpV.TriggerVib(0.3f, 0.3f, 0.5f);
+
+        // Reset combo on hit
+        if (combo != null) combo.ResetCombo();
+        else isAttacking = false;
+
         StartCoroutine(Hit());
         if (hp <= 0)
         {

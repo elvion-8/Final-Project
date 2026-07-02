@@ -9,9 +9,10 @@ public class ComboAttack : MonoBehaviour
     PlayerCtrl player;
     Animator anim;
     AttackMotion attackMotion;
-    private Coroutine comboResetCor;
 
-    bool comboAttack = false;
+    private bool hasBufferedAttack = false;
+    private bool transitionPending = false;
+    private float lastAttackTime = 0f;
 
     private readonly int hashComboCount = Animator.StringToHash("ComboCount");
     private readonly int hashWeaponType = Animator.StringToHash("WeaponType");
@@ -24,77 +25,178 @@ public class ComboAttack : MonoBehaviour
         attackMotion = GetComponent<AttackMotion>();
     }
 
+    void Update()
+    {
+        if (player.isAttacking)
+        {
+            int layer = GetAttackLayer();
+            float normTime = GetCurrentNormalizedTime();
+
+            if (transitionPending)
+            {
+                if ((Time.time - lastAttackTime >= 0.15f && normTime < 0.25f) || Time.time - lastAttackTime > 0.5f)
+                {
+                    transitionPending = false;
+                }
+            }
+
+            if (!transitionPending && hasBufferedAttack && !anim.IsInTransition(layer))
+            {
+                GetWeaponComboStats(out int weaponTypeVal, out int currentMaxCombo);
+
+                if (comboCount < currentMaxCombo)
+                {
+                    if (normTime >= 0.35f && normTime < 0.9f)
+                    {
+                        hasBufferedAttack = false;
+                        comboCount += 1;
+                        TriggerAttack(comboCount, weaponTypeVal);
+                    }
+                }
+                else if (comboCount == currentMaxCombo)
+                {
+                    if (normTime >= 0.9f)
+                    {
+                        hasBufferedAttack = false;
+                        comboCount = 1;
+                        TriggerAttack(comboCount, weaponTypeVal);
+                    }
+                }
+            }
+        }
+        else
+        {
+            if (comboCount != 0 || hasBufferedAttack || transitionPending)
+            {
+                ResetCombo();
+            }
+        }
+    }
+
     public void IsComboAttack()
     {
-        int weaponTypeVal = 0;
-        if (attackMotion != null)
+        if (!IsInComboAnimation())
         {
-            weaponTypeVal = attackMotion.GetCurrentWeaponType();
-        }
-        int currentMaxCombo = maxCombo;
-        float currentComboTime = comboTime;
-
-        if (attackMotion != null && attackMotion.currentWeaponData != null)
-        {
-            currentMaxCombo = attackMotion.currentWeaponData.maxCombo;
-            currentComboTime = attackMotion.currentWeaponData.comboTime;
+            ResetCombo();
         }
 
-        // Limit combo to 1 if in mid-air
-        if (anim != null && !anim.GetBool("isGrounded"))
-        {
-            currentMaxCombo = 1;
-        }
+        GetWeaponComboStats(out int weaponTypeVal, out int currentMaxCombo);
 
         if (player.isAttacking == false)
         {
             player.isAttacking = true;
             comboCount = 1;
-            TriggerAttack(comboCount, weaponTypeVal, currentComboTime);
+            hasBufferedAttack = false;
+            TriggerAttack(comboCount, weaponTypeVal);
         }
         else
         {
-            if (comboResetCor != null)
+            if (transitionPending)
             {
-                // Prevent rapid spam-clicking
-                if (CanProgressCombo())
+                hasBufferedAttack = true;
+                return;
+            }
+
+            float normTime = GetCurrentNormalizedTime();
+
+            if (normTime < 0.35f)
+            {
+                hasBufferedAttack = true;
+            }
+            else if (normTime >= 0.35f && normTime < 0.9f)
+            {
+                if (comboCount < currentMaxCombo)
                 {
+                    hasBufferedAttack = false;
                     comboCount += 1;
-                    if (comboCount > currentMaxCombo) comboCount = 1;
-                    TriggerAttack(comboCount, weaponTypeVal, currentComboTime);
+                    TriggerAttack(comboCount, weaponTypeVal);
                 }
+                else
+                {
+                    hasBufferedAttack = true;
+                }
+            }
+            else if (normTime >= 0.9f)
+            {
+                comboCount = 1;
+                hasBufferedAttack = false;
+                TriggerAttack(comboCount, weaponTypeVal);
             }
         }
     }
 
-    private bool CanProgressCombo()
+    private void GetWeaponComboStats(out int weaponType, out int maxComboLimit)
     {
-        if (anim == null) return true;
-
-        int layer = anim.GetLayerIndex("Attack");
-        if (layer == -1)
+        weaponType = 0;
+        if (attackMotion != null)
         {
-            for (int i = 1; i < anim.layerCount; i++)
-            {
-                if (anim.GetLayerWeight(i) > 0.5f)
-                {
-                    layer = i;
-                    break;
-                }
-            }
-            if (layer == -1) layer = 0;
+            weaponType = attackMotion.GetCurrentWeaponType();
         }
 
-        if (anim.IsInTransition(layer)) return false;
+        maxComboLimit = maxCombo;
+        if (attackMotion != null && attackMotion.currentWeaponData != null)
+        {
+            maxComboLimit = attackMotion.currentWeaponData.maxCombo;
+        }
+    }
+
+    public int GetAttackLayer()
+    {
+        if (anim == null) return -1;
+        int layer = anim.GetLayerIndex("Attack");
+        if (layer != -1 && anim.GetLayerWeight(layer) > 0.5f)
+        {
+            return layer;
+        }
+
+        for (int i = 1; i < anim.layerCount; i++)
+        {
+            if (anim.GetLayerWeight(i) > 0.5f)
+            {
+                return i;
+            }
+        }
+        return 0;
+    }
+
+    private float GetCurrentNormalizedTime()
+    {
+        if (anim == null) return 0f;
+        int layer = GetAttackLayer();
+        if (layer == -1) return 0f;
+
+        if (anim.IsInTransition(layer))
+        {
+            AnimatorStateInfo nextStateInfo = anim.GetNextAnimatorStateInfo(layer);
+            return nextStateInfo.normalizedTime;
+        }
 
         AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(layer);
-        return (stateInfo.normalizedTime % 1f) >= 0.3f;
+        return stateInfo.normalizedTime;
     }
 
-    private void TriggerAttack(int combo, int weaponType, float customComboTime)
+    public bool IsInComboAnimation()
     {
-        if (comboResetCor != null) StopCoroutine(comboResetCor);
-        comboResetCor = StartCoroutine(ResetComboTimer(customComboTime));
+        if (anim == null) return false;
+        int layer = GetAttackLayer();
+        if (layer == -1) return false;
+
+        if (anim.IsInTransition(layer))
+        {
+            AnimatorStateInfo nextStateInfo = anim.GetNextAnimatorStateInfo(layer);
+            bool nextIsIdle = nextStateInfo.IsName("New State") || nextStateInfo.IsName("Idle") || nextStateInfo.IsName("Empty");
+            return !nextIsIdle;
+        }
+
+        AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(layer);
+        bool currentIsIdle = stateInfo.IsName("New State") || stateInfo.IsName("Idle") || stateInfo.IsName("Empty");
+        return !currentIsIdle;
+    }
+
+    private void TriggerAttack(int combo, int weaponType)
+    {
+        lastAttackTime = Time.time;
+        transitionPending = true;
 
         PhotonView pv = player.GetComponent<PhotonView>();
         if (pv != null && PhotonNetwork.inRoom)
@@ -107,19 +209,17 @@ public class ComboAttack : MonoBehaviour
         }
     }
 
-    IEnumerator ResetComboTimer(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        ResetCombo();
-    }
-
     public void ResetCombo()
     {
         comboCount = 0;
-        comboAttack = false;
-        anim.SetInteger(hashComboCount, comboCount);
-        anim.applyRootMotion = false; // 루트 모션 비활성화
-        if (comboResetCor != null) StopCoroutine(comboResetCor);
+        hasBufferedAttack = false;
+        transitionPending = false;
+        if (anim != null)
+        {
+            anim.SetInteger(hashComboCount, comboCount);
+            anim.ResetTrigger(hashAttackTrigger);
+            anim.applyRootMotion = false; // 루트 모션 비활성화
+        }
         player.isAttacking = false;
     }
 }

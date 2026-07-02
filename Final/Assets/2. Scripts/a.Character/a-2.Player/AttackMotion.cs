@@ -20,6 +20,9 @@ public class AttackMotion : MonoBehaviour
     // Photon view //////////
     PhotonView pv;
 
+    private int pendingWeaponIndex = -1;
+    private ItemData pendingWeaponData;
+
     void Awake()
     {
         player = GetComponent<PlayerCtrl>();
@@ -57,6 +60,17 @@ public class AttackMotion : MonoBehaviour
                     StartCoroutine(TrailWeapon());
                 }
             }
+
+            // Check if we have a pending weapon swap and player has finished attacking
+            if (pendingWeaponIndex != -1)
+            {
+                Debug.Log($"[AttackMotion] Pending swap exists: index {pendingWeaponIndex}. player.isAttacking: {player.isAttacking}");
+                if (!player.isAttacking)
+                {
+                    SwapToPendingWeapon();
+                }
+            }
+
             if (Input.GetKeyDown(KeyCode.Q))
             {
                 Debug.Log("-1");
@@ -71,43 +85,84 @@ public class AttackMotion : MonoBehaviour
 
     public void OnWeaponChange(InputValue value)
     {
+        Debug.Log($"[AttackMotion] OnWeaponChange invoked. pv.isMine: {pv.isMine}, inRoom: {PhotonNetwork.inRoom}");
         if (pv.isMine || !PhotonNetwork.inRoom)
         {
-            if (player.isAttacking == false)
+            float weaponIndex = value.Get<float>();
+            if (weaponIndex == 0) return;
+            Debug.Log($"[AttackMotion] Requested weaponIndex: {weaponIndex}");
+
+            ItemData hotbarItem = csInvenManager.Instance.GetHotbarItem((int)weaponIndex - 1);
+            if (hotbarItem == null)
             {
-                float weaponIndex = value.Get<float>();
-                if (weaponIndex == 0) return;
-                Debug.Log(weaponIndex);
+                Debug.LogWarning($"[AttackMotion] Hotbar item is null at slot {(int)weaponIndex - 1}");
+                return;
+            }
+            if (hotbarItem.itemPrefab == null)
+            {
+                Debug.LogWarning($"[AttackMotion] Hotbar item prefab is null at slot {(int)weaponIndex - 1}");
+                return;
+            }
 
-                ItemData hotbarItem = csInvenManager.Instance.GetHotbarItem((int)weaponIndex - 1);
-                if (hotbarItem == null || hotbarItem.itemPrefab == null) return;
+            int prefabIndex = -1;
 
-                int prefabIndex = -1;
-
-                for (int i = 0; i < weaponPrefabs.Length; i++)
+            for (int i = 0; i < weaponPrefabs.Length; i++)
+            {
+                if (weaponPrefabs[i] == hotbarItem.itemPrefab)
                 {
-                    if (weaponPrefabs[i] == hotbarItem.itemPrefab)
-                    {
-                        prefabIndex = i;
-                        break;
-                    }
+                    prefabIndex = i;
+                    break;
                 }
+            }
 
-                if (prefabIndex == -1)
-                {
-                    Debug.LogError("weaponPrefabs 배열에 등록되지 않은 무기 프리팹입니다!");
-                    return;
-                }
+            if (prefabIndex == -1)
+            {
+                Debug.LogError($"weaponPrefabs 배열에 등록되지 않은 무기 프리팹입니다! Prefab name: {hotbarItem.itemPrefab.name}");
+                return;
+            }
+
+            if (player.isAttacking)
+            {
+                pendingWeaponIndex = prefabIndex;
+                pendingWeaponData = hotbarItem;
+                Debug.Log($"[AttackMotion] Attack in progress. Weapon swap buffered: {hotbarItem.itemName} (Index: {prefabIndex})");
+            }
+            else
+            {
+                pendingWeaponIndex = -1;
+                pendingWeaponData = null;
 
                 currentWeaponData = hotbarItem;
+                Debug.Log($"[AttackMotion] Not attacking. Swapping immediately to: {hotbarItem.itemName} (Index: {prefabIndex})");
 
                 if (PhotonNetwork.inRoom)
                 {
                     pv.RPC("EquipWeapon", PhotonTargets.AllBuffered, prefabIndex);
                 }
                 else EquipWeapon(prefabIndex);
-
             }
+        }
+    }
+
+    private void SwapToPendingWeapon()
+    {
+        if (pendingWeaponIndex == -1) return;
+
+        currentWeaponData = pendingWeaponData;
+        int indexToEquip = pendingWeaponIndex;
+
+        pendingWeaponIndex = -1;
+        pendingWeaponData = null;
+
+        Debug.Log($"[AttackMotion] Executing pending weapon swap to index: {indexToEquip}");
+
+        if (PhotonNetwork.inRoom)
+        {
+            pv.RPC("EquipWeapon", PhotonTargets.AllBuffered, indexToEquip);
+        }
+        else
+        {
+            EquipWeapon(indexToEquip);
         }
     }
 
@@ -131,7 +186,6 @@ public class AttackMotion : MonoBehaviour
     [PunRPC]
     public void EquipWeapon(int index)
     {
-        if(player.isAttacking) return;
         if (index < 0 || index > weaponPrefabs.Length) return;
         //if (csInvenManager.Instance == null) return;
 
