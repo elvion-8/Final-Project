@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using UnityEngine.InputSystem;
 
 public class Managers : MonoBehaviour
@@ -93,8 +94,9 @@ public class Managers : MonoBehaviour
             _instance._gameOver.Init();
         }
     }
-    public void ReStartInit()
+    public IEnumerator ReStartInit()
     {
+        yield return new WaitForSeconds(0.5f);
         if (_instance.onInputManager) _instance._input.Init();
         PlayerInput playerInput = GetComponent<PlayerInput>();
         if(playerInput !=null)
