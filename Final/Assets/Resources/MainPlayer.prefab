@@ -696,10 +696,9 @@ MonoBehaviour:
   playerId: -1
   obstacleLayer:
     serializedVersion: 2
-    m_Bits: 0
-  maxClimbHeight: 2.5
-  climbSpeed: 2
-  wallCheckDistance: 1
+    m_Bits: 72
+  maxClimbHeight: 10
+  wallCheckDistance: 0.4
   ledgeForwardOffset: 0.5
   ledgeUpperHeightOffset: 2.2
   gpV: {fileID: 655839309683755263}
@@ -3219,7 +3218,7 @@ MonoBehaviour:
   player: {fileID: 8682280514685855374}
   groundMask:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 72
   castDist: 0.2
   radiusOffset: 0.05
 --- !u!1 &6787574385296425833

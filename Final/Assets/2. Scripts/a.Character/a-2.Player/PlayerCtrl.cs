@@ -81,14 +81,15 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     [Header("Wall & Ledge Climb")]
     public LayerMask obstacleLayer;
     public float maxClimbHeight = 2.5f;
-    public float climbSpeed = 2.0f;
     public float wallCheckDistance = 1.0f;
     public float ledgeForwardOffset = 0.5f;
     public float ledgeUpperHeightOffset = 2.2f;
 
     private bool isWallClimbing = false;
     private bool isLedgeClimbing = false;
+    public bool IsClimbing => isWallClimbing || isLedgeClimbing;
     private float climbHeightCounter = 0f;
+    private float climbStartHeight = 0f;
     private bool isMultiJump = false;
 
     //입력용 변수
@@ -257,11 +258,10 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
 
         if (!IsGrounded && !isRolling && !isAttacking)
         {
-            if (v > 0.1f && (input.jumpKey/*isJumpTriggered || isJumpHeld*/))
+            if (v > 0.1f && (input.jumpKey || input.isJumpHeld))
             {
                 RaycastHit wallHit;
                 Vector3 rayOrigin = transform.position + Vector3.up * 1.0f;
-                Debug.DrawRay(rayOrigin, transform.forward * wallCheckDistance, Color.red, 2f);
 
                 if (Physics.Raycast(rayOrigin, transform.forward, out wallHit, wallCheckDistance, obstacleLayer))
                 {
@@ -270,8 +270,10 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
                     {
                         transform.rotation = Quaternion.LookRotation(-wallHit.normal);
                         isWallClimbing = true;
+                        climbStartHeight = transform.position.y;
                         climbHeightCounter = 0f;
                         MoveDir = Vector3.zero;
+                        anim.applyRootMotion = true;
                         anim.SetBool("IsWallClimbing", true);
                         anim.SetBool("Walk", false);
                         anim.SetBool("Run", false);
@@ -370,7 +372,6 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     {
         if (IsGrounded)
         {
-            input.isJumpHeld = false;
             isMultiJump = false;
             tempJumpCnt = 0;
         }
@@ -639,21 +640,19 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         {
             isWallClimbing = false;
             anim.SetBool("IsWallClimbing", false);
+            anim.applyRootMotion = false;
             return;
         }
 
-        MoveDir = Vector3.up * climbSpeed;
-        climbHeightCounter += climbSpeed * Time.deltaTime;
+        climbHeightCounter = transform.position.y - climbStartHeight;
 
         if (climbHeightCounter >= maxClimbHeight)
         {
             isWallClimbing = false;
             anim.SetBool("IsWallClimbing", false);
-            MoveDir = -transform.forward * 1.5f;
+            anim.applyRootMotion = false;
             return;
         }
-
-        charCon.Move(MoveDir * Time.deltaTime);
 
         RaycastHit chestHit;
         bool hasWallAtChest = Physics.Raycast(transform.position + Vector3.up * 1.0f, transform.forward, out chestHit, wallCheckDistance, obstacleLayer);
@@ -662,6 +661,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         {
             isWallClimbing = false;
             anim.SetBool("IsWallClimbing", false);
+            anim.applyRootMotion = false;
             return;
         }
 
@@ -691,42 +691,12 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         anim.SetBool("IsWallClimbing", false);
         anim.SetTrigger("LedgeClimb");
 
-        charCon.enabled = false;
-
-        Vector3 startPos = transform.position;
-        Vector3 targetPos = ledgeSurfacePoint;
-        targetPos.y = ledgeSurfacePoint.y + 0.05f;
-
+        // 루트 모션 재생 시간 동안 대기합니다.
         float duration = 1.2f;
-        float elapsed = 0f;
+        yield return new WaitForSeconds(duration);
 
-        while (elapsed < duration)
-        {
-            elapsed += Time.deltaTime;
-            float percent = elapsed / duration;
-
-            if (percent < 0.5f)
-            {
-                // 1단계: 수직 위로 상승
-                float t = percent / 0.5f;
-                Vector3 intermediatePos = new Vector3(startPos.x, targetPos.y, startPos.z);
-                transform.position = Vector3.Lerp(startPos, intermediatePos, t);
-            }
-            else
-            {
-                // 2단계: 착지점으로 전진
-                float t = (percent - 0.5f) / 0.5f;
-                Vector3 intermediatePos = new Vector3(startPos.x, targetPos.y, startPos.z);
-                transform.position = Vector3.Lerp(intermediatePos, targetPos, t);
-            }
-
-            yield return null;
-        }
-
-        transform.position = targetPos;
-        charCon.enabled = true;
         isLedgeClimbing = false;
-
+        anim.applyRootMotion = false;
         MoveDir = Vector3.zero;
     }
 

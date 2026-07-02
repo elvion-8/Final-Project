@@ -21,7 +21,11 @@ public class AnimatorMoveForwarder : MonoBehaviour
         {
             Vector3 deltaPosition = anim.deltaPosition;
 
-            deltaPosition.y = player.MoveDir.y * Time.deltaTime;
+            // 클라이밍 상태가 아닐 때만 Y축 이동을 스크립트 값으로 덮어씌웁니다.
+            if (!player.IsClimbing)
+            {
+                deltaPosition.y = player.MoveDir.y * Time.deltaTime;
+            }
 
             charCon.Move(deltaPosition);
 
