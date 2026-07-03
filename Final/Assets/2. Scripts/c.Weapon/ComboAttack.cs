@@ -9,6 +9,7 @@ public class ComboAttack : MonoBehaviour
     PlayerCtrl player;
     Animator anim;
     AttackMotion attackMotion;
+    PhotonView pv;
 
     private bool hasBufferedAttack = false;
     private bool transitionPending = false;
@@ -23,104 +24,125 @@ public class ComboAttack : MonoBehaviour
         player = GetComponent<PlayerCtrl>();
         anim = GetComponentInChildren<Animator>();
         attackMotion = GetComponent<AttackMotion>();
+        pv = GetComponent<PhotonView>();
     }
 
     void Update()
     {
-        if (player.isAttacking)
+        if (pv.isMine || !PhotonNetwork.inRoom)
         {
-            int layer = GetAttackLayer();
-            float normTime = GetCurrentNormalizedTime();
-
-            if (transitionPending)
+            if (player.isAttacking)
             {
-                if ((Time.time - lastAttackTime >= 0.15f && normTime < 0.25f) || Time.time - lastAttackTime > 0.5f)
-                {
-                    transitionPending = false;
-                }
-            }
+                int layer = GetAttackLayer();
+                float normTime = GetCurrentNormalizedTime();
 
-            if (!transitionPending && hasBufferedAttack && !anim.IsInTransition(layer))
-            {
-                GetWeaponComboStats(out int weaponTypeVal, out int currentMaxCombo);
-
-                if (comboCount < currentMaxCombo)
+                if (transitionPending)
                 {
-                    if (normTime >= 0.35f && normTime < 0.9f)
+                    if ((Time.time - lastAttackTime >= 0.15f && normTime < 0.25f) || Time.time - lastAttackTime > 0.5f)
                     {
-                        hasBufferedAttack = false;
-                        comboCount += 1;
-                        TriggerAttack(comboCount, weaponTypeVal);
+                        transitionPending = false;
                     }
                 }
-                else if (comboCount == currentMaxCombo)
+
+                if (!transitionPending && hasBufferedAttack && !anim.IsInTransition(layer))
                 {
-                    if (normTime >= 0.9f)
+                    GetWeaponComboStats(out int weaponTypeVal, out int currentMaxCombo);
+
+                    if (comboCount < currentMaxCombo)
                     {
-                        hasBufferedAttack = false;
-                        comboCount = 1;
-                        TriggerAttack(comboCount, weaponTypeVal);
+                        if (normTime >= 0.35f && normTime < 0.9f)
+                        {
+                            hasBufferedAttack = false;
+                            comboCount += 1;
+                            TriggerAttack(comboCount, weaponTypeVal);
+                        }
+                    }
+                    else if (comboCount == currentMaxCombo)
+                    {
+                        if (normTime >= 0.9f)
+                        {
+                            hasBufferedAttack = false;
+                            comboCount = 1;
+                            TriggerAttack(comboCount, weaponTypeVal);
+                        }
                     }
                 }
             }
-        }
-        else
-        {
-            if (comboCount != 0 || hasBufferedAttack || transitionPending)
+            else
             {
-                ResetCombo();
+                if (comboCount != 0 || hasBufferedAttack || transitionPending)
+                {
+                    if (PhotonNetwork.inRoom)
+                    {
+                        pv.RPC("ResetCombo", PhotonTargets.AllBuffered);
+                    }
+                    else
+                    {
+                        ResetCombo();
+                    }
+                }
             }
         }
     }
 
     public void IsComboAttack()
     {
-        if (!IsInComboAnimation())
+        if (pv.isMine || !PhotonNetwork.inRoom)
         {
-            ResetCombo();
-        }
-
-        GetWeaponComboStats(out int weaponTypeVal, out int currentMaxCombo);
-
-        if (player.isAttacking == false)
-        {
-            player.isAttacking = true;
-            comboCount = 1;
-            hasBufferedAttack = false;
-            TriggerAttack(comboCount, weaponTypeVal);
-        }
-        else
-        {
-            if (transitionPending)
+            if (!IsInComboAnimation())
             {
-                hasBufferedAttack = true;
-                return;
-            }
-
-            float normTime = GetCurrentNormalizedTime();
-
-            if (normTime < 0.35f)
-            {
-                hasBufferedAttack = true;
-            }
-            else if (normTime >= 0.35f && normTime < 0.9f)
-            {
-                if (comboCount < currentMaxCombo)
+                if (PhotonNetwork.inRoom)
                 {
-                    hasBufferedAttack = false;
-                    comboCount += 1;
-                    TriggerAttack(comboCount, weaponTypeVal);
+                    pv.RPC("ResetCombo", PhotonTargets.AllBuffered);
                 }
                 else
                 {
-                    hasBufferedAttack = true;
+                    ResetCombo();
                 }
             }
-            else if (normTime >= 0.9f)
+
+            GetWeaponComboStats(out int weaponTypeVal, out int currentMaxCombo);
+
+            if (player.isAttacking == false)
             {
+                player.isAttacking = true;
                 comboCount = 1;
                 hasBufferedAttack = false;
                 TriggerAttack(comboCount, weaponTypeVal);
+            }
+            else
+            {
+                if (transitionPending)
+                {
+                    hasBufferedAttack = true;
+                    return;
+                }
+
+                float normTime = GetCurrentNormalizedTime();
+
+                if (normTime < 0.35f)
+                {
+                    hasBufferedAttack = true;
+                }
+                else if (normTime >= 0.35f && normTime < 0.9f)
+                {
+                    if (comboCount < currentMaxCombo)
+                    {
+                        hasBufferedAttack = false;
+                        comboCount += 1;
+                        TriggerAttack(comboCount, weaponTypeVal);
+                    }
+                    else
+                    {
+                        hasBufferedAttack = true;
+                    }
+                }
+                else if (normTime >= 0.9f)
+                {
+                    comboCount = 1;
+                    hasBufferedAttack = false;
+                    TriggerAttack(comboCount, weaponTypeVal);
+                }
             }
         }
     }
@@ -177,6 +199,7 @@ public class ComboAttack : MonoBehaviour
 
     public bool IsInComboAnimation()
     {
+
         if (anim == null) return false;
         int layer = GetAttackLayer();
         if (layer == -1) return false;
@@ -195,22 +218,27 @@ public class ComboAttack : MonoBehaviour
 
     private void TriggerAttack(int combo, int weaponType)
     {
-        lastAttackTime = Time.time;
-        transitionPending = true;
+        if (pv.isMine || !PhotonNetwork.inRoom)
+        {
+            lastAttackTime = Time.time;
+            transitionPending = true;
 
-        PhotonView pv = player.GetComponent<PhotonView>();
-        if (pv != null && PhotonNetwork.inRoom)
-        {
-            pv.RPC("NetworkAttack", PhotonTargets.All, combo, weaponType);
-        }
-        else
-        {
-            player.NetworkAttack(combo, weaponType);
+            PhotonView pv = player.GetComponent<PhotonView>();
+            if (pv != null && PhotonNetwork.inRoom)
+            {
+                pv.RPC("NetworkAttack", PhotonTargets.All, combo, weaponType);
+            }
+            else
+            {
+                player.NetworkAttack(combo, weaponType);
+            }
         }
     }
 
+    [PunRPC]
     public void ResetCombo()
     {
+
         comboCount = 0;
         hasBufferedAttack = false;
         transitionPending = false;
@@ -222,4 +250,5 @@ public class ComboAttack : MonoBehaviour
         }
         player.isAttacking = false;
     }
+    
 }

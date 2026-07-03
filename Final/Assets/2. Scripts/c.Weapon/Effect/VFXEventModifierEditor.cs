@@ -74,7 +74,7 @@ public class VFXEventModifierEditor : Editor
         EditorGUILayout.BeginVertical("box");
 
         targetScript.useVFXSet = EditorGUILayout.Toggle("1. 매니저 세트 VFX 사용", targetScript.useVFXSet);
-        targetScript.useTrailRenderer = EditorGUILayout.Toggle("2. 테일 레더러(잔상) 사용", targetScript.useTrailRenderer);
+        targetScript.useParticleRenderer = EditorGUILayout.Toggle("2. 파티클 사용", targetScript.useParticleRenderer);
         EditorGUILayout.Space(10);
 
         // --- 이펙트 세트 선택 팝업 UI ---
@@ -100,9 +100,9 @@ public class VFXEventModifierEditor : Editor
             else EditorGUILayout.HelpBox("WeaponEffectManager에 등록된 VFX 세트 데이터가 없습니다.", MessageType.Info);
         }
 
-        if (targetScript.useTrailRenderer)
+        if (targetScript.useParticleRenderer)
         {
-            targetScript.targetTrail = (TrailRenderer)EditorGUILayout.ObjectField("대상 Trail Renderer", targetScript.targetTrail, typeof(TrailRenderer), true);
+            targetScript.Particle = (GameObject)EditorGUILayout.ObjectField("대상 Particle", targetScript.Particle, typeof(GameObject), true);
         }
 
         EditorGUILayout.Space(10);
@@ -147,7 +147,7 @@ public class VFXEventModifierEditor : Editor
 
         bool shouldVisible = currentFrame >= startFrame && currentFrame <= endFrame;
 
-        if (targetScript.useTrailRenderer && targetScript.targetTrail != null) targetScript.targetTrail.emitting = shouldVisible;
+        if (targetScript.useParticleRenderer && targetScript.Particle != null) targetScript.Particle.SetActive(shouldVisible);
 
         if (targetScript.useVFXSet && effectManager != null)
         {
@@ -194,7 +194,7 @@ public class VFXEventModifierEditor : Editor
         if (AnimationMode.InAnimationMode()) AnimationMode.StopAnimationMode();
         if (previewWeaponVFX != null) DestroyImmediate(previewWeaponVFX);
         if (previewParticleVFX != null) DestroyImmediate(previewParticleVFX);
-        if (targetScript != null && targetScript.targetTrail != null) targetScript.targetTrail.emitting = false;
+        if (targetScript != null && targetScript.Particle != null) targetScript.Particle.SetActive(false);
     }
 
     private void ApplyAnimationEvents(AnimationClip clip)

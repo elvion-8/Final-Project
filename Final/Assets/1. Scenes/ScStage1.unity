@@ -21935,7 +21935,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e3b0e847e4c7654a861246d4bc5c908, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  vfxSetList: []
+  vfxSetList:
+  - actionID: axe
+    weaponVFXPrefab: {fileID: 274761310258684839, guid: 8f2bec3f27b76c14182b7a5414797940, type: 3}
+    particleVFXPrefab: {fileID: 7121595418166541928, guid: b4cd10855e37a1f46be017e90f9362af, type: 3}
 --- !u!4 &1801637941
 Transform:
   m_ObjectHideFlags: 0

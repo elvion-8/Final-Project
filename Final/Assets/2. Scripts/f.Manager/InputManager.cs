@@ -34,51 +34,63 @@ public class InputManager : MonoBehaviour
     #region Input callback
     public void OnMove(InputValue value)
     {
-        if (inven == null){Debug.Log("inven null");return;}
-        if (inven.pnlInven.activeSelf)
+        if (pv.isMine || !PhotonNetwork.inRoom)
         {
-            Debug.Log("[InputManager]Inven select move test");
-            _moveInputX.x = value.Get<Vector2>().x;
-            if (Mathf.Abs(_moveInputX.x) > 0.6f)
+            if (inven == null) { Debug.Log("inven null"); return; }
+            if (inven.pnlInven.activeSelf)
             {
-                inven.HandleInventorySelect(inven._selectedSlot);
+                Debug.Log("[InputManager]Inven select move test");
+                _moveInputX.x = value.Get<Vector2>().x;
+                if (Mathf.Abs(_moveInputX.x) > 0.6f)
+                {
+                    inven.HandleInventorySelect(inven._selectedSlot);
+                }
+                else if (_moveInputX.x < 0.2f)
+                {
+                    inven.movingInv = false;
+                }
             }
-            else if (_moveInputX.x < 0.2f)
-            {
-                inven.movingInv = false;
-            }
+            else move = value.Get<Vector2>();
+            // if (inven != null)
+            // {
+            //     move = value.Get<Vector2>();
+            //     if (!inven.pnlInven.activeSelf) return;
+            //     _moveInputX.x = value.Get<Vector2>().x;
+            //     if (Mathf.Abs(_moveInputX.x) > 0.7f)
+            //     {
+            //         inven.HandleInventorySelect(inven._selectedSlot);
+            //     }
+            //     else if (_moveInputX.x < 0.2f)
+            //     {
+            //         inven.movingInv = false;
+            //     }
+            // }
         }
-        else move = value.Get<Vector2>();
-        // if (inven != null)
-        // {
-        //     move = value.Get<Vector2>();
-        //     if (!inven.pnlInven.activeSelf) return;
-        //     _moveInputX.x = value.Get<Vector2>().x;
-        //     if (Mathf.Abs(_moveInputX.x) > 0.7f)
-        //     {
-        //         inven.HandleInventorySelect(inven._selectedSlot);
-        //     }
-        //     else if (_moveInputX.x < 0.2f)
-        //     {
-        //         inven.movingInv = false;
-        //     }
-        // }
     }
 
     public void OnJump(InputValue value)
     {
-        if (value.isPressed) jumpKey = true;
-        isJumpHeld = value.isPressed;
+        if (pv.isMine || !PhotonNetwork.inRoom)
+        {
+            if (value.isPressed) jumpKey = true;
+            isJumpHeld = value.isPressed;
+        }
     }
 
     public void OnAttack(InputValue value)
     {
-        if (value.isPressed) attackKey = true;
+        if (pv.isMine || !PhotonNetwork.inRoom)
+        {
+            if (value.isPressed) attackKey = true;
+        }
     }
     public void OnRolling(InputValue value)
     {
-        if (value.isPressed && !inven.pnlInven.activeSelf) rollingKey = true;
-        if (value.isPressed && inven.pnlInven.activeSelf) { inven.CloseInventory(); }
+        if (pv.isMine || !PhotonNetwork.inRoom)
+        {
+            if (value.isPressed && !inven.pnlInven.activeSelf) rollingKey = true;
+            if (value.isPressed && inven.pnlInven.activeSelf) { inven.CloseInventory(); }
+        }
     }
     public void OnWeaponChange(InputValue value)
     {
@@ -132,10 +144,13 @@ public class InputManager : MonoBehaviour
     }
     public void OnInventory(InputValue value)
     {
-        if (value.isPressed)
+        if (pv.isMine || !PhotonNetwork.inRoom)
         {
-            if (!inventoryKey) onInven = true;
-            else if (inven.pnlInven.activeSelf) { inven.CloseInventory(); }
+            if (value.isPressed)
+            {
+                if (!inventoryKey) onInven = true;
+                else if (inven.pnlInven.activeSelf) { inven.CloseInventory(); }
+            }
         }
     }
     public void OnScreenMove(InputValue value)
@@ -167,8 +182,8 @@ public class InputManager : MonoBehaviour
         }
         GameObject temp2 = GameObject.Find("Inventory");
         if (temp2 != null) inven = temp2.GetComponent<csInvenManager>();
-        if(atm!=null)atm = GameObject.FindGameObjectWithTag("Player").GetComponent<AttackMotion>();
-        if(pv!=null)pv = GameObject.FindGameObjectWithTag("Player").GetComponent<PhotonView>();
+        if(atm!=null)atm = GameObject.Find("Player").GetComponent<AttackMotion>();
+        if(pv!=null)pv = GameObject.Find("Player").GetComponent<PhotonView>();
     }
     public void ResetKey()
     {
@@ -186,8 +201,8 @@ public class InputManager : MonoBehaviour
     {
         GameObject temp2 = GameObject.Find("Inventory");
         if (temp2 != null) inven = temp2.GetComponent<csInvenManager>();
-        atm = GameObject.FindGameObjectWithTag("Player").GetComponent<AttackMotion>();
-        pv = GameObject.FindGameObjectWithTag("Player").GetComponent<PhotonView>();
+        atm = GameObject.Find("Player").GetComponent<AttackMotion>();
+        pv = GameObject.Find("Player").GetComponent<PhotonView>();
         //Managers.Input.Init();
     }
     void Awake()
