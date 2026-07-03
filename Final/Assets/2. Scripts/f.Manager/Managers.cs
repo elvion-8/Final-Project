@@ -16,12 +16,14 @@ public class Managers : MonoBehaviour
     private DataManager _data;
     private InputManager _input;
     private WeaponEffectManager _weaponEffect;
+    private VFXManager _vfx;
     private LoadingManager _loading;
     private GameOver _gameOver;
     public static SoundManager Sound => Instance._sound;
     public static DataManager Data => Instance._data;
     public static InputManager Input => Instance._input;
     public static WeaponEffectManager weaponEffect => Instance._weaponEffect;
+    public static VFXManager VFX => Instance._vfx;
     public static LoadingManager loadingManager => Instance._loading;
     public static GameOver gameOver => Instance._gameOver;
 
@@ -75,6 +77,12 @@ public class Managers : MonoBehaviour
             //        }
             //    }
             //}
+            _instance._vfx = go.GetComponent<VFXManager>();
+            if (_instance._vfx == null)
+            {
+                _instance._vfx = go.AddComponent<VFXManager>();
+            }
+
             _instance._loading = go.GetComponent<LoadingManager>();
             if (_instance._loading == null)
             {
@@ -90,6 +98,7 @@ public class Managers : MonoBehaviour
             if (_instance.onSoundManager) _instance._sound.Init();
             if (_instance.onInputManager) _instance._input.Init();
             //if(_instance.onWeaponEffectManager)_instance._weaponEffect.Init();
+            if (_instance._vfx != null) _instance._vfx.Init();
             _instance._loading.Init();
             _instance._gameOver.Init();
         }
