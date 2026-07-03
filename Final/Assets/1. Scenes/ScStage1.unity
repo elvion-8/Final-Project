@@ -250,9 +250,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 37308974}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: upup
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1236,6 +1236,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: tripo_convert_41995056-3a6a-4ef4-af70-bdf6c3ce03ea (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b446b4406d8ac26479b919988c76e25b, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b446b4406d8ac26479b919988c76e25b, type: 3}
+      propertyPath: m_TagString
+      value: Ground
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1456,18 +1464,6 @@ PrefabInstance:
     - target: {fileID: 5088627461440000933, guid: e79d931ac6402d3439f0452b4ee57391, type: 3}
       propertyPath: m_Name
       value: Organic3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7767829060791242895, guid: e79d931ac6402d3439f0452b4ee57391, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1.9723
-      objectReference: {fileID: 0}
-    - target: {fileID: 7767829060791242895, guid: e79d931ac6402d3439f0452b4ee57391, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1.9723
-      objectReference: {fileID: 0}
-    - target: {fileID: 7767829060791242895, guid: e79d931ac6402d3439f0452b4ee57391, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1.9723
       objectReference: {fileID: 0}
     - target: {fileID: 7767829060791242895, guid: e79d931ac6402d3439f0452b4ee57391, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1834,9 +1830,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 204499125}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: upup (2)
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1992,7 +1988,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 213907901}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pillar (7)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2040,18 +2036,6 @@ PrefabInstance:
     - target: {fileID: 6569743943992112066, guid: 6238c60cc034af24684ba6755ae92fe3, type: 3}
       propertyPath: m_Name
       value: Organic
-      objectReference: {fileID: 0}
-    - target: {fileID: 8501024234447951525, guid: 6238c60cc034af24684ba6755ae92fe3, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1.4508
-      objectReference: {fileID: 0}
-    - target: {fileID: 8501024234447951525, guid: 6238c60cc034af24684ba6755ae92fe3, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1.4508
-      objectReference: {fileID: 0}
-    - target: {fileID: 8501024234447951525, guid: 6238c60cc034af24684ba6755ae92fe3, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1.4508
       objectReference: {fileID: 0}
     - target: {fileID: 8501024234447951525, guid: 6238c60cc034af24684ba6755ae92fe3, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2258,9 +2242,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 228041339}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: upup (5)
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2354,7 +2338,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 235637147}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pillar (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2700,7 +2684,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 307239058}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pillar (9)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2740,7 +2724,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 316540182}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pillar (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3254,7 +3238,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 351673728}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pillar (8)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8377,9 +8361,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 397842510}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: upup (4)
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -9193,7 +9177,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 474743322}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pillar (8)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9959,7 +9943,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 545343377}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pillars
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11079,7 +11063,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 602783561}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pillar (8)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11647,7 +11631,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 710614578}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pillar (7)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12631,10 +12615,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 4104740177886197110, guid: b683fe77e04f7b94e8470ec50c481159, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1503316237}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b683fe77e04f7b94e8470ec50c481159, type: 3}
 --- !u!1001 &798935004
 PrefabInstance:
@@ -13006,7 +12987,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 822968669}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pillar (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13120,7 +13101,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 848601420}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pillar (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13155,7 +13136,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 848644040}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pillar (10)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13954,7 +13935,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 911786736}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pillar (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14475,7 +14456,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 980447351}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pillar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14646,7 +14627,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 982943166}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pillar (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14681,7 +14662,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 994435055}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pillar (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14933,7 +14914,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1056894582}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pillar (8)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15176,7 +15157,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1078340344}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pillar (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15325,7 +15306,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1084967649}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pillar (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15833,7 +15814,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1160474443}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pillar (14)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -16860,7 +16841,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1337217025}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pillar (9)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -17727,7 +17708,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1406172316}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pillar (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -18143,7 +18124,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1426569300}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pillar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -18588,11 +18569,27 @@ PrefabInstance:
       propertyPath: m_Name
       value: tripo_convert_4fe20f6e-1c8e-42f6-9dbd-75e06f8cae65
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 3271a57b3f06d1b4d81f5a750d079b9b, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 3271a57b3f06d1b4d81f5a750d079b9b, type: 3}
+      propertyPath: m_TagString
+      value: Ground
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3271a57b3f06d1b4d81f5a750d079b9b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1909783567}
   m_SourcePrefab: {fileID: 100100000, guid: 3271a57b3f06d1b4d81f5a750d079b9b, type: 3}
+--- !u!1 &1479078187 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 3271a57b3f06d1b4d81f5a750d079b9b, type: 3}
+  m_PrefabInstance: {fileID: 1479078186}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1479537730
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19094,32 +19091,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d67def0fa27599c4ea1de2abd4576b05, type: 3}
---- !u!1 &1503316236 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4104740177886197110, guid: b683fe77e04f7b94e8470ec50c481159, type: 3}
-  m_PrefabInstance: {fileID: 795039133}
-  m_PrefabAsset: {fileID: 0}
---- !u!65 &1503316237
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1503316236}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1.9, y: 3.13, z: 0.42}
-  m_Center: {x: 0.58, y: -0.00000007053339, z: 0.24}
 --- !u!4 &1503316240 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3728179897690910668, guid: b683fe77e04f7b94e8470ec50c481159, type: 3}
@@ -19312,9 +19283,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1510671030}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: upup (1)
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -19413,7 +19384,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1528763845}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pillars (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -20095,6 +20066,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: tripo_convert_7bdd43f9-0cec-4f4e-ac64-e89b4c5ba670
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 7d9203eff918c48448b03cb3a956f817, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 7d9203eff918c48448b03cb3a956f817, type: 3}
+      propertyPath: m_TagString
+      value: Ground
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -20667,7 +20646,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1656724957}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pillar (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -20831,7 +20810,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1672458584}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pillar (7)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -21653,7 +21632,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1772272786}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pillar (7)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -21981,7 +21960,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1804030679}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pillars (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -22388,7 +22367,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1876497593}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pillar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -22480,7 +22459,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1882871211}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pillar (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -22791,6 +22770,27 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 3271a57b3f06d1b4d81f5a750d079b9b, type: 3}
   m_PrefabInstance: {fileID: 1479078186}
   m_PrefabAsset: {fileID: 0}
+--- !u!65 &1909783567
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1479078187}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.68, y: 1.77, z: 5.9882827}
+  m_Center: {x: 0, y: 0, z: 2.9941413}
 --- !u!1 &1933344585
 GameObject:
   m_ObjectHideFlags: 0
@@ -23248,7 +23248,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1962089931}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pillar (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23789,7 +23789,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1990662149}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pillars (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24037,7 +24037,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1996091287}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pillar (9)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24139,9 +24139,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2004358087}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: upup (3)
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -24287,7 +24287,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2015441613}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pillar (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24379,9 +24379,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2027914988}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: upup (6)
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -24423,7 +24423,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2044403003}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pillar (9)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24578,11 +24578,48 @@ PrefabInstance:
       propertyPath: m_Name
       value: tripo_convert_11aeb4e5-a39b-4357-81cf-0cc42acd8f67
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 22cac57af9b92a24fa8ba2d6b985401e, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 22cac57af9b92a24fa8ba2d6b985401e, type: 3}
+      propertyPath: m_TagString
+      value: Ground
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 22cac57af9b92a24fa8ba2d6b985401e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2072021571}
   m_SourcePrefab: {fileID: 100100000, guid: 22cac57af9b92a24fa8ba2d6b985401e, type: 3}
+--- !u!1 &2072021570 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 22cac57af9b92a24fa8ba2d6b985401e, type: 3}
+  m_PrefabInstance: {fileID: 2072021569}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &2072021571
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2072021570}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.24, y: 3.88, z: 5.8945327}
+  m_Center: {x: -0.84, y: 0, z: 2.9472663}
 --- !u!1 &2077233471
 GameObject:
   m_ObjectHideFlags: 0
@@ -24798,18 +24835,6 @@ PrefabInstance:
       value: Organic2
       objectReference: {fileID: 0}
     - target: {fileID: 3126557892685277515, guid: 6149864d683afa544aea602c70e4ae47, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1.5062028
-      objectReference: {fileID: 0}
-    - target: {fileID: 3126557892685277515, guid: 6149864d683afa544aea602c70e4ae47, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1.5062028
-      objectReference: {fileID: 0}
-    - target: {fileID: 3126557892685277515, guid: 6149864d683afa544aea602c70e4ae47, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1.5062028
-      objectReference: {fileID: 0}
-    - target: {fileID: 3126557892685277515, guid: 6149864d683afa544aea602c70e4ae47, type: 3}
       propertyPath: m_LocalPosition.x
       value: 6.56
       objectReference: {fileID: 0}
@@ -24925,7 +24950,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2098346479}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pillar
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -35,14 +35,11 @@ public class groundCheck : MonoBehaviour
         Vector3 feetPosition = colCenter + Vector3.down * (player.height / 2f);
         float sphereRadius = Mathf.Max(0.01f, player.radius - radiusOffset);
         
-        // 바닥보다 약간 위에서 sphere가 시작되도록 설정하여 시작 지점 겹침(Overlap) 현상을 방지합니다.
         Vector3 origin = feetPosition + Vector3.up * (sphereRadius + 0.05f);
         float maxDistance = 0.05f + castDist;
 
         if (Physics.SphereCast(origin, sphereRadius, Vector3.down, out RaycastHit hit, maxDistance, groundMask))
         {
-            // 경사각 체크: 충돌한 표면의 노멀 벡터 Y 성분이 캐릭터의 경사 제한(slopeLimit) 이하일 때만 땅으로 판정합니다.
-            // (벽면이나 장애물의 수직면에 비벼질 때 ground가 true가 되는 현상을 방지)
             float slopeLimit = player.slopeLimit;
             float minNormalY = Mathf.Cos(slopeLimit * Mathf.Deg2Rad);
 
