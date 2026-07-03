@@ -61,10 +61,8 @@ public class AttackMotion : MonoBehaviour
                 }
             }
 
-            // Check if we have a pending weapon swap and player has finished attacking
             if (pendingWeaponIndex != -1)
             {
-                Debug.Log($"[AttackMotion] Pending swap exists: index {pendingWeaponIndex}. player.isAttacking: {player.isAttacking}");
                 if (!player.isAttacking)
                 {
                     SwapToPendingWeapon();
@@ -201,7 +199,6 @@ public class AttackMotion : MonoBehaviour
             Destroy(currentWeapon);
         }
 
-        // 애니메이션 레이어 조절 (임시: 무기 종류에 따라 레이어를 설정을 위해 ItemData에 속성을 추가해 구분 예정)
         SetAnimationLayer(index);
 
         Transform spawnPoint = weaponPoint != null ? weaponPoint : transform;
@@ -221,16 +218,12 @@ public class AttackMotion : MonoBehaviour
     {
         for (int i = 3; i <= 8; i++) anim.SetLayerWeight(i, 0f); // 우선 전부 0으로 초기화
 
-        // 테스트용 통합 Attack 레이어가 있는지 확인
         int attackLayerIndex = anim.GetLayerIndex("Attack");
         Debug.Log($"[AttackMotion] GetLayerIndex('Attack') 결과: {attackLayerIndex}");
 
         if (attackLayerIndex != -1)
         {
-            // Attack 레이어 활성화
             anim.SetLayerWeight(attackLayerIndex, 1f);
-            
-            // 제대로 적용되었는지 더블 체크 로그
             float currentWeight = anim.GetLayerWeight(attackLayerIndex);
             Debug.Log($"[AttackMotion] Attack 레이어 가중치 설정 시도 후 실제 값: {currentWeight}");
 
