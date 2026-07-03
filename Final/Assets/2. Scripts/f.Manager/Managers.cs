@@ -65,16 +65,16 @@ public class Managers : MonoBehaviour
                     _instance._input = go.AddComponent<InputManager>();
                 }
             }
-            if (_instance.onWeaponEffectManager)
-            {
-                _instance._weaponEffect = GameObject.Find("WeaponEffactManager").GetComponent<WeaponEffectManager>();
-                {
-                    if (_instance._weaponEffect == null)
-                    {
-                        _instance._weaponEffect = GameObject.Find("WeaponEffactManager").GetComponent<WeaponEffectManager>(); ;
-                    }
-                }
-            }
+            //if (_instance.onWeaponEffectManager)
+            //{
+            //    _instance._weaponEffect = GameObject.Find("WeaponEffactManager").GetComponent<WeaponEffectManager>();
+            //    {
+            //        if (_instance._weaponEffect == null)
+            //        {
+            //            _instance._weaponEffect = GameObject.Find("WeaponEffactManager").GetComponent<WeaponEffectManager>(); ;
+            //        }
+            //    }
+            //}
             _instance._loading = go.GetComponent<LoadingManager>();
             if (_instance._loading == null)
             {
@@ -107,5 +107,12 @@ public class Managers : MonoBehaviour
             Debug.Log("재시작 완료");
         }
         _instance._gameOver.Init();
+        GameObject weaponM;
+        weaponM = GameObject.Find("WeaponEffactManager");
+        if (weaponM != null)
+        {
+            _instance._weaponEffect = weaponM.GetComponent<WeaponEffectManager>();
+        }
+
     }
 }
