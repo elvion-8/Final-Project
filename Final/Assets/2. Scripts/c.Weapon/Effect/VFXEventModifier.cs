@@ -5,14 +5,14 @@ public class VFXEventModifier : MonoBehaviour
 {
     [Header("기능 활성화 토글")]
     public bool useVFXSet = true;         // 매니저 세트 이펙트 사용 여부
-    public bool useTrailRenderer = false; // 테일 잔상 사용 여부
+    public bool useParticleRenderer = false; // 파티클 사용 여부
 
     [Header("1. 매니저 이펙트 세트 선택")]
     public string selectedActionID;
     public int selectedActionIndex = -1;
 
-    [Header("2. 독립 테일 레너더 설정")]
-    public TrailRenderer targetTrail;
+    [Header("2. 파티클 레너더 설정")]
+    public GameObject Particle;
 
     [Header("VFX 스폰 위치 설정 (공통 적용)")]
     public Transform targetTransform;
@@ -38,7 +38,7 @@ public class VFXEventModifier : MonoBehaviour
     public void TurnOnVFX()
     {
         // 1. 테일 잔상 처리
-        if (useTrailRenderer && targetTrail != null) targetTrail.emitting = true;
+        if (useParticleRenderer && Particle != null) Particle.SetActive(false);
 
         // 2. 이펙트 세트 동시 처리
         if (!useVFXSet || Managers.weaponEffect == null) return;
@@ -93,7 +93,7 @@ public class VFXEventModifier : MonoBehaviour
     // 애니메이션 이벤트 OFF (동시에 끄기)
     public void TurnOffVFX()
     {
-        if (useTrailRenderer && targetTrail != null) targetTrail.emitting = false;
+        if (useParticleRenderer && Particle != null) Particle.SetActive(false);
         if (instantiatedWeaponVFX != null) instantiatedWeaponVFX.SetActive(false);
         if (instantiatedParticleVFX != null) instantiatedParticleVFX.SetActive(false);
     }

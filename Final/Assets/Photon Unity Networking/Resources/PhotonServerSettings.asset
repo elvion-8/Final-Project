@@ -62,4 +62,5 @@ MonoBehaviour:
   - EquipWeapon
   - WeaponSikll1
   - RPC_SetBoundTarget
+  - ResetCombo
   DisableAutoOpenWizard: 1

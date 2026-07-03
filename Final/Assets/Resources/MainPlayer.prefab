@@ -2011,10 +2011,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   useVFXSet: 1
-  useTrailRenderer: 0
+  useParticleRenderer: 0
   selectedActionID: 
   selectedActionIndex: -1
-  targetTrail: {fileID: 0}
+  Particle: {fileID: 0}
   targetTransform: {fileID: 5118152902448183569}
   positionOffset: {x: 0, y: 1.3, z: 0}
   rotationOffset: {x: 0, y: 0, z: 0}
@@ -3530,10 +3530,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   useVFXSet: 1
-  useTrailRenderer: 0
-  selectedActionID: 
-  selectedActionIndex: -1
-  targetTrail: {fileID: 0}
+  useParticleRenderer: 0
+  selectedActionID: axe
+  selectedActionIndex: 0
+  Particle: {fileID: 0}
   targetTransform: {fileID: 1540902332571846437}
   positionOffset: {x: 0, y: 0, z: 0}
   rotationOffset: {x: 0, y: 0, z: 0}
