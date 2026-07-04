@@ -63,4 +63,6 @@ MonoBehaviour:
   - WeaponSikll1
   - RPC_SetBoundTarget
   - ResetCombo
+  - RPC_ReleaseBindEarly
+  - RPC_UpdateBindFill
   DisableAutoOpenWizard: 1

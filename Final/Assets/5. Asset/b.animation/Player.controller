@@ -3060,6 +3060,25 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
+--- !u!114 &1680252584161122453
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6977b0345a150a4da0487a241a5f5be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  swingVFXPrefab: {fileID: 25935458239848803, guid: b959046642cca364095b2418db1b6181, type: 3}
+  startTime: 0.333
+  endTime: 1
+  isLooping: 0
+  attachToWeapon: 0
+  positionOffset: {x: 0, y: 0, z: 3.57}
+  rotationOffset: {x: 0, y: 0, z: 0}
 --- !u!1107 &1769161554720904179
 AnimatorStateMachine:
   serializedVersion: 6
@@ -3261,6 +3280,7 @@ AnimatorState:
   m_StateMachineBehaviours:
   - {fileID: 5160948890528382820}
   - {fileID: -2993343811638970659}
+  - {fileID: 1680252584161122453}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
