@@ -49,7 +49,8 @@ public class WeaponSwingVFXState : WeaponVFXState
             {
                 if (VFXManager.Instance != null)
                 {
-                    VFXManager.Instance.ReturnVFX(_spawnedVFX);
+                    // 파티클 소멸 후 풀 반환
+                    VFXManager.Instance.StopAndReturnVFX(_spawnedVFX);
                 }
                 _spawnedVFX = null;
             }
@@ -67,7 +68,8 @@ public class WeaponSwingVFXState : WeaponVFXState
         {
             if (VFXManager.Instance != null)
             {
-                VFXManager.Instance.ReturnVFX(_spawnedVFX);
+                // 파티클 소멸 후 풀 반환
+                VFXManager.Instance.StopAndReturnVFX(_spawnedVFX);
             }
             _spawnedVFX = null;
         }

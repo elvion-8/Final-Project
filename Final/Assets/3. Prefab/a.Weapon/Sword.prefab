@@ -74,7 +74,7 @@ MonoBehaviour:
   baseCritProb: 1
   baseCritDmg: 1
   baseAttackSpeed: 1
-  baseDurability: 1
+  baseDurability: 400
   pS:
     cost: 0
     hpUpgrade: 0
@@ -82,6 +82,7 @@ MonoBehaviour:
     weaponCritProbUpgradeCnt: 0
     weaponCritDmgUpgradeCnt: 0
     weaponAttackSpeed: 0
+  anim: {fileID: 0}
 --- !u!54 &-2789345741428020436
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -38,7 +38,22 @@ public class ComboAttack : MonoBehaviour
 
                 if (transitionPending)
                 {
-                    if ((Time.time - lastAttackTime >= 0.15f && normTime < 0.25f) || Time.time - lastAttackTime > 0.5f)
+                    // 현재 공격 애니메이션의 실제 재생 시간(초)을 가져옴
+                    float animLength = 1.0f;
+                    if (anim != null && layer != -1)
+                    {
+                        AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(layer);
+                        if (stateInfo.length > 0.01f)
+                        {
+                            animLength = stateInfo.length;
+                        }
+                    }
+
+                    // 최소 0.5초 대기를 보장하여 빠른 무기(검)의 트랜지션 씹힘 방지
+                    float transitionLimit = Mathf.Max(0.5f, animLength * 0.6f);
+                    float transitionStartCheck = 0.15f; // 트랜지션 안정성을 위해 고정
+
+                    if ((Time.time - lastAttackTime >= transitionStartCheck && normTime < 0.25f) || Time.time - lastAttackTime > transitionLimit)
                     {
                         transitionPending = false;
                     }

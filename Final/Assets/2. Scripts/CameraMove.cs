@@ -5,6 +5,16 @@ using UnityEngine.InputSystem;
 
 public class CameraMove : MonoBehaviour
 {
+    public static CameraMove Instance { get; private set; }
+
+    private float shakeDuration;
+    private float initialShakeDuration;
+    private float shakeMagnitude;
+    private float shakeFrequency;
+    private bool shouldFadeOut;
+    private Vector3 currentShakeOffset;
+    private float currentRollOffset;
+
     private Transform cmTr;
     public Transform playerPos;
 
@@ -44,6 +54,16 @@ public class CameraMove : MonoBehaviour
 
     void Awake()
     {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         cmTr = GetComponent<Transform>();
         if (playerPos == null)
         {
@@ -152,6 +172,8 @@ public class CameraMove : MonoBehaviour
 
         if (!lockOn) { MouseMove(); }
         else { LockOn(); }
+
+        ApplyShake();
     }
 
     void MouseMove()
@@ -226,4 +248,54 @@ public class CameraMove : MonoBehaviour
             }
         }
     }
+
+    #region Camera Shake Implementation
+    public void Shake(float duration, float magnitude, float frequency = 1f, bool fadeOut = true)
+    {
+        shakeDuration = duration;
+        initialShakeDuration = duration;
+        shakeMagnitude = magnitude;
+        shakeFrequency = frequency;
+        shouldFadeOut = fadeOut;
+        
+        currentShakeOffset = Vector3.zero;
+        currentRollOffset = 0f;
+    }
+
+    public void ShakeAtPosition(Vector3 epicenter, float maxDistance, float duration, float maxMagnitude, float frequency = 1f, bool fadeOut = true)
+    {
+        if (playerPos == null) return;
+        
+        float distanceToPlayer = Vector3.Distance(epicenter, playerPos.position);
+        if (distanceToPlayer < maxDistance)
+        {
+            float distanceFactor = 1f - (distanceToPlayer / maxDistance);
+            float calculatedMagnitude = maxMagnitude * distanceFactor;
+            Shake(duration, calculatedMagnitude, frequency, fadeOut);
+        }
+    }
+
+    private void ApplyShake()
+    {
+        if (shakeDuration > 0)
+        {
+            shakeDuration -= Time.deltaTime;
+
+            float currentMag = shakeMagnitude;
+            if (shouldFadeOut && initialShakeDuration > 0f)
+            {
+                currentMag = Mathf.Lerp(0f, shakeMagnitude, shakeDuration / initialShakeDuration);
+            }
+
+            Vector3 randomPoint = UnityEngine.Random.insideUnitSphere * currentMag;
+            
+            currentShakeOffset = (transform.right * randomPoint.x) + (transform.up * randomPoint.y);
+
+            currentRollOffset = UnityEngine.Random.Range(-1f, 1f) * currentMag * 15f;
+
+            transform.position += currentShakeOffset;
+            transform.Rotate(0, 0, currentRollOffset);
+        }
+    }
+    #endregion
 }

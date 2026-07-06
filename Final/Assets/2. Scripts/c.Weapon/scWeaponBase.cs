@@ -30,8 +30,28 @@ public abstract class scWeaponBase : MonoBehaviour, IWeaponStats
 
     float HitTime;                     //히트후 무적시간
 
+    private PlayerCtrl _playerCtrl;
+    private PlayerCtrl GetPlayerCtrl()
+    {
+        if (_playerCtrl == null)
+        {
+            _playerCtrl = GetComponentInParent<PlayerCtrl>();
+            if (_playerCtrl == null)
+            {
+                _playerCtrl = transform.root.GetComponentInChildren<PlayerCtrl>();
+            }
+        }
+        return _playerCtrl;
+    }
+
     public void Equip()                //무기 착용
     {}
+
+    protected virtual void OnEnable()
+    {
+        // 내구도 초기화
+        Durability = baseDurability;
+    }
 
     public abstract void Skill1();               //무기별 기본 스킬 2개 정도는 넣기!
 
@@ -46,15 +66,25 @@ public abstract class scWeaponBase : MonoBehaviour, IWeaponStats
         //    target.TakeDamage(attackDmg);
         //}
 
-        if (GameObject.FindWithTag("Player").GetComponent<PlayerCtrl>().isAttacking == true)
+        PlayerCtrl player = GetPlayerCtrl();
+        if (player != null && player.isAttacking == true)
         {
             if (other.gameObject.tag == "Enemy")
             {
-                if (Time.time < HitTime + attackSpeed)
+                // 연속 타격이 씹히지 않도록 짧은 고정 무적 시간(0.15초) 적용
+                if (Time.time < HitTime + 0.15f)
                 {
                     // 아직 무적 시간 중이라면 데미지 무시
                     return;
                 }
+
+                // 타격 이펙트 활성화 및 닿은 지점 전달
+                if (player.currentHitVFXState != null)
+                {
+                    Vector3 contactPoint = other.ClosestPoint(transform.position);
+                    player.currentHitVFXState.TriggerHitVFX(contactPoint);
+                }
+
                 other.GetComponentInParent<EnemyCtrl>().TakeDamage(Damage());
 
                 //내구도 감소

@@ -74,7 +74,7 @@ MonoBehaviour:
   baseCritProb: 1
   baseCritDmg: 1
   baseAttackSpeed: 1
-  baseDurability: 1
+  baseDurability: 247
   pS:
     cost: 0
     hpUpgrade: 0

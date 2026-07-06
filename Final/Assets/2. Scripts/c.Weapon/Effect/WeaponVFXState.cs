@@ -6,6 +6,7 @@ public class WeaponVFXState : StateMachineBehaviour
 {
     protected GameObject trail;
     protected ParticleSystem _particle;
+    protected CameraMove camera;
 
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
@@ -16,6 +17,8 @@ public class WeaponVFXState : StateMachineBehaviour
         {
             _particle = trail.GetComponent<ParticleSystem>();
         }
+        if(camera==null)
+        camera=CameraMove.Instance;
     }
 
     protected Transform GetWeaponTransform(Animator animator)

@@ -4,53 +4,47 @@ public class WeaponHitVFXState : WeaponVFXState
 {
     [Header("타격 이펙트 설정")]
     public GameObject hitVFXPrefab;
-    [Range(0f, 1f)] public float hitTime = 0.5f;
-
-    [Header("루프 애니메이션 여부")]
-    public bool isLooping = false;
 
     [Header("배치 옵션")]
-    public bool useWeaponPosition = true;
-    public Vector3 positionOffset;
     public Vector3 rotationOffset;
 
-    private bool _hasSpawned = false;
+    private Animator _animator;
+    private float _lastSpawnTime = 0f;
+    private const float SPAWN_COOLDOWN = 0.02f; // 중복 생성 방지용 쿨다운
 
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         base.OnStateEnter(animator, stateInfo, layerIndex);
-        _hasSpawned = false;
+        _animator = animator;
+        _lastSpawnTime = 0f;
+
+        // 플레이어에게 현재 타격 VFX 상태 등록
+        var player = animator.GetComponentInParent<PlayerCtrl>();
+        if (player != null)
+        {
+            player.currentHitVFXState = this;
+        }
     }
 
-    public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    // 물리 충돌 시 즉시 타격 이펙트 소환
+    public void TriggerHitVFX(Vector3 spawnPos)
     {
-        if (hitVFXPrefab == null) return;
+        if (hitVFXPrefab == null || _animator == null) return;
+        if (Time.time < _lastSpawnTime + SPAWN_COOLDOWN) return;
 
-        float normalizedTime = isLooping ? (stateInfo.normalizedTime % 1f) : stateInfo.normalizedTime;
+        Quaternion spawnRot = _animator.transform.rotation * Quaternion.Euler(rotationOffset);
+        camera.Shake(0.2f,0.3f,10f,true);
 
-        if (normalizedTime >= hitTime)
-        {
-            if (!_hasSpawned)
-            {
-                Transform baseTransform = useWeaponPosition ? GetWeaponTransform(animator) : animator.transform;
-                Vector3 spawnPos = baseTransform.position + baseTransform.TransformDirection(positionOffset);
-                Quaternion spawnRot = baseTransform.rotation * Quaternion.Euler(rotationOffset);
-
-                SpawnHitVFX(hitVFXPrefab, spawnPos, spawnRot);
-                _hasSpawned = true;
-            }
-        }
-        else
-        {
-            if (normalizedTime < hitTime)
-            {
-                _hasSpawned = false;
-            }
-        }
+        SpawnHitVFX(hitVFXPrefab, spawnPos, spawnRot);
+        _lastSpawnTime = Time.time;
     }
 
     public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        _hasSpawned = false;
+        var player = animator.GetComponentInParent<PlayerCtrl>();
+        if (player != null && player.currentHitVFXState == this)
+        {
+            player.currentHitVFXState = null;
+        }
     }
 }

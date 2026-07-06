@@ -75,6 +75,7 @@ public class VFXManager : MonoBehaviour
             obj.transform.position = position;
             obj.transform.rotation = rotation;
             obj.transform.SetParent(parent);
+            obj.transform.localScale = prefab.transform.localScale; // 풀링 복구 시 크기 정상화
             obj.SetActive(true);
         }
 
@@ -152,6 +153,54 @@ public class VFXManager : MonoBehaviour
         else
         {
             Destroy(obj);
+        }
+    }
+
+    public void StopAndReturnVFX(GameObject obj)
+    {
+        if (obj == null) return;
+
+        // 부모 해제하여 잔상이 제자리에 남도록 함
+        obj.transform.SetParent(null);
+
+        var ps = obj.GetComponent<ParticleSystem>();
+        if (ps != null)
+        {
+            ps.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+        }
+
+        ParticleSystem[] childPS = obj.GetComponentsInChildren<ParticleSystem>();
+        foreach (var child in childPS)
+        {
+            child.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+        }
+
+        // 최대 수명 계산 후 지연 반환
+        float maxLifetime = 0f;
+        if (ps != null)
+        {
+            maxLifetime = ps.main.startLifetime.constantMax;
+        }
+        foreach (var child in childPS)
+        {
+            float childLifetime = child.main.startLifetime.constantMax;
+            if (childLifetime > maxLifetime)
+            {
+                maxLifetime = childLifetime;
+            }
+        }
+
+        if (maxLifetime <= 0f) maxLifetime = 1.0f;
+
+        StartCoroutine(CoStopAndReturn(obj, maxLifetime));
+    }
+
+    private IEnumerator CoStopAndReturn(GameObject obj, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        if (obj != null)
+        {
+            ReturnVFX(obj);
         }
     }
 

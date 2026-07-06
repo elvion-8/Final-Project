@@ -61,6 +61,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
 
     private bool isRolling;
     private Coroutine attackRoutineCor;
+    [HideInInspector] public WeaponHitVFXState currentHitVFXState; // 현재 활성화된 타격 VFX 상태
 
     // Poton Viow /////////////////////////////////
 
@@ -110,6 +111,8 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     ComboAttack combo;
     AttackMotion attackMotion;
 
+    CameraMove camera;
+
     void Awake()
 
     {
@@ -156,6 +159,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         combo = GetComponent<ComboAttack>();
         attackMotion = GetComponent<AttackMotion>();
         groundCheck = GetComponentInChildren<groundCheck>();
+        camera = CameraMove.Instance;
     }
 
     void Start()
@@ -630,6 +634,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         anim.SetLayerWeight(animD, 0f);
         Debug.Log(animD);
         Debug.Log("i'm hit!");
+        if(camera!=null)camera.Shake(0.5f,0.3f,1.5f,true);
         invincibility = false;
     }
 
