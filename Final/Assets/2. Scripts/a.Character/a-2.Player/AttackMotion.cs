@@ -10,7 +10,6 @@ public class AttackMotion : MonoBehaviour
     public ItemData currentWeaponData;
     public Animator anim;
     private PlayerCtrl player;
-    public GameObject trail;
     public float attackSpeed;
     private bool isTrailing;
     CharacterController charCon;
@@ -51,16 +50,6 @@ public class AttackMotion : MonoBehaviour
     {
         if (pv.isMine || !PhotonNetwork.inRoom)
         {
-            if (trail != null)
-            {
-                if (player.isAttacking && !isTrailing)
-                {
-                    isTrailing = false;
-                    //Debug.Log("trail");
-                    StartCoroutine(TrailWeapon());
-                }
-            }
-
             if (pendingWeaponIndex != -1)
             {
                 if (!player.isAttacking)
@@ -163,23 +152,6 @@ public class AttackMotion : MonoBehaviour
             EquipWeapon(indexToEquip);
         }
     }
-
-    IEnumerator TrailWeapon()
-    {
-        
-        //isTrailing = true;
-        if (GameObject.FindWithTag("Weapon") != null)
-        {
-            attackSpeed = GameObject.FindWithTag("Weapon").GetComponent<IWeaponStats>().attackSpeed;
-        }
-        yield return new WaitForSeconds(0.3f);
-        trail.SetActive(true);
-        yield return new WaitForSeconds(0.5f);
-        trail.SetActive(false);
-        yield return new WaitForSeconds(1f / attackSpeed);
-        //isTrailing = false;
-    }
-
     
     [PunRPC]
     public void EquipWeapon(int index)
@@ -199,7 +171,6 @@ public class AttackMotion : MonoBehaviour
         Transform spawnPoint = weaponPoint != null ? weaponPoint : transform;
         currentWeapon = Instantiate(weaponPrefabs[index], spawnPoint.position, spawnPoint.rotation, spawnPoint);
 
-        trail = currentWeapon.GetComponentInChildren<TrailRenderer>(true).gameObject;
         if (pv.isMine || !PhotonNetwork.inRoom)
         {
             if (currentWeaponData != null && sound != null)
