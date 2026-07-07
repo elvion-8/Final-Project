@@ -22,6 +22,7 @@ public class csInvenManager : MonoBehaviour
     public Transform slotContainer;
     public int totalSlotCount = 20;
     public List<ItemData> startingItems = new List<ItemData>();
+    private List<ItemData> _currentItems = new List<ItemData>();
 
     private List<csInvSlot> _inventorySlots = new List<csInvSlot>();
     public csInvSlot _selectedSlot;
@@ -134,6 +135,7 @@ public class csInvenManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+        _currentItems = new List<ItemData>(startingItems);
         BuildSlots();
         input = Managers.Input;
         //player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerCtrl>();
@@ -271,6 +273,17 @@ public class csInvenManager : MonoBehaviour
         ClearInfoPnl();
     }
 
+    public void UpdateInventoryUI()
+    {
+        for (int i = 0; i < _inventorySlots.Count; i++)
+        {
+            if (_inventorySlots[i] == null) continue;
+
+            ItemData data = i < _currentItems.Count ? _currentItems[i] : null;
+            _inventorySlots[i].Setup(data);
+        }
+    }
+
     private void BuildSlots()
     {
         foreach (Transform child in slotContainer)
@@ -285,11 +298,11 @@ public class csInvenManager : MonoBehaviour
             csInvSlot slot = go.GetComponent<csInvSlot>();
             if (slot == null) continue;
 
-            ItemData data = i < startingItems.Count ? startingItems[i] : null;
-            slot.Setup(data);
             slot.OnSlotClicked += HandleInventorySlotClicked;
             _inventorySlots.Add(slot);
         }
+
+        UpdateInventoryUI();
     }
 
     // Cursor, timeScale 제어 SystemBtn이 담당
@@ -352,5 +365,48 @@ public class csInvenManager : MonoBehaviour
         if (txtWType != null) txtWType.text = string.Empty;
         if (txtTitle != null) txtTitle.text = string.Empty;
         if (txtSub != null) txtSub.text = string.Empty;
+    }
+
+    // --- 아이템 인벤토리에 추가 ---
+    public bool AddItem(ItemData item)
+    {
+        if (item == null) return false;
+
+        if (_currentItems.Count >= totalSlotCount)
+        {
+            Debug.Log("인벤토리가 가득 찼습니다.");
+            return false;
+        }
+
+        // 데이터 리스트에 추가
+        _currentItems.Add(item);
+
+        // UI 업데이트
+        UpdateInventoryUI();
+        Debug.Log($"아이템 데이터 획득 및 UI 갱신 완료: {item.itemName}");
+        return true;
+    }
+
+    // --- 인벤토리 슬롯 동적 확장 ---
+    public void ExpandInventory(int amount)
+    {
+        if (amount <= 0) return;
+
+        int oldTotal = totalSlotCount;
+        totalSlotCount += amount;
+
+        for (int i = 0; i < amount; i++)
+        {
+            GameObject go = Instantiate(slotPrefab, slotContainer);
+            go.name = $"InvSlot_{oldTotal + i:00}";
+
+            csInvSlot slot = go.GetComponent<csInvSlot>();
+            if (slot == null) continue;
+
+            slot.OnSlotClicked += HandleInventorySlotClicked;
+            _inventorySlots.Add(slot);
+        }
+
+        UpdateInventoryUI();
     }
 }

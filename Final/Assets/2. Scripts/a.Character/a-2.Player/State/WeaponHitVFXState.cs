@@ -12,6 +12,12 @@ public class WeaponHitVFXState : WeaponVFXState
     private float _lastSpawnTime = 0f;
     private const float SPAWN_COOLDOWN = 0.02f; // 중복 생성 방지용 쿨다운
 
+    [Header("화면 흔들림 설정")]
+    [SerializeField][Range(0f,1f)] float duration=0.2f;
+    [SerializeField][Range(0f,1f)] float magnitude=0.3f;
+    [SerializeField][Range(0f,10f)] float frequency = 1f;
+    [SerializeField] bool fadeOut = true;
+
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         base.OnStateEnter(animator, stateInfo, layerIndex);
@@ -33,7 +39,7 @@ public class WeaponHitVFXState : WeaponVFXState
         if (Time.time < _lastSpawnTime + SPAWN_COOLDOWN) return;
 
         Quaternion spawnRot = _animator.transform.rotation * Quaternion.Euler(rotationOffset);
-        camera.Shake(0.2f,0.3f,10f,true);
+        camera.Shake(duration,magnitude,frequency,true);
 
         SpawnHitVFX(hitVFXPrefab, spawnPos, spawnRot);
         _lastSpawnTime = Time.time;

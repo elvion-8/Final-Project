@@ -81,8 +81,8 @@ public class csInvSlot : MonoBehaviour, IPointerClickHandler
     {
         if(borderImg == null) return;
 
-        Sprite litSprite = (_itemData != null && selectBorderImg!=null)?selectBorderImg : defaultBorderImg;
-        Sprite normalSprite = (_itemData != null && defaultBorderImg != null) ? defaultBorderImg : selectBorderImg;
+        Sprite litSprite = (selectBorderImg != null) ? selectBorderImg : defaultBorderImg;
+        Sprite normalSprite = (defaultBorderImg != null) ? defaultBorderImg : selectBorderImg;
         borderImg.sprite = lit ? litSprite : normalSprite;
     }
 

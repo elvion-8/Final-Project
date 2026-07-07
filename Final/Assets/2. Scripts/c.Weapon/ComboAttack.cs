@@ -118,6 +118,15 @@ public class ComboAttack : MonoBehaviour
 
             GetWeaponComboStats(out int weaponTypeVal, out int currentMaxCombo);
 
+            if (weaponTypeVal <= -1)
+            {
+                if (player.isAttacking)
+                {
+                    ResetCombo();
+                }
+                return;
+            }
+
             if (player.isAttacking == false)
             {
                 player.isAttacking = true;

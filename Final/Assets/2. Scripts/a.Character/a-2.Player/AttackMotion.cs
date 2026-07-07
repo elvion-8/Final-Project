@@ -185,11 +185,6 @@ public class AttackMotion : MonoBehaviour
     public void EquipWeapon(int index)
     {
         if (index < 0 || index > weaponPrefabs.Length) return;
-        //if (csInvenManager.Instance == null) return;
-
-        //ItemData hotbarItem = csInvenManager.Instance.GetHotbarItem(index);
-
-        //if (hotbarItem == null || hotbarItem.itemType != ItemType.Weapon || hotbarItem.itemPrefab == null) return;
 
         vfxModifier.ChangeActionByIndex(index);
 
@@ -280,7 +275,7 @@ public class AttackMotion : MonoBehaviour
         }
         else
         {
-            Debug.LogError("현재 장착된 무기(currentWeapon)가 없어 스킬을 실행할 수 없습니다.");
+            Debug.LogError("현재 장착된 무기가 없어 스킬 실행 불가");
         }
         Debug.Log("스킬사용");
         charCon.enabled = true;
@@ -304,10 +299,9 @@ public class AttackMotion : MonoBehaviour
 
     public int WeaponNume()
     {
-        GameObject weaponObj = GameObject.FindWithTag("Weapon");
-        if (weaponObj == null) return -1;
+        if (currentWeapon == null) return -1;
 
-        string name = weaponObj.name;
+        string name = currentWeapon.name;
         for (int i = 0; i < weaponPrefabs.Length; i++)
         {
             if (name.Contains(weaponPrefabs[i].name))
