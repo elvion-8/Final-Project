@@ -15,6 +15,7 @@ TagManager:
   - EnemyHpBar
   - GameOver
   - WeaponEffectManager
+  - Target
   layers:
   - Default
   - TransparentFX

@@ -24,6 +24,11 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
     [Header("Death")]
     public float deathDestroyDelay = 4.5f;
 
+    [Header("공격 텀")]
+    [Tooltip("한 번의 공격 패턴이 끝난 후 다음 공격 패턴이 시작되기까지의 대기 시간(초)")]
+    [SerializeField] float attackCooldown = 1.5f;
+    private float lastAttackEndTime = -999f;
+
     [Header("STATE")]
     public MODE_STATE enemyMode = MODE_STATE.IDLE;
 
@@ -68,6 +73,9 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
 
     // 현재 실행 중인 패턴 인스턴스
     private GameObject _currentPatternObj;
+
+    // 패턴 실행 중 여부 (true인 동안 플레이어 방향 회전 정지)
+    private bool _isPatternRunning = false;
 
     // ────────────────────────────────────────────
     //  초기화
@@ -164,7 +172,10 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
 
         // 상태 전환 시 실행 중인 패턴 정리
         if (enemyMode == MODE_STATE.ATTACK)
+        {
             CleanupCurrentPattern();
+            _isPatternRunning = false;
+        }
 
         StopAllCoroutines();
         isActing  = false;
@@ -174,6 +185,7 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
     void UpdateRotation()
     {
         if (traceTarget == null) return;
+        if (_isPatternRunning) return; // 공격 패턴 실행 중에는 회전 고정
         if (enemyMode != MODE_STATE.TRACE && enemyMode != MODE_STATE.ATTACK) return;
 
         Vector3 dir = traceTarget.position - myTr.position;
@@ -191,7 +203,10 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
         {
             case MODE_STATE.IDLE:     StartCoroutine(IdleCoroutine());   break;
             case MODE_STATE.SURPRISE: StartCoroutine(AggroCoroutine());  break;
-            case MODE_STATE.ATTACK:   StartCoroutine(AttackCoroutine()); break;
+            case MODE_STATE.ATTACK:
+                if (Time.time >= lastAttackEndTime + attackCooldown)
+                    StartCoroutine(AttackCoroutine());
+                break;
             case MODE_STATE.HIT:      StartCoroutine(HitCoroutine());    break;
             case MODE_STATE.TRACE:    UpdateTrace();                     break;
         }
@@ -279,10 +294,13 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
         pattern.SetContext(myTr, traceTarget);
         _anim.SetTrigger("Attack" + (index + 1));
 
+        _isPatternRunning = true;
         yield return StartCoroutine(pattern.Execute());
+        _isPatternRunning = false;
 
         // 패턴 종료 후 정리
         CleanupCurrentPattern();
+        lastAttackEndTime = Time.time;
         isActing = false;
     }
 
@@ -369,3 +387,4 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
 
     void OnDestroy() => CleanupCurrentPattern();
 }
+

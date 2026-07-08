@@ -44,15 +44,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 863e8e32b4dc2cf4aae3442f4d259412, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  coreOpenEffectPrefab: {fileID: 1531814124222292, guid: bc1c406e8debe27419da2b3a80a1ef99, type: 3}
+  coreOpenEffectPrefab: {fileID: 1315764361558410, guid: f99c3ed97779c5b4eb026cb91d4e4933, type: 3}
   beamPrefab: {fileID: 1395565506770744, guid: 9d5dbdf2d3c3c6b4eadc51123699d237, type: 3}
-  beamRange: 25
-  warningDuration: 1.5
+  beamRange: 30
+  warningDuration: 1
   beamSustainDuration: 1.2
   beamSpeed: 0
   firePointOffset: {x: 0, y: 1.5, z: 2}
   damage: 60
-  warningZoomAmount: 10
+  warningZoomAmount: 10.8
   shakeIntensity: 0.35
   shakeDuration: 0.35
   flashColor: {r: 1, g: 1, b: 1, a: 0.8}

@@ -9917,7 +9917,7 @@ LineRenderer:
     numCapVertices: 0
     alignment: 0
     textureMode: 0
-    textureScale: {x: 1, y: 1}
+    textureScale: {x: 2, y: 2}
     shadowBias: 0
     generateLightingData: 0
   m_MaskInteraction: 0

@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58e72e89aafac52448fabf8c3e8ee414, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  coreEffectPrefab: {fileID: 2811559171390492949, guid: 7ada66e14a4aec34292b67dabd608e9d, type: 3}
+  coreEffectPrefab: {fileID: 1612411718768874, guid: 4ef343c2fedb6884aac07e8610d65212, type: 3}
   explosionEffectPrefab: {fileID: 1171190231128718, guid: d9467a10b94fb3b428cc539326c9579b, type: 3}
   pullRange: 12
   pullDuration: 2

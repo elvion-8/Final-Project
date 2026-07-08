@@ -11388,7 +11388,7 @@ GameObject:
   - component: {fileID: 1222173294}
   m_Layer: 0
   m_Name: TentacleTarget
-  m_TagString: Untagged
+  m_TagString: Target
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -11402,7 +11402,7 @@ Transform:
   m_GameObject: {fileID: 1222173291}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2, y: 5.3, z: -36.93}
+  m_LocalPosition: {x: -2, y: 0.4, z: -36.93}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -18704,6 +18704,10 @@ PrefabInstance:
       propertyPath: IKBaseReactionWeight
       value: 0.28
       objectReference: {fileID: 0}
+    - target: {fileID: 5034571084329135106, guid: d4da4ed65e38b8045a24c938b34fdcdc, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6218853110977695472, guid: d4da4ed65e38b8045a24c938b34fdcdc, type: 3}
       propertyPath: UseIK
       value: 1
@@ -18759,6 +18763,18 @@ PrefabInstance:
     - target: {fileID: 6449912869832761052, guid: d4da4ed65e38b8045a24c938b34fdcdc, type: 3}
       propertyPath: IKBaseReactionWeight
       value: 0.28
+      objectReference: {fileID: 0}
+    - target: {fileID: 6746616051914155822, guid: d4da4ed65e38b8045a24c938b34fdcdc, type: 3}
+      propertyPath: attackCooldown
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6746616051914155822, guid: d4da4ed65e38b8045a24c938b34fdcdc, type: 3}
+      propertyPath: hitAnimDuration
+      value: 1.04
+      objectReference: {fileID: 0}
+    - target: {fileID: 6746616051914155822, guid: d4da4ed65e38b8045a24c938b34fdcdc, type: 3}
+      propertyPath: hitStateDuration
+      value: 1.04
       objectReference: {fileID: 0}
     - target: {fileID: 6878695578950136504, guid: d4da4ed65e38b8045a24c938b34fdcdc, type: 3}
       propertyPath: UseIK
