@@ -63,10 +63,12 @@ public class GameOver : MonoBehaviour
     }
     public void ReStart()
     {
+        PlayerStatController.ClearRunBuffs();
         Managers.loadingManager.LoadScene("ScStartPoint", LoadingType.GameToGame);
     }
     public void Menu()
     {
+        PlayerStatController.ClearRunBuffs();
         Managers.loadingManager.LoadScene("ScOpen", LoadingType.MenuToGame);
     }
     public void Init()

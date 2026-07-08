@@ -112,10 +112,16 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     AttackMotion attackMotion;
 
     CameraMove camera;
+    [HideInInspector] public PlayerStatController statController;
 
     void Awake()
 
     {
+        statController = GetComponent<PlayerStatController>();
+        if (statController == null)
+        {
+            statController = gameObject.AddComponent<PlayerStatController>();
+        }
         stat = Managers.Data.stat;
         input = Managers.Input;
         Debug.Log(input.ToString());
@@ -162,12 +168,17 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         camera = CameraMove.Instance;
     }
 
+    public float MoveSpeedVal => statController != null ? statController.MoveSpeed : 1.3f;
+    public float RunSpeedVal => statController != null ? statController.RunSpeed : runningSpeed;
+    public float JumpPowerVal => statController != null ? statController.JumpPower : jumpPower;
+    public int JumpCountVal => statController != null ? statController.JumpCount : jumpCnt;
+
     void Start()
     {
         MoveDir = Vector3.zero;
         jumpPower = 9.0f;
         gravity = 20.0f;
-        hp += stat.hpUpgrade * 50;
+        hp = Mathf.RoundToInt(statController != null ? statController.MaxHP : 1000f);
         fullHp = hp;
 
         if (obstacleLayer.value == 0)
@@ -180,6 +191,28 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     }
 
 
+    void SetAnimatorSpeed()
+    {
+        if (isDie)
+        {
+            anim.speed = 1.0f;
+            return;
+        }
+
+        if (isAttacking)
+        {
+            anim.speed = statController != null ? statController.AttackSpeedMultiplier : 1.0f;
+        }
+        else if (isWallClimbing || isLedgeClimbing)
+        {
+            anim.speed = statController != null ? statController.ClimbSpeedMultiplier : 1.0f;
+        }
+        else
+        {
+            anim.speed = 1.0f;
+        }
+    }
+
     void Update()
     {
         if (pv.isMine || PhotonNetwork.inRoom == false)
@@ -190,7 +223,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
             GetInput();
 
             // 벽타기
-            if (Climb()) { input.ResetKey(); return; }
+            if (Climb()) { input.ResetKey(); SetAnimatorSpeed(); return; }
 
             // 공격
             Attack();
@@ -210,6 +243,8 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
             anim.SetBool("isGrounded", IsGrounded);
             //ResetInputTriggers();
             input.ResetKey();
+
+            SetAnimatorSpeed();
         }
         else   //내가 아닌 플레이어
         {
@@ -383,7 +418,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         // 점프
         if (IsGrounded && !isRolling && input.jumpKey)
         {
-            MoveDir.y = jumpPower;
+            MoveDir.y = JumpPowerVal;
 
             if (PhotonNetwork.inRoom)
             {
@@ -394,10 +429,10 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
             isMultiJump = true;
         }
         // 추가 점프
-        else if (input.jumpKey && !IsGrounded && tempJumpCnt < jumpCnt && isMultiJump)
+        else if (input.jumpKey && !IsGrounded && tempJumpCnt < JumpCountVal && isMultiJump)
         {
             tempJumpCnt++;
-            MoveDir.y = jumpPower;
+            MoveDir.y = JumpPowerVal;
 
             Vector3 jumpDir = transform.forward.normalized;
             MoveDir.x = jumpDir.x * jumpForwardForce;
@@ -447,12 +482,12 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
                     if (input.runKey)
                     {
                         anim.SetBool("Run", true);
-                        moveSpeed = runningSpeed;
+                        moveSpeed = RunSpeedVal;
                     }
                     else
                     {
                         anim.SetBool("Walk", true);
-                        moveSpeed = 1.3f;
+                        moveSpeed = MoveSpeedVal;
                         anim.SetBool("Run", false);
                     }
                 }
@@ -696,8 +731,9 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         anim.SetBool("IsWallClimbing", false);
         anim.SetTrigger("LedgeClimb");
 
-        // 루트 모션 재생 시간 동안 대기합니다.
-        float duration = 1.2f;
+        // 루트 모션 재생 시간 동안 대기합니다. (클라이밍 재생 속도를 반영)
+        float climbMult = statController != null ? statController.ClimbSpeedMultiplier : 1.0f;
+        float duration = 1.2f / climbMult;
         yield return new WaitForSeconds(duration);
 
         isLedgeClimbing = false;

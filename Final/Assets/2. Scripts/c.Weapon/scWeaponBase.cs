@@ -12,18 +12,40 @@ public abstract class scWeaponBase : MonoBehaviour, IWeaponStats
 
     public scPlayerStat pS;
 
-    public int attackDmg { get{if (pS == null) return baseAttackDmg;
-            return baseAttackDmg+(pS.weaponDmgUpgradeCnt*5);}}       //공격력
+    private PlayerStatController GetStatController()
+    {
+        PlayerCtrl player = GetPlayerCtrl();
+        return player != null ? player.statController : null;
+    }
+
+    public int attackDmg { get {
+        var sc = GetStatController();
+        if (sc != null) return sc.GetWeaponDamage(baseAttackDmg);
+        if (pS != null) return baseAttackDmg + (pS.weaponDmgUpgradeCnt * 5);
+        return baseAttackDmg;
+    }}       //공격력
     public float attackRange { get{return baseAttackRange;}}   //공격 범위
     public float attackCoolDown { get;}//공격 쿨다운
     public int attackType { get;}      //공격 타입
     public float weaponMoveSpeed { get;}  //무기 이동속도
-    public float attackSpeed { get{if( pS == null) return baseAttackSpeed; 
-            return baseAttackSpeed + pS.weaponAttackSpeed;}}   //공격 속도
-    public int criticalDmg { get{if( pS == null) return baseCritDmg;
-            return baseCritDmg+(pS.weaponCritDmgUpgradeCnt);}}      //치명타 데미지
-    public int criticalProb { get{if (pS == null) return baseCritProb;
-            return baseCritProb+(pS.weaponCritProbUpgradeCnt);}}     //치명타 확률
+    public float attackSpeed { get {
+        var sc = GetStatController();
+        if (sc != null) return sc.GetWeaponAttackSpeed(baseAttackSpeed);
+        if (pS != null) return baseAttackSpeed + pS.weaponAttackSpeed;
+        return baseAttackSpeed;
+    }}   //공격 속도
+    public int criticalDmg { get {
+        var sc = GetStatController();
+        if (sc != null) return sc.GetCritDamage(baseCritDmg);
+        if (pS != null) return baseCritDmg + pS.weaponCritDmgUpgradeCnt;
+        return baseCritDmg;
+    }}      //치명타 데미지
+    public int criticalProb { get {
+        var sc = GetStatController();
+        if (sc != null) return sc.GetCritProbability(baseCritProb);
+        if (pS != null) return baseCritProb + pS.weaponCritProbUpgradeCnt;
+        return baseCritProb;
+    }}     //치명타 확률
     public int Durability { get; private set; }     //내구도
 
     int damage;                        //데미지
@@ -59,33 +81,44 @@ public abstract class scWeaponBase : MonoBehaviour, IWeaponStats
 
     void OnTriggerEnter(Collider other)
     {
-        //ITakeDamage target = other.GetComponent<ITakeDamage>();
-
-        //if(target != null)
-        //{
-        //    target.TakeDamage(attackDmg);
-        //}
-
         PlayerCtrl player = GetPlayerCtrl();
         if (player != null && player.isAttacking == true)
         {
             if (other.gameObject.tag == "Enemy")
             {
-                // 연속 타격이 씹히지 않도록 짧은 고정 무적 시간(0.15초) 적용
                 if (Time.time < HitTime + 0.15f)
                 {
-                    // 아직 무적 시간 중이라면 데미지 무시
                     return;
                 }
 
-                // 타격 이펙트 활성화 및 닿은 지점 전달
                 if (player.currentHitVFXState != null)
                 {
                     Vector3 contactPoint = other.ClosestPoint(transform.position);
                     player.currentHitVFXState.TriggerHitVFX(contactPoint);
                 }
 
-                other.GetComponentInParent<EnemyCtrl>().TakeDamage(Damage());
+                int finalDamage = Damage();
+                other.GetComponentInParent<EnemyCtrl>().TakeDamage(finalDamage);
+
+                // 흡혈(Life Steal)
+                var sc = GetStatController();
+                if (sc != null)
+                {
+                    float lifeStealPct = sc.GetBuffValue(CharacterStatType.LifeSteal);
+                    if (lifeStealPct > 0.001f)
+                    {
+                        int healAmount = Mathf.RoundToInt(finalDamage * lifeStealPct);
+                        if (healAmount > 0)
+                        {
+                            player.hp = Mathf.Min(player.hp + healAmount, Mathf.RoundToInt(sc.MaxHP));
+                            if (player.hpBar != null)
+                            {
+                                player.hpBar.fillAmount = (float)player.hp / sc.MaxHP;
+                            }
+                            Debug.Log($"[흡혈] {healAmount} HP 회복 완료 (흡혈률: {lifeStealPct:P0})");
+                        }
+                    }
+                }
 
                 //내구도 감소
                 Durability -= 10;

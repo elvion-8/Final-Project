@@ -58,12 +58,22 @@ public class CharacterPnl : MonoBehaviour
     void OnEnable()
     {
         RefreshUI();
+        PlayerStatController.OnStatsChanged += RefreshUI;
+    }
+
+    void OnDisable()
+    {
+        PlayerStatController.OnStatsChanged -= RefreshUI;
     }
 
     public void RefreshUI()
     {
         if (playerStatManage == null) return;
         var stat = playerStatManage.stat;
+
+        // Try to get active player stats in scene
+        PlayerCtrl player = FindObjectOfType<PlayerCtrl>();
+        PlayerStatController statCtrl = player != null ? player.statController : null;
 
         // ── 유저네임 ──────────────────────────────────────────────
         //public string userName;   // stat에 userName 필드 추가 후 연결
@@ -72,8 +82,8 @@ public class CharacterPnl : MonoBehaviour
 
         // ── HP ───────────────────────────────────────────────────
         //public float currentHp;    // stat에 currentHp 필드 추가 후 연결
-        float maxHp = BASE_MAX_HP + stat.hpUpgrade * HP_PER_UPGRADE;
-        float curHp = maxHp; // currentHp 필드 추가 후 stat.currentHp 로 교체
+        float maxHp = statCtrl != null ? statCtrl.MaxHP : (BASE_MAX_HP + stat.hpUpgrade * HP_PER_UPGRADE);
+        float curHp = player != null ? player.hp : maxHp;
 
         if (hpSlider != null) { hpSlider.maxValue = maxHp; hpSlider.value = curHp; }
         if (hpText   != null) hpText.text = $"{curHp:0} / {maxHp:0}";
@@ -86,12 +96,26 @@ public class CharacterPnl : MonoBehaviour
         if (SANcText   != null) SANcText.text = $"{SANc:0}%";
 
         // ── 기본 능력치 ───────────────────────────────────────────
-        float attack    = BASE_ATTACK     + stat.weaponDmgUpgradeCnt      * ATTACK_PER_UPGRADE;
-        float defense   = BASE_DEFENSE;
-        float critProb  = BASE_CRIT_PROB  + stat.weaponCritProbUpgradeCnt * CRIT_PROB_PER_UPG;
-        float critDmg   = BASE_CRIT_DMG   + stat.weaponCritDmgUpgradeCnt  * CRIT_DMG_PER_UPG;
-        float atkSpeed  = BASE_ATTACK_SPD + stat.weaponAttackSpeed         * ATTACK_SPD_PER_UPG;
-        float moveSpeed = BASE_MOVE_SPEED;
+        float attack, defense, critProb, critDmg, atkSpeed, moveSpeed;
+
+        if (statCtrl != null)
+        {
+            attack = BASE_ATTACK + statCtrl.WeaponDmgUpgradeCnt * ATTACK_PER_UPGRADE + statCtrl.GetBuffValue(CharacterStatType.WeaponDamage);
+            defense = BASE_DEFENSE;
+            critProb = BASE_CRIT_PROB + statCtrl.WeaponCritProbUpgradeCnt * CRIT_PROB_PER_UPG + statCtrl.GetBuffValue(CharacterStatType.CritProbability);
+            critDmg = BASE_CRIT_DMG + statCtrl.WeaponCritDmgUpgradeCnt * CRIT_DMG_PER_UPG + statCtrl.GetBuffValue(CharacterStatType.CritDamage);
+            atkSpeed = BASE_ATTACK_SPD + statCtrl.WeaponAttackSpeedUpgradeCnt * ATTACK_SPD_PER_UPG + statCtrl.GetBuffValue(CharacterStatType.AttackSpeed);
+            moveSpeed = BASE_MOVE_SPEED + statCtrl.GetBuffValue(CharacterStatType.MoveSpeed);
+        }
+        else
+        {
+            attack = BASE_ATTACK + stat.weaponDmgUpgradeCnt * ATTACK_PER_UPGRADE;
+            defense = BASE_DEFENSE;
+            critProb = BASE_CRIT_PROB + stat.weaponCritProbUpgradeCnt * CRIT_PROB_PER_UPG;
+            critDmg = BASE_CRIT_DMG + stat.weaponCritDmgUpgradeCnt * CRIT_DMG_PER_UPG;
+            atkSpeed = BASE_ATTACK_SPD + stat.weaponAttackSpeed * ATTACK_SPD_PER_UPG;
+            moveSpeed = BASE_MOVE_SPEED;
+        }
 
         if (attackText      != null) attackText.text      = $"{attack:0}";
         if (defenseText     != null) defenseText.text     = $"{defense:0}";

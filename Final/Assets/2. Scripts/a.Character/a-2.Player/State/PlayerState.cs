@@ -201,6 +201,8 @@ public class PlayerState : PlayerAttackState
 
     public override void OnStateExit(Animator anim, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        anim.speed = 1.0f; // Reset animator speed to default on state exit
+
         if (rb != null)
         {
             rb.velocity = new Vector3(0, rb.velocity.y, 0);

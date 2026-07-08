@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9dbe77bb20d098745b42c8d1fc9d1b07, type: 3}
+  m_Name: DmgUpItem
+  m_EditorClassIdentifier: 
+  itemType: 1
+  weaponType: 0
+  itemName: DmgUp
+  itemDesc: dmg 100 up
+  itemIcon: {fileID: 0}
+  iconLit: {fileID: 0}
+  itemPrefab: {fileID: 0}
+  attackSoundName: 
+  maxCombo: 3
+  comboTime: 0.8
+  effects:
+  - {fileID: 11400000, guid: e83e7aef53c87114ab378f22d87e1fc9, type: 2}

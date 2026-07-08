@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum ItemType
@@ -27,4 +28,31 @@ public class ItemData : ScriptableObject
     [Header("Combo Settings")]
     public int maxCombo = 3;
     public float comboTime = 0.8f;
+
+    [Header("Item Effects (Buff/Special)")]
+    public List<ItemEffect> effects = new List<ItemEffect>();
+
+    public void OnAcquire(PlayerCtrl player)
+    {
+        if (effects == null) return;
+        foreach (var effect in effects)
+        {
+            if (effect != null)
+            {
+                effect.OnApply(player);
+            }
+        }
+    }
+
+    public void OnLost(PlayerCtrl player)
+    {
+        if (effects == null) return;
+        foreach (var effect in effects)
+        {
+            if (effect != null)
+            {
+                effect.OnRemove(player);
+            }
+        }
+    }
 }

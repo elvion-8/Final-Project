@@ -16,12 +16,30 @@ public class FieldItem : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             if (itemData == null) return;
-            bool success = csInvenManager.Instance.AddItem(itemData);
-            if (success)
-            {
-                PlayPickupEffects();
 
-                Destroy(gameObject);
+            PlayerCtrl player = other.GetComponent<PlayerCtrl>();
+            if (player == null)
+            {
+                player = other.GetComponentInParent<PlayerCtrl>();
+            }
+
+            if (itemData.itemType == ItemType.Buff)
+            {
+                if (player != null)
+                {
+                    itemData.OnAcquire(player);
+                    PlayPickupEffects();
+                    Destroy(gameObject);
+                }
+            }
+            else
+            {
+                bool success = csInvenManager.Instance.AddItem(itemData);
+                if (success)
+                {
+                    PlayPickupEffects();
+                    Destroy(gameObject);
+                }
             }
         }
     }

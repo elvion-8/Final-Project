@@ -12,7 +12,6 @@ public class csUpgrade : MonoBehaviour
     private bool isPlayerInRange = false;
     private bool isUpgradePanelOpen = false;
     Animator anim;
-    scPlayerStat pS;
 
     void Awake()
     {
@@ -89,58 +88,47 @@ public class csUpgrade : MonoBehaviour
             mainCameraPos.position = tempMainCamPos;
         }
     }
+
     //===========================================================Player, Weapon Upgrade Button Punc
+    // Wrappers proxying to PlayerStatManage to prevent breaking Unity inspector events
+
+    private PlayerStatManage GetStatManage()
+    {
+        PlayerStatManage statManage = FindObjectOfType<PlayerStatManage>();
+        if (statManage == null)
+        {
+            Debug.LogError("PlayerStatManage could not be found in the scene.");
+        }
+        return statManage;
+    }
+
     public void HpUpgrade()
     {
-        int price = 0 + (pS.hpUpgrade);
-        if (pS.cost > price)
-        {
-            pS.cost -= 1;
-            pS.hpUpgrade++;
-        }
-        else Debug.Log("not enough cost!");
+        var sm = GetStatManage();
+        if (sm != null) sm.UpgradeHp();
     }
 
     public void WeaponAttackSpeedUpgrade()
     {
-        int price = 0 + (pS.weaponAttackSpeed);
-        if (pS.cost > price)
-        {
-            pS.cost -= 1;
-            pS.weaponAttackSpeed++;
-        }
-        else Debug.Log("not enough cost!");
+        var sm = GetStatManage();
+        if (sm != null) sm.UpgradeAttackSpeed();
     }
 
     public void WeaponDmgUpgrade()
     {
-        int price = 0 + (pS.weaponDmgUpgradeCnt);
-        if (pS.cost > price)
-        {
-            pS.cost -= 1;
-            pS.weaponDmgUpgradeCnt++;
-        }
-        else Debug.Log("not enough cost!");
+        var sm = GetStatManage();
+        if (sm != null) sm.UpgradeWeaponDmg();
     }
 
     public void WeaponCritProbUpgrade()
     {
-        int price = 0 + (pS.weaponCritProbUpgradeCnt);
-        if (pS.cost > price)
-        {
-            pS.cost -= 1;
-            pS.weaponCritProbUpgradeCnt++;
-        }
-        else Debug.Log("not enough cost!");
+        var sm = GetStatManage();
+        if (sm != null) sm.UpgradeCritProb();
     }
+
     public void WeaponCritDmgUpgrade()
     {
-        int price = 0 + (pS.weaponCritDmgUpgradeCnt);
-        if (pS.cost > price)
-        {
-            pS.cost -= 1;
-            pS.weaponCritDmgUpgradeCnt++;
-        }
-        else Debug.Log("not enough cost!");
+        var sm = GetStatManage();
+        if (sm != null) sm.UpgradeCritDmg();
     }
 }

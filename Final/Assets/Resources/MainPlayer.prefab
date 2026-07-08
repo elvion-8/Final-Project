@@ -642,6 +642,7 @@ GameObject:
   - component: {fileID: 6817033599759912610}
   - component: {fileID: 7718799050016782552}
   - component: {fileID: 7468465819994353796}
+  - component: {fileID: 8310845745751232393}
   m_Layer: 0
   m_Name: MainPlayer
   m_TagString: Player
@@ -693,6 +694,7 @@ MonoBehaviour:
   anim: {fileID: 0}
   MoveDir: {x: 0, y: 0, z: 0}
   isAttacking: 0
+  currentHitVFXState: {fileID: 0}
   playerId: -1
   obstacleLayer:
     serializedVersion: 2
@@ -702,6 +704,7 @@ MonoBehaviour:
   ledgeForwardOffset: 0.5
   ledgeUpperHeightOffset: 2.2
   gpV: {fileID: 655839309683755263}
+  statController: {fileID: 0}
 --- !u!136 &2713677463199808178
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -773,7 +776,6 @@ MonoBehaviour:
   weaponPoint: {fileID: 0}
   currentWeaponData: {fileID: 0}
   anim: {fileID: 0}
-  trail: {fileID: 0}
   attackSpeed: 0
 --- !u!114 &6817033599759912610
 MonoBehaviour:
@@ -836,6 +838,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxCombo: 3
   comboTime: 1.5
+--- !u!114 &8310845745751232393
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1226331344322202821}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b303d73fa90956d4b8dbcfa1a454486b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1263711682559840926
 GameObject:
   m_ObjectHideFlags: 0
