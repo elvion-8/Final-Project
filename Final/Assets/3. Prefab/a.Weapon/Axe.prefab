@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 356194811668164964}
   - component: {fileID: 188463217489179451}
   - component: {fileID: -5622214419761577228}
+  - component: {fileID: 1807264516742367045}
   m_Layer: 0
   m_Name: Axe
   m_TagString: Weapon
@@ -69,7 +70,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 879745853168d244a8e8b1a8892160c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseAttackDmg: 1
+  baseAttackDmg: 20
   baseAttackRange: 1
   baseCritProb: 1
   baseCritDmg: 1
@@ -123,6 +124,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemData: {fileID: 11400000, guid: e164640c8ad68d247807fcd0427bef0d, type: 2}
+--- !u!114 &1807264516742367045
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9159102852955507597}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3fb36c7ec46dbf346a9ac7c8dac1a7a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dissolvePropertyName: _DissolveAmount
+  disappearVfxDuration: 2
+  appearVfxDuration: 1
+  floatUpDistance: 1
+  rotationSpeed: 75
+  appearVFXPrefab: {fileID: 0}
+  disappearVFXPrefab: {fileID: 1700508717906386518, guid: 04395a46e83172245b8216ce554937b9, type: 3}
 --- !u!1001 &2295159719183814727
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -5220,7 +5220,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemData: {fileID: 11400000, guid: e164640c8ad68d247807fcd0427bef0d, type: 2}
   pickupSound: {fileID: 0}
-  pickupEffectPrefab: {fileID: 0}
+  pickupEffectPrefab: {fileID: 2245918866036196035, guid: e64a4de73aed7a44498f258303ef505b, type: 3}
 --- !u!1 &1455325384
 GameObject:
   m_ObjectHideFlags: 0
@@ -6951,7 +6951,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3403637947226272793, guid: 61077aa1281a8ba40a69b2308d422630, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.9007635
+      value: 1.6
       objectReference: {fileID: 0}
     - target: {fileID: 3403637947226272793, guid: 61077aa1281a8ba40a69b2308d422630, type: 3}
       propertyPath: m_LocalPosition.z
@@ -7238,7 +7238,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2831415604328320508, guid: 682b3774eceaa6d488b3a6113c21d471, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.1908526
+      value: 1.846
       objectReference: {fileID: 0}
     - target: {fileID: 2831415604328320508, guid: 682b3774eceaa6d488b3a6113c21d471, type: 3}
       propertyPath: m_LocalPosition.z
@@ -7437,7 +7437,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2703669508018331795, guid: cf35eea8495f84c48974218dd57bd15c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.0846477
+      value: 1.77
       objectReference: {fileID: 0}
     - target: {fileID: 2703669508018331795, guid: cf35eea8495f84c48974218dd57bd15c, type: 3}
       propertyPath: m_LocalPosition.z
@@ -7723,6 +7723,7 @@ MonoBehaviour:
   hitStateDuration: 0.5
   hitAnimDuration: 0.5
   deathDestroyDelay: 4.5
+  attackCooldown: 1.5
   enemyMode: 0
   hp: 1000
   findDist: 20

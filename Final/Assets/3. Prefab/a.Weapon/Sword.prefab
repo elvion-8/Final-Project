@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1207435603923578994}
   - component: {fileID: 211306249437593467}
   - component: {fileID: -2789345741428020436}
+  - component: {fileID: -5994814529449507396}
   m_Layer: 0
   m_Name: Sword
   m_TagString: Weapon
@@ -110,6 +111,25 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &-5994814529449507396
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8559635611127355586}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3fb36c7ec46dbf346a9ac7c8dac1a7a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dissolvePropertyName: _DissolveAmount
+  disappearVfxDuration: 2
+  appearVfxDuration: 1
+  floatUpDistance: 2
+  rotationSpeed: 75
+  appearVFXPrefab: {fileID: 0}
+  disappearVFXPrefab: {fileID: 1700508717906386518, guid: 34e03562feaac0c4eb69ac62c739d4ca, type: 3}
 --- !u!1001 &1204611998574317636
 PrefabInstance:
   m_ObjectHideFlags: 0

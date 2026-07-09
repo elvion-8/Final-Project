@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3403637947226272793}
+  - component: {fileID: 5673924294390611285}
   m_Layer: 0
   m_Name: Dmg
   m_TagString: Untagged
@@ -32,6 +33,27 @@ Transform:
   - {fileID: 5516404729194418436}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &5673924294390611285
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8843220603528554895}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 3f38fedbe130fb94386dabb44166ef3c, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1001 &5516404729194548100
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -160,4 +182,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemData: {fileID: 11400000, guid: 18e2cc51bf838cc4f98c6ab002ea35af, type: 2}
   pickupSound: {fileID: 0}
-  pickupEffectPrefab: {fileID: 0}
+  pickupEffectPrefab: {fileID: 2245918866036196035, guid: e64a4de73aed7a44498f258303ef505b, type: 3}

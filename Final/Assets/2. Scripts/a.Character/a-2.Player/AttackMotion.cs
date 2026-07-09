@@ -157,19 +157,35 @@ public class AttackMotion : MonoBehaviour
     public void EquipWeapon(int index)
     {
         if (index < 0 || index > weaponPrefabs.Length) return;
+        if (currentWeapon != null && WeaponNume() == index) return;
 
         vfxModifier.ChangeActionByIndex(index);
 
-        // 기존 무기 제거
+        // 기존 무기 제거 (즉시 삭제하지 않고 소멸 이펙트 호출)
         if (currentWeapon != null)
         {
-            Destroy(currentWeapon);
+            WeaponVisualEffect oldEffect = currentWeapon.GetComponent<WeaponVisualEffect>();
+            if (oldEffect != null)
+            {
+                oldEffect.PlayDisappearEffect();
+            }
+            else
+            {
+                Destroy(currentWeapon);
+            }
         }
 
         SetAnimationLayer(index);
 
         Transform spawnPoint = weaponPoint != null ? weaponPoint : transform;
         currentWeapon = Instantiate(weaponPrefabs[index], spawnPoint.position, spawnPoint.rotation, spawnPoint);
+
+        // 새 무기에 소환 이펙트 적용
+        WeaponVisualEffect newEffect = currentWeapon.GetComponent<WeaponVisualEffect>();
+        if (newEffect != null)
+        {
+            newEffect.PlayAppearEffect();
+        }
 
         if (pv.isMine || !PhotonNetwork.inRoom)
         {
