@@ -192,6 +192,13 @@ public class csPhotonInit : Photon.MonoBehaviour
     //룸 목록만큼 생성될 RoomItem 프리팹 연결 레퍼런스 (UI 버전에서 사용)
     public GameObject roomItem;
 
+
+    //private void Awake()
+    //{
+    //    userId
+    //}
+
+
     // App 인증 및 로비연결
     void Start()
     {

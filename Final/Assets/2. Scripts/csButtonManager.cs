@@ -49,7 +49,7 @@ public class csButtonManager : MonoBehaviour
     public Text statusText;
 
     [Header("서버 설정 (Apache 8080 포트)")]
-    private string serverBaseUrl = "http://127.0.0.1:8080/";
+    private string serverBaseUrl = "http://192.168.0.44:8080/";
     private int currentUserId = -1;
 
     private DataManager dataManager;
