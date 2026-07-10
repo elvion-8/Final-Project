@@ -1,7 +1,7 @@
 [System.Serializable]
 public class scPlayerStat
 {
-    public int cost = 0;
+    public int cost = 10;
     public int hpUpgrade = 0;
     public int weaponDmgUpgradeCnt = 0;
     public int weaponCritProbUpgradeCnt = 0;

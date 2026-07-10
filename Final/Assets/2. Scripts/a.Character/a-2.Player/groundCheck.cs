@@ -11,6 +11,9 @@ public class groundCheck : MonoBehaviour
     public float castDist = 0.2f;
     public float radiusOffset = 0.05f;
 
+    private bool isAttackLock = false;
+    private bool lockedGroundedValue = false;
+
     void Awake()
     {
         player = GetComponentInParent<CharacterController>();
@@ -22,9 +25,30 @@ public class groundCheck : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        isGrounded = CheckGround();
+        // 공격 중(Lock)일 때는 물리 검사를 하지 않고, 공격 시작 시점의 값을 그대로 유지
+        if (isAttackLock)
+        {
+            isGrounded = lockedGroundedValue;
+        }
+        else
+        {
+            isGrounded = CheckGround();
+        }
+    }
+
+    public void LockGroundState()
+    {
+        // 공격 직전의 진짜 물리적인 지면 상태를 체크해서 저장
+        lockedGroundedValue = CheckGround();
+        isAttackLock = true;
+        isGrounded = lockedGroundedValue; // 즉시 반영
+    }
+
+    public void UnlockGroundState()
+    {
+        isAttackLock = false;
     }
 
     bool CheckGround()

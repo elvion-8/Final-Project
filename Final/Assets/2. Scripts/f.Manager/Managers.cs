@@ -94,7 +94,7 @@ public class Managers : MonoBehaviour
                 _instance._gameOver = go.AddComponent<GameOver>();
             }
 
-            if (_instance.onDataManager) _instance._data.Init();
+            //if (_instance.onDataManager) _instance._data.Init();
             if (_instance.onSoundManager) _instance._sound.Init();
             if (_instance.onInputManager) _instance._input.Init();
             //if(_instance.onWeaponEffectManager)_instance._weaponEffect.Init();
