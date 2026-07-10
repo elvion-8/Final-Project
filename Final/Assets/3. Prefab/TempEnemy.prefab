@@ -161,6 +161,7 @@ GameObject:
   - component: {fileID: 5959549033389167809}
   - component: {fileID: 293363960826794592}
   - component: {fileID: 2606199624365376920}
+  - component: {fileID: 3840601124338045230}
   m_Layer: 0
   m_Name: TempEnemy
   m_TagString: Untagged
@@ -227,6 +228,7 @@ MonoBehaviour:
   hitStateDuration: 0.5
   hitAnimDuration: 0.5
   deathDestroyDelay: 4.5
+  attackCooldown: 1.5
   enemyMode: 0
   hp: 1000
   findDist: 30
@@ -240,6 +242,35 @@ MonoBehaviour:
   - {fileID: 1085010372756603544, guid: 57222939aa5273d4fa9f9dd9c44e8cc7, type: 3}
   - {fileID: 5342617459482360968, guid: 3c73c007b4b6f5a48bd9e44b832bb2dc, type: 3}
   traceTarget: {fileID: 0}
+--- !u!114 &3840601124338045230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4688862856659575060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08b422e034c2e074b9ff8986767fb641, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dropTable:
+  - fieldItemPrefab: {fileID: 834138252338049378, guid: 8bc4b7ed9a37921458a2fb614d4b6f53, type: 3}
+    itemData: {fileID: 11400000, guid: cd859b6bb5ffa8e4e936cb3675e291a4, type: 2}
+    dropChance: 0.388
+    minCount: 0
+    maxCount: 3
+  - fieldItemPrefab: {fileID: 8843220603528554895, guid: d8ffbbdff6cda2f409da97160c16f2bf, type: 3}
+    itemData: {fileID: 11400000, guid: 18e2cc51bf838cc4f98c6ab002ea35af, type: 2}
+    dropChance: 0.404
+    minCount: 0
+    maxCount: 3
+  - fieldItemPrefab: {fileID: 6139211009515447409, guid: 910f7ad9e5cff154aa51c0456f94dff7, type: 3}
+    itemData: {fileID: 11400000, guid: 7f3df2c75e93467459388fc06547643e, type: 2}
+    dropChance: 0.371
+    minCount: 0
+    maxCount: 3
+  dropScatterRadius: {x: 0.3, y: 1.2}
 --- !u!1 &6982967072352499708
 GameObject:
   m_ObjectHideFlags: 0

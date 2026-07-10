@@ -21,8 +21,7 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
     public float hitStateDuration = 0.5f;
     public float hitAnimDuration  = 0.5f;
 
-    [Header("Death")]
-    public float deathDestroyDelay = 4.5f;
+    [Header("Death")]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        public float deathDestroyDelay = 4.5f;
 
     [Header("공격 텀")]
     [Tooltip("한 번의 공격 패턴이 끝난 후 다음 공격 패턴이 시작되기까지의 대기 시간(초)")]
@@ -61,6 +60,7 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
     private NavMeshAgent _agent;
     public  Transform    traceTarget;   // 패턴 프리팹에서 참조할 수 있도록 public
     private Rigidbody    rbody;
+    private EnemyItemDrop _itemDrop;
 
     private bool  isActing       = false;
     private bool  hasPlayedAggro = false;
@@ -86,6 +86,7 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
         myTr   = GetComponent<Transform>();
         rbody  = GetComponent<Rigidbody>();
         _agent = GetComponent<NavMeshAgent>();
+        _itemDrop = GetComponent<EnemyItemDrop>();
 
         maxHp = hp;
         UpdateHpBar();
@@ -381,7 +382,13 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
 
         SetHpBarVisible(false);
 
+        // 죽음 애니메이션 재생 시간만큼 대기
         yield return new WaitForSeconds(deathDestroyDelay);
+
+        // 애니메이션이 끝난 시점에 아이템 드랍
+        if (_itemDrop != null)
+            _itemDrop.Drop(myTr.position);
+
         Destroy(gameObject);
     }
 
