@@ -75,6 +75,8 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
 
     private float syncSpeed;   // 원격 플레이어의 애니메이션 속도를 담을 변수
 
+    public static PlayerCtrl localPlayer;
+
 
     /////////////////////////////////////////////////////
 
@@ -144,6 +146,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
 
         if (pv.isMine)   // 자신인 경우
         {
+            localPlayer = this;
             //메인 카메라에 추가된 추적 대상을 연결
             Camera.main.GetComponent<CameraMove>().playerPos = myTr;
         }

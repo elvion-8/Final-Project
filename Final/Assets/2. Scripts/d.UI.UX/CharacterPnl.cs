@@ -26,7 +26,7 @@ public class CharacterPnl : MonoBehaviour
     public Text moveSpeedText;
 
     // ── 수치 공식 상수 (필요시 조정) ──────────────────────────────
-    private const float BASE_MAX_HP        = 1000f;
+    private const float BASE_MAX_HP        = 100f;
     private const float HP_PER_UPGRADE     = 50f;
 
     private const float BASE_ATTACK        = 100f;
@@ -68,11 +68,25 @@ public class CharacterPnl : MonoBehaviour
 
     public void RefreshUI()
     {
-        if (playerStatManage == null) return;
-        var stat = playerStatManage.stat;
+        if (playerStatManage == null)
+        {
+            playerStatManage = FindObjectOfType<PlayerStatManage>();
+        }
+
+        scPlayerStat stat = null;
+        if (playerStatManage != null)
+        {
+            stat = playerStatManage.stat;
+        }
+        else if (Managers.Instance != null && Managers.Data != null)
+        {
+            stat = Managers.Data.stat;
+        }
+
+        if (stat == null) return;
 
         // Try to get active player stats in scene
-        PlayerCtrl player = FindObjectOfType<PlayerCtrl>();
+        PlayerCtrl player = PlayerCtrl.localPlayer;
         PlayerStatController statCtrl = player != null ? player.statController : null;
 
         // ── 유저네임 ──────────────────────────────────────────────
