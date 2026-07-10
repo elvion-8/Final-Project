@@ -53,6 +53,7 @@ public class PlayerState : PlayerAttackState
         if (_player == null)
         {
             _player = anim.GetComponentInParent<PlayerCtrl>();
+            isLocalPlayer = (_player != null && _player == PlayerCtrl.localPlayer);
         }
 
         // Find Components
@@ -82,6 +83,8 @@ public class PlayerState : PlayerAttackState
     public override void OnStateUpdate(Animator anim, AnimatorStateInfo stateInfo, int layerIndex)
     {
         base.OnStateUpdate(anim, stateInfo, layerIndex);
+
+        if (!isLocalPlayer) return;
 
         if (rb == null && cc == null) return;
         
@@ -203,13 +206,16 @@ public class PlayerState : PlayerAttackState
     {
         anim.speed = 1.0f; // Reset animator speed to default on state exit
 
-        if (rb != null)
+        if (isLocalPlayer)
         {
-            rb.velocity = new Vector3(0, rb.velocity.y, 0);
-        }
-        else if (cc != null && _player != null)
-        {
-            _player.MoveDir = new Vector3(0f, _player.MoveDir.y, 0f);
+            if (rb != null)
+            {
+                rb.velocity = new Vector3(0, rb.velocity.y, 0);
+            }
+            else if (cc != null && _player != null)
+            {
+                _player.MoveDir = new Vector3(0f, _player.MoveDir.y, 0f);
+            }
         }
 
         if (resetComboOnExit)

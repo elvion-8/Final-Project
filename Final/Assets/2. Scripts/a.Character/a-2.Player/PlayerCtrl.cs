@@ -137,21 +137,13 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         myTr = GetComponent<Transform>();
         pv = GetComponent<PhotonView>();
 
-
-        //pv.ObservedComponents[0] = this;
-
-        //pv.synchronization = ViewSynchronization.UnreliableOnChange;
         if (pv.ownerId == null) { playerId = 1001; }
         else playerId = pv.ownerId;
 
-        if (pv.isMine)   // 자신인 경우
+        if (pv.isMine || PhotonNetwork.inRoom == false)   // 자신인 경우 또는 오프라인 테스트인 경우
         {
             localPlayer = this;
             //메인 카메라에 추가된 추적 대상을 연결
-            Camera.main.GetComponent<CameraMove>().playerPos = myTr;
-        }
-        else if (PhotonNetwork.inRoom == false)
-        {
             Camera.main.GetComponent<CameraMove>().playerPos = myTr;
         }
         else            // 자신의 네트워크 객체가 아닐때
@@ -255,6 +247,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
             myTr.rotation = Quaternion.Slerp(myTr.rotation, currRot, Time.deltaTime * 3.0f);
 
             anim.SetFloat("Speed", syncSpeed);
+            anim.SetBool("isGrounded", IsGrounded);
 
             if (syncSpeed > 0.1f) // 상대방이 움직이고 있다면
             {
