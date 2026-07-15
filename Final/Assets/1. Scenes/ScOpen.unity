@@ -223,7 +223,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.66748047, y: 1.388382}
+  m_AnchoredPosition: {x: 0.66748047, y: 1.3883667}
   m_SizeDelta: {x: -1.5703735, y: -0.71157837}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &131708981
@@ -577,7 +577,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -97.60004, y: -0.43198395}
+  m_AnchoredPosition: {x: -97.60004, y: -0.43197632}
   m_SizeDelta: {x: -286.6679, y: -198.42}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &519421729
@@ -1185,7 +1185,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.66867065, y: 1.3883057}
+  m_AnchoredPosition: {x: 0.6687012, y: 1.3883057}
   m_SizeDelta: {x: -1.5727, y: -0.71164}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &927926197
@@ -1467,7 +1467,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\uD68C \uC6D0 \uAC00 \uC785"
+  m_Text: "\uACC4 \uC815 \uC0DD \uC131"
 --- !u!222 &980362578
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2025,7 +2025,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -97.60004, y: -0.43198395}
+  m_AnchoredPosition: {x: -97.60004, y: -0.43197632}
   m_SizeDelta: {x: -286.6679, y: -198.42}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1103497667
@@ -2271,7 +2271,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.6687317, y: -41.388382}
+  m_AnchoredPosition: {x: -0.6687012, y: -41.388367}
   m_SizeDelta: {x: -455.2702, y: -197.59636}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1219213816
@@ -4408,10 +4408,10 @@ MonoBehaviour:
   pnlOption: {fileID: 1435217014}
   registerIDInputField: {fileID: 844654105}
   registerPWInputField: {fileID: 1601396553}
-  loginIDInputField: {fileID: 0}
-  loginPWInputField: {fileID: 0}
+  loginIDInputField: {fileID: 1399438864}
+  loginPWInputField: {fileID: 1690179668}
   btnRegisterSubmit: {fileID: 1246575593}
-  btnLoginSubmit: {fileID: 0}
+  btnLoginSubmit: {fileID: 1404873051}
   savedRegisterID: 
   savedRegisterPW: 
   savedLoginID: 

@@ -150,6 +150,7 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
 
         float dist = Vector3.Distance(myTr.position, traceTarget.position);
         SetHpBarVisible(dist <= hpBarShowDist);
+        SetCombat(dist <= findDist);
 
         if (dist <= attackDist)
         {
@@ -262,7 +263,6 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
 
         if (attackPatternPrefabs == null || attackPatternPrefabs.Length == 0)
         {
-            Debug.LogWarning($"[EnemyCtrl] {gameObject.name}: 연결된 패턴 프리팹이 없습니다.");
             isActing = false;
             yield break;
         }
@@ -347,9 +347,28 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
         hpBarImage.fillAmount = (float)hp / maxHp;
     }
 
+    private bool hpBarVisible; 
+
     void SetHpBarVisible(bool visible)
     {
         if (hpBarRoot != null) hpBarRoot.SetActive(visible);
+        SetCombat(visible);   
+    }
+    void OnDisable()
+    {
+        inCombat = false;
+        HUDFadeManager.Instance?.ExitCombat(this);
+    }
+
+    private bool inCombat;
+
+    void SetCombat(bool value)
+    {
+        if (inCombat == value) return;
+        inCombat = value;
+
+        if (value) HUDFadeManager.Instance?.EnterCombat(this);
+        else       HUDFadeManager.Instance?.ExitCombat(this);
     }
 
     // ────────────────────────────────────────────
@@ -360,6 +379,7 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
         StopAllCoroutines();
         enemyMode = MODE_STATE.DIE;
         isActing  = false;
+        SetCombat(false);  
         StartCoroutine(DieCoroutine());
     }
 
