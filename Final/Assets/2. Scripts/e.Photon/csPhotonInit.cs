@@ -192,11 +192,8 @@ public class csPhotonInit : Photon.MonoBehaviour
     //룸 목록만큼 생성될 RoomItem 프리팹 연결 레퍼런스 (UI 버전에서 사용)
     public GameObject roomItem;
 
-
-    //private void Awake()
-    //{
-    //    userId
-    //}
+    DataManager dataManager;
+    
 
 
     // App 인증 및 로비연결
@@ -246,6 +243,8 @@ public class csPhotonInit : Photon.MonoBehaviour
 
         // ScrollContents의 Pivot 좌표를 Top, Left로 설정 하자. (UI 버전에서 사용)
         scrollContents.GetComponent<RectTransform>().pivot = new Vector2(0.0f, 1.0f);
+
+        dataManager = GameObject.Find("@Managers").GetComponent<DataManager>();
     }
 
     /*
@@ -445,6 +444,8 @@ public class csPhotonInit : Photon.MonoBehaviour
     // PhotonNetwork.CreateRoom 함수로 룸을 생성한 후 입장하거나, PhotonNetwork.JoinRandomRoom, PhotonNetwork.JoinRoom 함수를 통해 입장해도 호출 된다.
     void OnJoinedRoom()
     {
+        //dataManager.SaveGame();
+
         Debug.Log("Enter Room");
         //여기까지 게임을 실행하면 로비 입장, 랜덤 매치 메이킹, 룸 생성, 룸 입장의 과정을 거치며 Console 뷰에 
         //Joined Lobby !!!, No Rooms !!!, Enter Room 메시지가 출력~ 즉 순서대로 룸 입장까지 완료된 로그 메시지를 확인하자~!

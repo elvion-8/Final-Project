@@ -9,14 +9,14 @@ public class PhpResponse
 {
     public bool success;
     public string message;
-    public int userId;
+    public int user_index;
     public scPlayerStat stats;
 }
 
 [System.Serializable]
 public class AuthPayload
 {
-    public string username;
+    public string user_id;
     public string password;
 }
 
@@ -86,17 +86,17 @@ public class csButtonManager : MonoBehaviour
         Managers.loadingManager.LoadScene("ScStartPoint",LoadingType.MenuToGame);
     }
 
-    private IEnumerator AuthRequestRoutine(string phpFile, string username, string password, bool isLogin)
+    private IEnumerator AuthRequestRoutine(string phpFile, string user_id, string password, bool isLogin)
     {
         LogMessage("서버와 통신 중...");
 
-        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+        if (string.IsNullOrEmpty(user_id) || string.IsNullOrEmpty(password))
         {
             LogMessage("아이디와 비밀번호를 모두 입력해주세요.");
             yield break;
         }
 
-        AuthPayload payload = new AuthPayload { username = username, password = password };
+        AuthPayload payload = new AuthPayload { user_id = user_id, password = password };
         string json = JsonUtility.ToJson(payload);
 
         using (UnityWebRequest request = new UnityWebRequest(serverBaseUrl + phpFile, "POST"))
@@ -134,7 +134,7 @@ public class csButtonManager : MonoBehaviour
                     {
                         if (dataManager != null)
                         {
-                            dataManager.SetUserData(response.userId, response.stats);
+                            dataManager.SetUserData(response.user_index, response.stats);
                         }
                         LogMessage("데이터 로드 성공! 게임을 로드합니다.");
                         yield return new WaitForSeconds(1.0f);
@@ -144,7 +144,7 @@ public class csButtonManager : MonoBehaviour
                     {
                         LogMessage("회원가입 완료! 자동으로 로그인 중...");
                         yield return new WaitForSeconds(1.0f);
-                        StartCoroutine(AuthRequestRoutine("login.php", username, password, true));
+                        StartCoroutine(AuthRequestRoutine("login.php", user_id, password, true));
                     }
                 }
             }
