@@ -181,5 +181,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemData: {fileID: 11400000, guid: 18e2cc51bf838cc4f98c6ab002ea35af, type: 2}
-  pickupSound: {fileID: 0}
+  pickupSound: {fileID: 8300000, guid: 08f65912c9a96584d848d338bd2958f0, type: 3}
   pickupEffectPrefab: {fileID: 2245918866036196035, guid: e64a4de73aed7a44498f258303ef505b, type: 3}

@@ -21,9 +21,9 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     public int jumpCnt = 0;
     private int tempJumpCnt = 0;
     [Header("피격 시 무적 시간")]
-    [SerializeField] private float hitTime;
+    private float hitTime;
     private bool invincibility;     //무적 여부
-    [SerializeField] private groundCheck groundCheck;
+    private groundCheck groundCheck;
     private bool IsGrounded
     {
         get
@@ -112,6 +112,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     int activeWeaponLayerIndex = -1;
     ComboAttack combo;
     AttackMotion attackMotion;
+    AttackSound sound;
 
     CameraMove camera;
     [HideInInspector] public PlayerStatController statController;
@@ -161,6 +162,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         attackMotion = GetComponent<AttackMotion>();
         groundCheck = GetComponentInChildren<groundCheck>();
         camera = CameraMove.Instance;
+        sound = GetComponentInChildren<AttackSound>();
     }
 
     public float MoveSpeedVal => statController != null ? statController.MoveSpeed : 1.3f;
@@ -343,6 +345,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
                     transform.rotation = Quaternion.LookRotation(lookDir);
                 }
             }
+            
 
             if (combo != null)
             {

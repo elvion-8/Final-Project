@@ -686,8 +686,6 @@ MonoBehaviour:
   rollPower: 7
   attackSpeed: 1
   jumpCnt: 1
-  hitTime: 0
-  groundCheck: {fileID: 0}
   hp: 1
   hpBar: {fileID: 0}
   jumpForwardForce: 6.5

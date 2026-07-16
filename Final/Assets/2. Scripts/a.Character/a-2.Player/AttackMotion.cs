@@ -191,6 +191,7 @@ public class AttackMotion : MonoBehaviour
         {
             if (currentWeaponData != null && sound != null)
             {
+                sound.PlayAttackSFX("ChangeWeapon");
                 sound.ChangeWeapon(currentWeaponData);
             }
         }

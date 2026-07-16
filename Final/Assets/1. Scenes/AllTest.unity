@@ -2809,6 +2809,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2596740954640860005, guid: 61077aa1281a8ba40a69b2308d422630, type: 3}
+      propertyPath: pickupSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 08f65912c9a96584d848d338bd2958f0, type: 3}
     - target: {fileID: 3403637947226272793, guid: 61077aa1281a8ba40a69b2308d422630, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1.2609639

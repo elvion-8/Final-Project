@@ -70,10 +70,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1efa406b1a6a6c742bdb2f0a13f990dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseAttackDmg: 1
+  baseAttackDmg: 50
   baseAttackRange: 1
-  baseCritProb: 1
-  baseCritDmg: 1
+  baseCritProb: 20
+  baseCritDmg: 20
   baseAttackSpeed: 1
   baseDurability: 400
   pS:

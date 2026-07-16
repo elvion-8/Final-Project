@@ -21,7 +21,7 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 0eac1d1417131524bba1829b7d815219, type: 3}
     volumeMultiplier: 0.5
   - name: Sword
-    clip: {fileID: 8300000, guid: 254fba039a4dd4a42a0d51936abb1571, type: 3}
+    clip: {fileID: 8300000, guid: 9df54098d84f759418b09716b86465be, type: 3}
     volumeMultiplier: 0.5
   - name: Dagger
     clip: {fileID: 8300000, guid: d3316a78e8c21ba449786f64eb425cc0, type: 3}
@@ -31,4 +31,7 @@ MonoBehaviour:
     volumeMultiplier: 0.5
   - name: other2
     clip: {fileID: 8300000, guid: 9df54098d84f759418b09716b86465be, type: 3}
+    volumeMultiplier: 0.5
+  - name: ChangeWeapon
+    clip: {fileID: 8300000, guid: dfdeb56797c69064ea88239cf407ea65, type: 3}
     volumeMultiplier: 0.5
