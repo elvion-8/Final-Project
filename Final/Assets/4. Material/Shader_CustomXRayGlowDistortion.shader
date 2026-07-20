@@ -4,8 +4,8 @@ Shader "Custom/XRayGlowDistortion_FrontOnly"
     {
         _MainTex ("Base (RGB) Trans (A)", 2D) = "white" {}
         _Color ("Glow Color", Color) = (0, 1, 0, 0.3)
-        _DistortSpeed ("Distortion Speed", Float) = 3.0 // 기본 속도를 살짝 올렸습니다.
-        _DistortScale ("Distortion Scale", Float) = 8.0 // 노이즈 밀도를 올려 일렁임을 강조했습니다.
+        _DistortSpeed ("Distortion Speed", Float) = 3.0
+        _DistortScale ("Distortion Scale", Float) = 8.0
         _DistortStrength ("Distortion Strength", Float) = 0.04
         _RimPower ("Rim Power (외곽선 두께)", Range(0.5, 8.0)) = 3.0
     }
@@ -65,7 +65,6 @@ Shader "Custom/XRayGlowDistortion_FrontOnly"
             {
                 float time = _Time.y * _DistortSpeed;
 
-                // [핵심 수정] 사인/코사인 왜곡 값을 따로 추출합니다.
                 float distortX = sin(i.uv.y * _DistortScale + time) * _DistortStrength;
                 float distortY = cos(i.uv.x * _DistortScale + time) * _DistortStrength;
                 
@@ -75,7 +74,7 @@ Shader "Custom/XRayGlowDistortion_FrontOnly"
                 
                 // 2. 외곽선(Rim)도 일렁이게 만들기 위해 노멀 벡터에 왜곡값 적용
                 float3 normal = normalize(i.normal);
-                normal.x += distortX * 2.0; // 노멀의 X, Y축을 흔들어 실루엣을 일렁이게 만듭니다.
+                normal.x += distortX * 2.0;
                 normal.y += distortY * 2.0;
                 normal = normalize(normal);
 
@@ -88,7 +87,7 @@ Shader "Custom/XRayGlowDistortion_FrontOnly"
                 // 4. 최종 색상 및 투명도 결합
                 fixed4 finalColor = texCol * _Color;
                 finalColor.rgb += rim * _Color.rgb; 
-                finalColor.a = saturate(_Color.a + rim * 0.5); // 인스펙터 알파 기본값에 외곽선 투명도 결합
+                finalColor.a = saturate(_Color.a + rim * 0.5);
 
                 return finalColor;
             }
