@@ -50,7 +50,7 @@ MonoBehaviour:
   pullDuration: 2
   pullSpeed: 4
   explosionRadius: 6
-  explosionDamage: 50
+  explosionDamage: 500
   pullZoomAmount: 8
   shakeIntensity: 0.3
   shakeDuration: 0.4
