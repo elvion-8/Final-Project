@@ -72,8 +72,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseAttackDmg: 50
   baseAttackRange: 1
-  baseCritProb: 20
-  baseCritDmg: 20
+  baseCritProb: 1
+  baseCritDmg: 1
   baseAttackSpeed: 1
   baseDurability: 400
   pS:

@@ -13,7 +13,7 @@ public class StageManager : MonoBehaviour
     public Text txtLogMsg;
 
     //채팅을 표시할 Text UI 항목 연결 레퍼런스
-    
+
     public InputField chatInputField;
 
     private bool isChatting = false; // 현재 채팅 입력 중인지 체크
@@ -32,16 +32,19 @@ public class StageManager : MonoBehaviour
 
     csButtonManager buttonManager;
     private Transform tempPos;
+    private EnemyCtrl boss;
 
     private void Awake()
     {
         pv = GetComponent<PhotonView>();
 
         playerPos = GameObject.Find("PlayerSpawnPoint").GetComponentsInChildren<Transform>();
-        if(GameObject.Find("tempPos")!=null)
+        if (GameObject.Find("tempPos") != null)
         {
             tempPos = GameObject.Find("tempPos").GetComponent<Transform>();
         }
+        GameObject bossCtrl = GameObject.Find("TempEnemy");
+        if(bossCtrl!=null) {boss=bossCtrl.GetComponent<EnemyCtrl>();}
     }
 
     // Start is called before the first frame update
@@ -108,14 +111,14 @@ public class StageManager : MonoBehaviour
             GameObject playerPrefab = Resources.Load<GameObject>("MainPlayer");
             if (playerPrefab != null)
             {
-                player = Instantiate(playerPrefab,tempPos.position, tempPos.rotation);
+                player = Instantiate(playerPrefab, tempPos.position, tempPos.rotation);
                 player.name = "Player";
             }
 
 
         }
         // ���� �̸����� �����ؾ� �巳�� ���� ����(DestructionRay ��ũ��Ʈ ����)
-        
+
 
         //PhotonNetwork.InstantiateSceneObject(string prefabName, Vector3 position, Quaternion rotation, byte group, object[] data);
         //�� �Լ��� PhotonNetwork.Instantiate�� ���������� ��Ʈ��ũ �� �������� ���ÿ� ������Ű����, Master Client �� ���� �� ���� ����.
@@ -176,7 +179,7 @@ public class StageManager : MonoBehaviour
         }
     }
 
-    
+
     // ���� �߰�
     //��Ʈ��ũ �÷��̾ ���� �����ų� ������ �������� ��� ȣ��Ǵ� �ݹ� �Լ�
     void OnPhotonPlayerDisconnected(PhotonPlayer outPlayer)
@@ -241,6 +244,8 @@ public class StageManager : MonoBehaviour
         chatInputField.text = "";
         chatInputField.DeactivateInputField(); // 커서가 다시 깜빡이게 만듦
     }
-
-
+    void OnBossDie()
+    {
+        if(boss.hp<=0) Managers.loadingManager.LoadScene("ScStage2", LoadingType.GameToGame);
+    }
 }

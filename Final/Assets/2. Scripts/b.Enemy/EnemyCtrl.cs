@@ -408,7 +408,6 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
         // 애니메이션이 끝난 시점에 아이템 드랍
         if (_itemDrop != null)
             _itemDrop.Drop(myTr.position);
-
         Destroy(gameObject);
     }
 
