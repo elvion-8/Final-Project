@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -45,6 +46,12 @@ public class StageManager : MonoBehaviour
         }
         GameObject bossCtrl = GameObject.Find("TempEnemy");
         if(bossCtrl!=null) {boss=bossCtrl.GetComponent<EnemyCtrl>();}
+        GameObject canvas = GameObject.FindGameObjectWithTag("UI");
+        if(canvas != null){
+        chatInputField = canvas.transform.Find("LogSystem/InputChat").GetComponent<InputField>();
+        txtConnect = canvas.transform.Find("LogSystem/InputChat/Chat").GetComponent<Text>();
+        txtLogMsg = canvas.transform.Find("LogSystem/PanelLogMsg/ChatLog").GetComponent<Text>();
+        }
     }
 
     // Start is called before the first frame update

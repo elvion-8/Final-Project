@@ -5,34 +5,24 @@ using UnityEngine.UI;
 public class GameOver : MonoBehaviour
 {
     //public Image gameOver;
-    public PlayerCtrl player;
-    public GameObject gameOverPnl;
-    public Image gameOverImg;
+    private PlayerCtrl _player;
+    private GameObject gameOverPnl;
+    private Image gameOverImg;
     public float alpha = 0f;
-    public GameObject reStartGO;
-    public GameObject menuGO;
+    private GameObject reStartGO;
+    private GameObject menuGO;
     private Button reStartBtn;
     private Button menuBtn;
 
     void Awake()
     {
 
-
     }
     void Start()
     {
-        // GameObject playerOb = GameObject.FindGameObjectWithTag("Player");
-        // if (playerOb != null) player = playerOb.GetComponent<PlayerCtrl>();
+
     }
 
-    void Update()
-    {
-        // if (player.hp <= 0)
-        // {
-        //     gameOverPnl.SetActive(true);
-        //     StartCoroutine(GameOverView());
-        // }
-    }
     IEnumerator GameOverView()
     {
         float alpha = 0f;
@@ -74,7 +64,7 @@ public class GameOver : MonoBehaviour
     public void Init()
     {
         GameObject playerOb = GameObject.FindGameObjectWithTag("Player");
-        if (playerOb != null) player = playerOb.GetComponent<PlayerCtrl>();
+        if (playerOb != null) _player = playerOb.GetComponent<PlayerCtrl>();
         GameObject gameOverOb = GameObject.FindGameObjectWithTag("GameOver");
         if (gameOverOb != null) gameOverPnl = gameOverOb.transform.Find("GameOverPnl").gameObject;
         if (gameOverPnl != null)
@@ -88,5 +78,20 @@ public class GameOver : MonoBehaviour
 
         if (reStartBtn != null) reStartBtn.onClick.AddListener(ReStart);
         if (menuBtn != null) menuBtn.onClick.AddListener(Menu);
+    }
+    public PlayerCtrl player
+    {
+        get
+        {
+            if(_player==null)
+            {
+                GameObject playerOb = GameObject.FindGameObjectWithTag("Player");
+                if(playerOb != null)
+                {
+                    _player = playerOb.GetComponent<PlayerCtrl>();
+                }
+            }
+            return _player;
+        }
     }
 }

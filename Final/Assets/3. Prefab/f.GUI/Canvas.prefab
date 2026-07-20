@@ -1483,7 +1483,7 @@ GameObject:
   - component: {fileID: 5157294268071254554}
   m_Layer: 5
   m_Name: Canvas
-  m_TagString: Untagged
+  m_TagString: UI
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4103,6 +4103,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5062592438355987970, guid: 133c6ca5c57ec014bb38daedd340744f, type: 3}
+      propertyPath: m_Name
+      value: Chat
+      objectReference: {fileID: 0}
     - target: {fileID: 5447657166701210869, guid: 133c6ca5c57ec014bb38daedd340744f, type: 3}
       propertyPath: m_FontData.m_FontSize
       value: 85
@@ -4218,6 +4222,14 @@ PrefabInstance:
     - target: {fileID: 6974888375888168594, guid: 133c6ca5c57ec014bb38daedd340744f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7826836940294693865, guid: 133c6ca5c57ec014bb38daedd340744f, type: 3}
+      propertyPath: m_Name
+      value: ChatLog
+      objectReference: {fileID: 0}
+    - target: {fileID: 8028555728760516744, guid: 133c6ca5c57ec014bb38daedd340744f, type: 3}
+      propertyPath: m_Name
+      value: InputChat
       objectReference: {fileID: 0}
     - target: {fileID: 8049329651841946258, guid: 133c6ca5c57ec014bb38daedd340744f, type: 3}
       propertyPath: m_AnchoredPosition.y

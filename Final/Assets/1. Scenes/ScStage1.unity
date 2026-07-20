@@ -17300,7 +17300,7 @@ MonoBehaviour:
   height: 0
   obstacleLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 72
   cameraRadius: 0.3
   smoothSpeed: 10
   lockOn: 0
@@ -24516,9 +24516,9 @@ SceneRoots:
   - {fileID: 452410206}
   - {fileID: 110906249}
   - {fileID: 1131534507}
+  - {fileID: 2077233475}
   - {fileID: 375804947}
   - {fileID: 1983540068}
-  - {fileID: 2077233475}
   - {fileID: 410518393}
   - {fileID: 1421752410}
   - {fileID: 1801637941}

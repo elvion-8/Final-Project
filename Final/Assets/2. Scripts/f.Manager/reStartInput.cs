@@ -6,10 +6,12 @@ using System.Collections;
 public class reStartInput : MonoBehaviour
 {
     InputManager input;
+    GameOver gameOver;
     // Start is called before the first frame update
     void Awake()
     {
         input = GameObject.Find("@Managers").GetComponent<InputManager>();
+        gameOver = GameObject.Find("@Managers").GetComponent<GameOver>();
 
     }
     IEnumerator Start()
