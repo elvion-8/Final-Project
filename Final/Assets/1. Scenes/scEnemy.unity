@@ -1867,7 +1867,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4688862856659575060, guid: cefa34030b7b5824fadfa099f90e0df5, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5154840277541714543, guid: cefa34030b7b5824fadfa099f90e0df5, type: 3}
       propertyPath: m_LocalPosition.x
@@ -9749,6 +9749,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1595185282298247022, guid: d4da4ed65e38b8045a24c938b34fdcdc, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: ad3b1bfc247448a40b3c8453bb1266a8, type: 2}
+    - target: {fileID: 1595185282298247022, guid: d4da4ed65e38b8045a24c938b34fdcdc, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2332704901982450317, guid: d4da4ed65e38b8045a24c938b34fdcdc, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -9823,7 +9831,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3197093123523781393, guid: d4da4ed65e38b8045a24c938b34fdcdc, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3945268774029359208, guid: d4da4ed65e38b8045a24c938b34fdcdc, type: 3}
       propertyPath: UseIK
@@ -9940,6 +9948,14 @@ PrefabInstance:
     - target: {fileID: 6449912869832761052, guid: d4da4ed65e38b8045a24c938b34fdcdc, type: 3}
       propertyPath: IKBaseReactionWeight
       value: 0.28
+      objectReference: {fileID: 0}
+    - target: {fileID: 6746616051914155822, guid: d4da4ed65e38b8045a24c938b34fdcdc, type: 3}
+      propertyPath: idle1Duration
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6746616051914155822, guid: d4da4ed65e38b8045a24c938b34fdcdc, type: 3}
+      propertyPath: idle2Duration
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 6746616051914155822, guid: d4da4ed65e38b8045a24c938b34fdcdc, type: 3}
       propertyPath: attackCooldown
