@@ -2975,6 +2975,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1532799461}
     m_Modifications:
+    - target: {fileID: 3840601124338045230, guid: cefa34030b7b5824fadfa099f90e0df5, type: 3}
+      propertyPath: dropTable.Array.data[0].minCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3840601124338045230, guid: cefa34030b7b5824fadfa099f90e0df5, type: 3}
+      propertyPath: dropTable.Array.data[1].minCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3840601124338045230, guid: cefa34030b7b5824fadfa099f90e0df5, type: 3}
+      propertyPath: dropTable.Array.data[2].minCount
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4688862856659575060, guid: cefa34030b7b5824fadfa099f90e0df5, type: 3}
       propertyPath: m_Name
       value: TempEnemy

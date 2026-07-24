@@ -10,23 +10,66 @@ using Rand = UnityEngine.Random;
 
 public class EnemyCtrl : MonoBehaviour, ITakeDamage
 {
-    [Header("ANIMATION DURATION")]
-    public float idle1Duration   = 2.0f;
-    public float idle2Duration   = 2.0f;
-    public float aggroDuration   = 1.5f;
-    public float attack2Duration = 1.0f;
-    public float attack3Duration = 1.0f;
+    // ────────────────────────────────────────────
+    //  ★ 애니메이션 테이블
+    //  Animator의 Trigger 이름 + 클립을 짝지어 등록.
+    //  인스펙터에서 +/- 로 자유롭게 추가/삭제 가능.
+    //  (예: Idle1, Idle2, Aggro, Hit, Die, Attack1 ...)
+    // ────────────────────────────────────────────
+    [System.Serializable]
+    public struct AnimEntry
+    {
+        [Tooltip("Animator의 Trigger 파라미터 이름. 코드에서 이 이름으로 찾습니다.")]
+        public string trigger;
 
-    [Header("Hit Duration")]
-    public float hitStateDuration = 0.5f;
-    public float hitAnimDuration  = 0.5f;
+        [Tooltip("이 동작의 애니메이션 클립. 클립 길이가 그대로 대기 시간이 됩니다.")]
+        public AnimationClip clip;
 
-    [Header("Death")]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        public float deathDestroyDelay = 4.5f;
+        [Tooltip("클립 길이에 더할 여유 시간(초). 0이면 클립 길이 그대로.")]
+        [Min(0f)] public float extraDelay;
+    }
+
+    [Header("애니메이션 테이블")]
+    [Tooltip("Trigger 이름과 클립을 짝지어 등록. 필요한 만큼 +/- 로 추가하세요.")]
+    public List<AnimEntry> animTable = new List<AnimEntry>();
+
+    [Tooltip("Animator State의 Speed가 1이 아닐 때 보정용. 1이면 보정 없음.")]
+    [Min(0.01f)] public float animSpeedMultiplier = 1.0f;
+
+    [Tooltip("테이블에 없는 트리거가 호출됐을 때 사용할 기본 대기 시간(초)")]
+    [SerializeField] float fallbackDuration = 1.0f;
+
+    // trigger 이름 → 항목 (Awake에서 구성)
+    private Dictionary<string, AnimEntry> _animMap;
 
     [Header("공격 텀")]
     [Tooltip("한 번의 공격 패턴이 끝난 후 다음 공격 패턴이 시작되기까지의 대기 시간(초)")]
     [SerializeField] float attackCooldown = 1.5f;
     private float lastAttackEndTime = -999f;
+
+    // ────────────────────────────────────────────
+    //  ★ 어그로(위협 수치) 설정
+    //  누적 피해량이 가장 큰 플레이어를 타겟으로 삼음
+    // ────────────────────────────────────────────
+    [Header("어그로 / 타겟팅")]
+    [Tooltip("체크 시 '가장 많이 때린 플레이어'를 타겟으로 삼음. 해제 시 가장 가까운 플레이어.")]
+    [SerializeField] bool useThreatTargeting = true;
+
+    [Tooltip("현재 타겟을 뺏으려면 위협 수치가 이 배율 이상이어야 함. 타겟이 깜빡이는 것을 방지.")]
+    [Range(1f, 3f)][SerializeField] float threatSwitchRatio = 1.2f;
+
+    [Tooltip("초당 감소하는 위협 수치 비율(0 = 감소 없음). 0.1이면 초당 10%씩 감소.")]
+    [Range(0f, 1f)][SerializeField] float threatDecayPerSec = 0f;
+
+    [Tooltip("이 거리를 벗어난 플레이어는 위협 목록에서 제거")]
+    [SerializeField] float threatLeashDist = 40f;
+
+    // viewID → 누적 피해량
+    private readonly Dictionary<int, float> _threat      = new Dictionary<int, float>();
+    // viewID → Transform 캐시
+    private readonly Dictionary<int, Transform> _actorTr = new Dictionary<int, Transform>();
+    private int _currentTargetId = -1;
+    private PhotonView _pv;
 
     [Header("STATE")]
     public MODE_STATE enemyMode = MODE_STATE.IDLE;
@@ -87,11 +130,65 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
         rbody  = GetComponent<Rigidbody>();
         _agent = GetComponent<NavMeshAgent>();
         _itemDrop = GetComponent<EnemyItemDrop>();
+        _pv       = GetComponent<PhotonView>();
+
+        BuildAnimMap();
 
         maxHp = hp;
         UpdateHpBar();
         SetHpBarVisible(false);
     }
+
+    // ────────────────────────────────────────────
+    //  ★ 애니메이션 테이블 유틸
+    // ────────────────────────────────────────────
+    void BuildAnimMap()
+    {
+        _animMap = new Dictionary<string, AnimEntry>(animTable.Count);
+        foreach (AnimEntry e in animTable)
+        {
+            if (string.IsNullOrEmpty(e.trigger)) continue;
+            _animMap[e.trigger] = e;   // 같은 이름이 있으면 뒤쪽이 덮어씀
+        }
+    }
+
+    /// <summary>등록된 클립 길이(초) + 여유 시간. 등록이 없으면 fallback.</summary>
+    public float GetAnimLength(string trigger)
+    {
+        if (_animMap != null && _animMap.TryGetValue(trigger, out AnimEntry e))
+        {
+            float len = e.clip != null
+                      ? e.clip.length / animSpeedMultiplier
+                      : fallbackDuration;
+            return len + e.extraDelay;
+        }
+
+        Debug.LogWarning($"[EnemyCtrl] {gameObject.name}: 애니메이션 테이블에 '{trigger}' 항목이 없습니다.");
+        return fallbackDuration;
+    }
+
+    /// <summary>트리거 발동 + 그 클립 길이만큼 대기</summary>
+    IEnumerator PlayAnim(string trigger)
+    {
+        _anim.SetTrigger(trigger);
+        yield return new WaitForSeconds(GetAnimLength(trigger));
+    }
+
+#if UNITY_EDITOR
+    void OnValidate()
+    {
+        // 클립만 넣고 이름을 비워두면 클립 이름으로 자동 채움
+        for (int i = 0; i < animTable.Count; i++)
+        {
+            AnimEntry e = animTable[i];
+            if (string.IsNullOrEmpty(e.trigger) && e.clip != null)
+            {
+                e.trigger = e.clip.name;
+                animTable[i] = e;
+            }
+        }
+    }
+#endif
 
     // ────────────────────────────────────────────
     //  Update
@@ -116,10 +213,86 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
     void UpdateTarget()
     {
         if (Time.time < lastTargetSearchTime + targetSearchInterval) return;
+        float delta = Time.time - lastTargetSearchTime;
         lastTargetSearchTime = Time.time;
 
+        if (threatDecayPerSec > 0f) DecayThreat(delta);
+
+        Transform target = null;
+
+        // 1순위: 누적 피해량이 가장 큰 플레이어
+        if (useThreatTargeting) target = GetHighestThreatTarget();
+
+        // 2순위: 아직 아무도 때리지 않았다면 가장 가까운 플레이어
+        if (target == null) { target = GetClosestPlayer(); _currentTargetId = -1; }
+
+        traceTarget = target;
+    }
+
+    // ────────────────────────────────────────────
+    //  ★ 위협 수치 기반 타겟 선정
+    // ────────────────────────────────────────────
+    Transform GetHighestThreatTarget()
+    {
+        if (_threat.Count == 0) return null;
+
+        List<int> remove = null;
+        Transform best = null;
+        float bestThreat = 0f;
+        int   bestId = -1;
+        float leashSqr = threatLeashDist * threatLeashDist;
+
+        foreach (KeyValuePair<int, float> kv in _threat)
+        {
+            Transform tr = FindActor(kv.Key);
+
+            // 죽었거나 나갔거나 너무 멀어진 대상은 목록에서 제거
+            if (tr == null || !tr.gameObject.activeInHierarchy ||
+                (tr.position - myTr.position).sqrMagnitude > leashSqr)
+            {
+                if (remove == null) remove = new List<int>();
+                remove.Add(kv.Key);
+                continue;
+            }
+
+            // 동점이면 viewID가 작은 쪽 → 모든 클라이언트가 같은 타겟을 고르도록
+            if (kv.Value > bestThreat || (kv.Value == bestThreat && kv.Key < bestId))
+            {
+                bestThreat = kv.Value;
+                best       = tr;
+                bestId     = kv.Key;
+            }
+        }
+
+        if (remove != null)
+        {
+            foreach (int id in remove)
+            {
+                _threat.Remove(id);
+                _actorTr.Remove(id);
+                if (_currentTargetId == id) _currentTargetId = -1;
+            }
+        }
+
+        if (best == null) return null;
+
+        // 현재 타겟을 뺏으려면 threatSwitchRatio 배 이상이어야 함
+        if (_currentTargetId != -1 && _currentTargetId != bestId &&
+            _threat.TryGetValue(_currentTargetId, out float curThreat))
+        {
+            Transform curTr = FindActor(_currentTargetId);
+            if (curTr != null && bestThreat < curThreat * threatSwitchRatio)
+                return curTr;
+        }
+
+        _currentTargetId = bestId;
+        return best;
+    }
+
+    Transform GetClosestPlayer()
+    {
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-        if (players.Length == 0) { traceTarget = null; return; }
+        if (players.Length == 0) return null;
 
         Transform closest     = players[0].transform;
         float     closestDist = (closest.position - myTr.position).sqrMagnitude;
@@ -129,8 +302,44 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
             float d = (p.transform.position - myTr.position).sqrMagnitude;
             if (d < closestDist) { closest = p.transform; closestDist = d; }
         }
+        return closest;
+    }
 
-        traceTarget = closest;
+    void DecayThreat(float delta)
+    {
+        float factor = Mathf.Pow(1f - threatDecayPerSec, delta);
+        List<int> keys = new List<int>(_threat.Keys);
+        foreach (int id in keys)
+        {
+            float v = _threat[id] * factor;
+            if (v < 1f) { _threat.Remove(id); _actorTr.Remove(id); }
+            else        _threat[id] = v;
+        }
+    }
+
+    /// <summary>viewID로 실제 Transform 찾기 (캐시 우선)</summary>
+    Transform FindActor(int viewId)
+    {
+        if (_actorTr.TryGetValue(viewId, out Transform cached) && cached != null)
+            return cached;
+
+        PhotonView pv = PhotonView.Find(viewId);
+        if (pv == null) return null;
+
+        _actorTr[viewId] = pv.transform;
+        return pv.transform;
+    }
+
+    /// <summary>공격자 GameObject → 네트워크 식별자(viewID)</summary>
+    int GetActorId(GameObject attacker)
+    {
+        if (attacker == null) return -1;
+
+        PhotonView pv = attacker.GetComponentInParent<PhotonView>();
+        if (pv != null) return pv.viewID;
+
+        // PhotonView가 없는 경우(싱글 테스트) — 로컬에서만 유효
+        return attacker.GetInstanceID();
     }
 
     void UpdateModeState()
@@ -236,8 +445,7 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
             _anim.SetBool("IsMoving", false);
         }
         int rand = Rand.Range(1, 3);
-        _anim.SetTrigger("Idle" + rand);
-        yield return new WaitForSeconds(rand == 1 ? idle1Duration : idle2Duration);
+        yield return PlayAnim("Idle" + rand);
         isActing = false;
     }
 
@@ -245,8 +453,7 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
     {
         isActing = true;
         if (_agent != null && _agent.isOnNavMesh) _agent.isStopped = true;
-        _anim.SetTrigger("Aggro");
-        yield return new WaitForSeconds(aggroDuration);
+        yield return PlayAnim("Aggro");
         hasPlayedAggro = true;
         isActing = false;
     }
@@ -308,8 +515,7 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
     IEnumerator HitCoroutine()
     {
         isActing = true;
-        _anim.SetTrigger("Hit");
-        yield return new WaitForSeconds(hitAnimDuration);
+        yield return PlayAnim("Hit");
         isActing = false;
     }
 
@@ -328,15 +534,47 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
     // ────────────────────────────────────────────
     //  데미지 / HP
     // ────────────────────────────────────────────
-    public void TakeDamage(int damage)
+    /// <summary>기존 호환용. 공격자를 알 수 없으므로 어그로에는 반영되지 않음.</summary>
+    public void TakeDamage(int damage) => TakeDamage(damage, null);
+
+    /// <summary>★ 공격자를 넘겨주는 버전. 무기 쪽에서 이 함수를 호출할 것.</summary>
+    public void TakeDamage(int damage, GameObject attacker)
+    {
+        if (enemyMode == MODE_STATE.DIE) return;
+
+        int actorId = GetActorId(attacker);
+        if (attacker != null && actorId != -1)
+            _actorTr[actorId] = attacker.transform;   // 로컬 캐시
+
+        // 모든 클라이언트가 같은 위협 목록을 갖도록 브로드캐스트
+        if (_pv != null && PhotonNetwork.connected)
+            _pv.RPC("RpcApplyDamage", PhotonTargets.All, damage, actorId);
+        else
+            ApplyDamage(damage, actorId);
+    }
+
+    [PunRPC]
+    void RpcApplyDamage(int damage, int actorId)
+    {
+        ApplyDamage(damage, actorId);
+    }
+
+    void ApplyDamage(int damage, int actorId)
     {
         if (enemyMode == MODE_STATE.DIE) return;
 
         hp = Mathf.Max(hp - damage, 0);
         UpdateHpBar();
 
+        // 위협 수치 누적
+        if (actorId != -1 && damage > 0)
+        {
+            _threat.TryGetValue(actorId, out float t);
+            _threat[actorId] = t + damage;
+        }
+
         isHit        = true;
-        isHitEndTime = Time.time + hitStateDuration;
+        isHitEndTime = Time.time + GetAnimLength("Hit");
 
         if (hp <= 0) Die();
     }
@@ -379,6 +617,9 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
         StopAllCoroutines();
         enemyMode = MODE_STATE.DIE;
         isActing  = false;
+        _threat.Clear();
+        _actorTr.Clear();
+        _currentTargetId = -1;
         SetCombat(false);  
         StartCoroutine(DieCoroutine());
     }
@@ -402,8 +643,8 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
 
         SetHpBarVisible(false);
 
-        // 죽음 애니메이션 재생 시간만큼 대기
-        yield return new WaitForSeconds(deathDestroyDelay);
+        // 죽음 애니메이션 재생 시간만큼 대기 (여유 시간은 Die 항목의 extraDelay로 조절)
+        yield return new WaitForSeconds(GetAnimLength("Die"));
 
         // 애니메이션이 끝난 시점에 아이템 드랍
         if (_itemDrop != null)
@@ -413,4 +654,3 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
 
     void OnDestroy() => CleanupCurrentPattern();
 }
-

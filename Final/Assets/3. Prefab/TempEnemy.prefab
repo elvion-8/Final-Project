@@ -219,15 +219,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c10ee17af33c5bd47b25dc3699d7860e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  idle1Duration: 5
-  idle2Duration: 5
-  aggroDuration: 3
-  attack2Duration: 3
-  attack3Duration: 4
-  hitStateDuration: 0.5
-  hitAnimDuration: 0.5
-  deathDestroyDelay: 4.5
+  animTable:
+  - trigger: Idle1
+    clip: {fileID: 7400000, guid: 87abd4769dcb6274ca61a6d3a2aeefe7, type: 2}
+    extraDelay: 2
+  - trigger: Idle2
+    clip: {fileID: 7400000, guid: 7a7e45200378210418d15113ad053cce, type: 2}
+    extraDelay: 2
+  - trigger: Aggro
+    clip: {fileID: 7400000, guid: b09f4f55c76c36f45b4319be060781d0, type: 2}
+    extraDelay: 2
+  - trigger: Attack1
+    clip: {fileID: 7400000, guid: 7487a517073e15541a99e608d919a684, type: 2}
+    extraDelay: 2
+  - trigger: Attack2
+    clip: {fileID: 7400000, guid: 0d5695e8af113f94e81a4d9820f10be1, type: 2}
+    extraDelay: 2
+  - trigger: Attack3
+    clip: {fileID: 7400000, guid: 9448d6a9018db734caf8ac6c5b3dcc58, type: 2}
+    extraDelay: 2
+  - trigger: DIE
+    clip: {fileID: 7400000, guid: 1b410d8899ea3fc4784c41ce29a28613, type: 2}
+    extraDelay: 0
+  - trigger: 
+    clip: {fileID: 0}
+    extraDelay: 0
+  animSpeedMultiplier: 1
+  fallbackDuration: 1
   attackCooldown: 1.5
+  useThreatTargeting: 1
+  threatSwitchRatio: 1.2
+  threatDecayPerSec: 0
+  threatLeashDist: 40
   enemyMode: 0
   hp: 1000
   findDist: 30
@@ -257,17 +280,17 @@ MonoBehaviour:
   - fieldItemPrefab: {fileID: 834138252338049378, guid: 8bc4b7ed9a37921458a2fb614d4b6f53, type: 3}
     itemData: {fileID: 11400000, guid: cd859b6bb5ffa8e4e936cb3675e291a4, type: 2}
     dropChance: 0.388
-    minCount: 0
+    minCount: 1
     maxCount: 3
   - fieldItemPrefab: {fileID: 8843220603528554895, guid: d8ffbbdff6cda2f409da97160c16f2bf, type: 3}
     itemData: {fileID: 11400000, guid: 18e2cc51bf838cc4f98c6ab002ea35af, type: 2}
     dropChance: 0.404
-    minCount: 0
+    minCount: 1
     maxCount: 3
   - fieldItemPrefab: {fileID: 6139211009515447409, guid: 910f7ad9e5cff154aa51c0456f94dff7, type: 3}
     itemData: {fileID: 11400000, guid: 7f3df2c75e93467459388fc06547643e, type: 2}
     dropChance: 0.371
-    minCount: 0
+    minCount: 1
     maxCount: 3
   dropScatterRadius: {x: 0.3, y: 1.2}
 --- !u!1001 &265193643695053811
