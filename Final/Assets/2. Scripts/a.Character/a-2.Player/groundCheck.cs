@@ -26,12 +26,18 @@ public class groundCheck : MonoBehaviour
 
     void Update()
     {
-        if (playerCtrl != null && playerCtrl.isAttacking && isGrounded)
+        bool grounded = CheckGround();
+
+        if (playerCtrl != null && playerCtrl.isAttacking)
         {
+            if (grounded)
+            {
+                isGrounded = true;
+            }
             return;
         }
 
-        isGrounded = CheckGround();
+        isGrounded = grounded;
     }
 
     bool CheckGround()

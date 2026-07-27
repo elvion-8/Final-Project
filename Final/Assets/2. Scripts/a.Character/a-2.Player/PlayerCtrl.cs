@@ -74,6 +74,8 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     public int playerId = -1;
 
     private float syncSpeed;   // 원격 플레이어의 애니메이션 속도를 담을 변수
+    private bool syncIsRunning; // 원격 플레이어의 달리기 상태 변수
+    private bool isFirstSync = false; // 첫 네트워크 위치 동기화 여부
 
     public static PlayerCtrl localPlayer;
 
@@ -150,7 +152,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         else            // 자신의 네트워크 객체가 아닐때
         {
             Collider col = GetComponent<Collider>();
-            if (col != null)
+            if (col != null && !(col is CharacterController))
             {
                 col.enabled = false;
             }
@@ -245,15 +247,29 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         }
         else   //내가 아닌 플레이어
         {
-            myTr.position = Vector3.Lerp(myTr.position, currPos, Time.deltaTime * 3.0f);
-            myTr.rotation = Quaternion.Slerp(myTr.rotation, currRot, Time.deltaTime * 3.0f);
+            if (!isAttacking && anim != null && anim.applyRootMotion)
+            {
+                anim.applyRootMotion = false;
+            }
+
+            myTr.position = Vector3.Lerp(myTr.position, currPos, Time.deltaTime * 10.0f);
+            myTr.rotation = Quaternion.Slerp(myTr.rotation, currRot, Time.deltaTime * 10.0f);
 
             anim.SetFloat("Speed", syncSpeed);
             anim.SetBool("isGrounded", IsGrounded);
 
             if (syncSpeed > 0.1f) // 상대방이 움직이고 있다면
             {
-                anim.SetBool("Walk", true);
+                if (syncIsRunning)
+                {
+                    anim.SetBool("Run", true);
+                    anim.SetBool("Walk", false);
+                }
+                else
+                {
+                    anim.SetBool("Walk", true);
+                    anim.SetBool("Run", false);
+                }
             }
             else // 상대방이 멈췄다면
             {
@@ -782,6 +798,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
 
             float mySpeed = inputDir.magnitude;
             stream.SendNext(mySpeed);
+            stream.SendNext(anim != null ? anim.GetBool("Run") : false);
         }
         else
         {
@@ -789,8 +806,17 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
             currPos = (Vector3)stream.ReceiveNext();
             currRot = (Quaternion)stream.ReceiveNext();
 
-            // [추가] 3번째 데이터 순서에 맞춰 속도 값을 수신받아 변수에 저장합니다.
+            // 3번째: 속도 값
             this.syncSpeed = (float)stream.ReceiveNext();
+            // 4번째: 달리기 상태 값
+            this.syncIsRunning = (bool)stream.ReceiveNext();
+
+            if (!isFirstSync)
+            {
+                myTr.position = currPos;
+                myTr.rotation = currRot;
+                isFirstSync = true;
+            }
         }
     }
 }
