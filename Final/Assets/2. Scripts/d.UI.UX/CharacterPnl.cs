@@ -25,27 +25,6 @@ public class CharacterPnl : MonoBehaviour
     public Text attackSpeedText;
     public Text moveSpeedText;
 
-    // ── 수치 공식 상수 (필요시 조정) ──────────────────────────────
-    private const float BASE_MAX_HP        = 100f;
-    private const float HP_PER_UPGRADE     = 50f;
-
-    private const float BASE_ATTACK        = 100f;
-    private const float ATTACK_PER_UPGRADE = 20f;
-
-    private const float BASE_DEFENSE       = 100f;
-
-    private const float BASE_CRIT_PROB     = 5f;
-    private const float CRIT_PROB_PER_UPG  = 1.5f;
-
-    private const float BASE_CRIT_DMG      = 120f;
-    private const float CRIT_DMG_PER_UPG   = 8f;
-
-    private const float BASE_ATTACK_SPD    = 1.0f;
-    private const float ATTACK_SPD_PER_UPG = 0.1f;
-
-    private const float BASE_MOVE_SPEED    = 5f;
-    // ─────────────────────────────────────────────────────────────
-
     void Awake()
     {
         // 씬에서 PlayerStatManage 자동 탐색
@@ -90,45 +69,42 @@ public class CharacterPnl : MonoBehaviour
         PlayerStatController statCtrl = player != null ? player.statController : null;
 
         // ── 유저네임 ──────────────────────────────────────────────
-        //public string userName;   // stat에 userName 필드 추가 후 연결
         if (userNameText != null)
             userNameText.text = "플레이어";
 
         // ── HP ───────────────────────────────────────────────────
-        //public float currentHp;    // stat에 currentHp 필드 추가 후 연결
-        float maxHp = statCtrl != null ? statCtrl.MaxHP : (BASE_MAX_HP + stat.hpUpgrade * HP_PER_UPGRADE);
+        float maxHp = statCtrl != null ? statCtrl.MaxHP : (PlayerStatController.BASE_MAX_HP + stat.hpUpgrade * PlayerStatController.HP_PER_UPGRADE);
         float curHp = player != null ? player.hp : maxHp;
 
         if (hpSlider != null) { hpSlider.maxValue = maxHp; hpSlider.value = curHp; }
         if (hpText   != null) hpText.text = $"{curHp:0} / {maxHp:0}";
 
         // ── SANc ─────────────────────────────────────────────────
-        // stat에 SANc 필드 추가 후 연결: public float SANc;
-        float SANc = 0f; // SANc 필드 추가 후 stat.SANc 로 교체
+        float SANc = 0f;
 
         if (SANcSlider != null) { SANcSlider.maxValue = 100f; SANcSlider.value = SANc; }
         if (SANcText   != null) SANcText.text = $"{SANc:0}%";
 
-        // ── 기본 능력치 ───────────────────────────────────────────
+        // ── 기본 능력치 (PlayerStatController SSOT 참조) ───────────────────
         float attack, defense, critProb, critDmg, atkSpeed, moveSpeed;
 
         if (statCtrl != null)
         {
-            attack = BASE_ATTACK + statCtrl.WeaponDmgUpgradeCnt * ATTACK_PER_UPGRADE + statCtrl.GetBuffValue(CharacterStatType.WeaponDamage);
-            defense = BASE_DEFENSE;
-            critProb = BASE_CRIT_PROB + statCtrl.WeaponCritProbUpgradeCnt * CRIT_PROB_PER_UPG + statCtrl.GetBuffValue(CharacterStatType.CritProbability);
-            critDmg = BASE_CRIT_DMG + statCtrl.WeaponCritDmgUpgradeCnt * CRIT_DMG_PER_UPG + statCtrl.GetBuffValue(CharacterStatType.CritDamage);
-            atkSpeed = BASE_ATTACK_SPD + statCtrl.WeaponAttackSpeedUpgradeCnt * ATTACK_SPD_PER_UPG + statCtrl.GetBuffValue(CharacterStatType.AttackSpeed);
-            moveSpeed = BASE_MOVE_SPEED + statCtrl.GetBuffValue(CharacterStatType.MoveSpeed);
+            attack = statCtrl.TotalAttack;
+            defense = statCtrl.TotalDefense;
+            critProb = statCtrl.TotalCritProb;
+            critDmg = statCtrl.TotalCritDmg;
+            atkSpeed = statCtrl.TotalAttackSpeed;
+            moveSpeed = statCtrl.MoveSpeed;
         }
         else
         {
-            attack = BASE_ATTACK + stat.weaponDmgUpgradeCnt * ATTACK_PER_UPGRADE;
-            defense = BASE_DEFENSE;
-            critProb = BASE_CRIT_PROB + stat.weaponCritProbUpgradeCnt * CRIT_PROB_PER_UPG;
-            critDmg = BASE_CRIT_DMG + stat.weaponCritDmgUpgradeCnt * CRIT_DMG_PER_UPG;
-            atkSpeed = BASE_ATTACK_SPD + stat.weaponAttackSpeed * ATTACK_SPD_PER_UPG;
-            moveSpeed = BASE_MOVE_SPEED;
+            attack = PlayerStatController.BASE_ATTACK + stat.weaponDmgUpgradeCnt * PlayerStatController.ATTACK_PER_UPGRADE;
+            defense = PlayerStatController.BASE_DEFENSE;
+            critProb = PlayerStatController.BASE_CRIT_PROB + stat.weaponCritProbUpgradeCnt * PlayerStatController.CRIT_PROB_PER_UPG;
+            critDmg = PlayerStatController.BASE_CRIT_DMG + stat.weaponCritDmgUpgradeCnt * PlayerStatController.CRIT_DMG_PER_UPG;
+            atkSpeed = PlayerStatController.BASE_ATTACK_SPD + stat.weaponAttackSpeed * PlayerStatController.ATTACK_SPD_PER_UPG;
+            moveSpeed = PlayerStatController.BASE_WALK_SPEED;
         }
 
         if (attackText      != null) attackText.text      = $"{attack:0}";

@@ -45,10 +45,11 @@ public class PlayerStatController : MonoBehaviour
     public const float HP_PER_UPGRADE = 50f;
     public const float BASE_ATTACK = 100f;
     public const float ATTACK_PER_UPGRADE = 20f;
+    public const float BASE_DEFENSE = 100f;
     public const float BASE_CRIT_PROB = 5f;
     public const float CRIT_PROB_PER_UPG = 1.5f;
     public const float BASE_CRIT_DMG = 120f;
-    public const float CRIT_DMG_PER_UPG = 8f;
+    public const float CRIT_DMG_PER_UPG = 1.0f;
     public const float BASE_ATTACK_SPD = 1.0f;
     public const float ATTACK_SPD_PER_UPG = 0.1f;
 
@@ -184,7 +185,7 @@ public class PlayerStatController : MonoBehaviour
     {
         int permUpgrade = permanentStat != null ? permanentStat.weaponCritDmgUpgradeCnt : 0;
         float tempBuff = GetBuffValue(CharacterStatType.CritDamage);
-        return Mathf.RoundToInt(baseCritDmg + permUpgrade + tempBuff);
+        return Mathf.RoundToInt(baseCritDmg + (permUpgrade * CRIT_DMG_PER_UPG) + tempBuff);
     }
 
     // 공속
@@ -246,6 +247,13 @@ public class PlayerStatController : MonoBehaviour
             return BASE_JUMP_COUNT + Mathf.RoundToInt(GetBuffValue(CharacterStatType.JumpCount));
         }
     }
+
+    // UI 및 외부 참조용 최종 계산 스탯 (Single Source of Truth)
+    public float TotalAttack => BASE_ATTACK + (WeaponDmgUpgradeCnt * ATTACK_PER_UPGRADE) + GetBuffValue(CharacterStatType.WeaponDamage);
+    public float TotalDefense => BASE_DEFENSE;
+    public float TotalCritProb => BASE_CRIT_PROB + (WeaponCritProbUpgradeCnt * CRIT_PROB_PER_UPG) + GetBuffValue(CharacterStatType.CritProbability);
+    public float TotalCritDmg => BASE_CRIT_DMG + (WeaponCritDmgUpgradeCnt * CRIT_DMG_PER_UPG) + GetBuffValue(CharacterStatType.CritDamage);
+    public float TotalAttackSpeed => BASE_ATTACK_SPD + (WeaponAttackSpeedUpgradeCnt * ATTACK_SPD_PER_UPG) + GetBuffValue(CharacterStatType.AttackSpeed);
 
     // UI 스텟 표기 용
     public int HpUpgradeCnt => permanentStat != null ? permanentStat.hpUpgrade : 0;

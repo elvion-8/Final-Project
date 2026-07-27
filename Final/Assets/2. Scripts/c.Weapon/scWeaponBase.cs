@@ -10,8 +10,6 @@ public abstract class scWeaponBase : MonoBehaviour, IWeaponStats
     [SerializeField][Range(1,100)] protected int baseAttackSpeed;
     [SerializeField][Range(1,500)] protected int baseDurability;
 
-    public scPlayerStat pS;
-
     private PlayerStatController GetStatController()
     {
         PlayerCtrl player = GetPlayerCtrl();
@@ -20,31 +18,23 @@ public abstract class scWeaponBase : MonoBehaviour, IWeaponStats
 
     public int attackDmg { get {
         var sc = GetStatController();
-        if (sc != null) return sc.GetWeaponDamage(baseAttackDmg);
-        if (pS != null) return baseAttackDmg + (pS.weaponDmgUpgradeCnt * 5);
-        return baseAttackDmg;
+        return sc != null ? sc.GetWeaponDamage(baseAttackDmg) : baseAttackDmg;
     }}       //공격력
-    public float attackRange { get{return baseAttackRange;}}   //공격 범위
+    public float attackRange => baseAttackRange;   //공격 범위
     public float attackCoolDown { get;}//공격 쿨다운
     public int attackType { get;}      //공격 타입
     public float weaponMoveSpeed { get;}  //무기 이동속도
     public float attackSpeed { get {
         var sc = GetStatController();
-        if (sc != null) return sc.GetWeaponAttackSpeed(baseAttackSpeed);
-        if (pS != null) return baseAttackSpeed + pS.weaponAttackSpeed;
-        return baseAttackSpeed;
+        return sc != null ? sc.GetWeaponAttackSpeed(baseAttackSpeed) : baseAttackSpeed;
     }}   //공격 속도
     public int criticalDmg { get {
         var sc = GetStatController();
-        if (sc != null) return sc.GetCritDamage(baseCritDmg);
-        if (pS != null) return baseCritDmg + pS.weaponCritDmgUpgradeCnt;
-        return baseCritDmg;
+        return sc != null ? sc.GetCritDamage(baseCritDmg) : baseCritDmg;
     }}      //치명타 데미지
     public int criticalProb { get {
         var sc = GetStatController();
-        if (sc != null) return sc.GetCritProbability(baseCritProb);
-        if (pS != null) return baseCritProb + pS.weaponCritProbUpgradeCnt;
-        return baseCritProb;
+        return sc != null ? sc.GetCritProbability(baseCritProb) : baseCritProb;
     }}     //치명타 확률
     public int Durability { get; private set; }     //내구도
 
@@ -138,15 +128,15 @@ public abstract class scWeaponBase : MonoBehaviour, IWeaponStats
 
     public int Damage()
     {
-        int multiplier = 1;
+        float multiplier = 1.0f;
 
-        if (Random.Range(0, 30) < criticalProb)
+        if (Random.Range(0, 100) < criticalProb)
         {
-            multiplier = criticalDmg;
+            multiplier = criticalDmg / 100f;
             Debug.Log("크리티컬 히트!");
         }
 
-        damage = multiplier * attackDmg;
+        damage = Mathf.RoundToInt(attackDmg * multiplier);
 
         return damage;
     }

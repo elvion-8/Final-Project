@@ -92,14 +92,19 @@ public class csUpgrade : MonoBehaviour
     //===========================================================Player, Weapon Upgrade Button Punc
     // Wrappers proxying to PlayerStatManage to prevent breaking Unity inspector events
 
+    private PlayerStatManage cachedStatManage;
+
     private PlayerStatManage GetStatManage()
     {
-        PlayerStatManage statManage = FindObjectOfType<PlayerStatManage>();
-        if (statManage == null)
+        if (cachedStatManage == null)
         {
-            Debug.LogError("PlayerStatManage could not be found in the scene.");
+            cachedStatManage = FindObjectOfType<PlayerStatManage>();
+            if (cachedStatManage == null)
+            {
+                Debug.LogError("PlayerStatManage could not be found in the scene.");
+            }
         }
-        return statManage;
+        return cachedStatManage;
     }
 
     public void HpUpgrade()

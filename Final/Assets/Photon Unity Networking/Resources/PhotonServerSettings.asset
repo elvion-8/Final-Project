@@ -65,4 +65,5 @@ MonoBehaviour:
   - ResetCombo
   - RPC_ReleaseBindEarly
   - RPC_UpdateBindFill
+  - RpcApplyDamage
   DisableAutoOpenWizard: 1
