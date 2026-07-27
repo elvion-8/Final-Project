@@ -43,12 +43,12 @@ public class PlayerStatController : MonoBehaviour
     // Base values
     public const float BASE_MAX_HP = 100f;
     public const float HP_PER_UPGRADE = 50f;
-    public const float BASE_ATTACK = 100f;
+    public const float BASE_ATTACK = 10f;
     public const float ATTACK_PER_UPGRADE = 20f;
     public const float BASE_DEFENSE = 100f;
     public const float BASE_CRIT_PROB = 5f;
     public const float CRIT_PROB_PER_UPG = 1.5f;
-    public const float BASE_CRIT_DMG = 120f;
+    public const float BASE_CRIT_DMG = 20f;
     public const float CRIT_DMG_PER_UPG = 1.0f;
     public const float BASE_ATTACK_SPD = 1.0f;
     public const float ATTACK_SPD_PER_UPG = 0.1f;
@@ -164,36 +164,36 @@ public class PlayerStatController : MonoBehaviour
         }
     }
 
-    // 무기 데미지 관련
+    // 무기 데미지 관련 (무기 기본 데미지 + 플레이어 기본 공격력 + 강화/버프)
     public int GetWeaponDamage(int baseWeaponDmg)
     {
         int permUpgrade = permanentStat != null ? permanentStat.weaponDmgUpgradeCnt : 0;
         float tempBuff = GetBuffValue(CharacterStatType.WeaponDamage);
-        return Mathf.RoundToInt(baseWeaponDmg + (permUpgrade * 5) + tempBuff);
+        return Mathf.RoundToInt(baseWeaponDmg + BASE_ATTACK + (permUpgrade * ATTACK_PER_UPGRADE) + tempBuff);
     }
 
-    // 치확
+    // 치확 (무기 기본 치확 + 플레이어 기본 치확 + 강화/버프)
     public int GetCritProbability(int baseCritProb)
     {
         int permUpgrade = permanentStat != null ? permanentStat.weaponCritProbUpgradeCnt : 0;
         float tempBuff = GetBuffValue(CharacterStatType.CritProbability);
-        return Mathf.RoundToInt(baseCritProb + permUpgrade + tempBuff);
+        return Mathf.RoundToInt(baseCritProb + BASE_CRIT_PROB + (permUpgrade * CRIT_PROB_PER_UPG) + tempBuff);
     }
 
-    // 치피
+    // 치피 (무기 기본 치피 + 플레이어 기본 치피 + 강화/버프)
     public int GetCritDamage(int baseCritDmg)
     {
         int permUpgrade = permanentStat != null ? permanentStat.weaponCritDmgUpgradeCnt : 0;
         float tempBuff = GetBuffValue(CharacterStatType.CritDamage);
-        return Mathf.RoundToInt(baseCritDmg + (permUpgrade * CRIT_DMG_PER_UPG) + tempBuff);
+        return Mathf.RoundToInt(baseCritDmg + BASE_CRIT_DMG + (permUpgrade * CRIT_DMG_PER_UPG) + tempBuff);
     }
 
-    // 공속
+    // 공속 (무기 기본 공속 + 플레이어 강화/버프)
     public float GetWeaponAttackSpeed(float baseAttackSpeed)
     {
         int permUpgrade = permanentStat != null ? permanentStat.weaponAttackSpeed : 0;
         float tempBuff = GetBuffValue(CharacterStatType.AttackSpeed);
-        return baseAttackSpeed + permUpgrade + tempBuff;
+        return baseAttackSpeed + (permUpgrade * ATTACK_SPD_PER_UPG) + tempBuff;
     }
 
     // 애니메이션 재생속도 /// 아직 미사용

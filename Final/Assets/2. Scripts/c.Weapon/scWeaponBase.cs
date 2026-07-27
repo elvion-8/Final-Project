@@ -3,10 +3,10 @@ using UnityEngine;
 public abstract class scWeaponBase : MonoBehaviour, IWeaponStats
 {
     [Header("Base")]
-    [SerializeField][Range(1,100)] protected int baseAttackDmg;
+    [SerializeField][Range(1,500)] protected int baseAttackDmg;
     [SerializeField][Range(1,100)] protected int baseAttackRange;
     [SerializeField][Range(1,100)] protected int baseCritProb;
-    [SerializeField][Range(1,100)] protected int baseCritDmg;
+    [SerializeField][Range(1,500)] protected int baseCritDmg;
     [SerializeField][Range(1,100)] protected int baseAttackSpeed;
     [SerializeField][Range(1,500)] protected int baseDurability;
 
@@ -74,13 +74,31 @@ public abstract class scWeaponBase : MonoBehaviour, IWeaponStats
         PlayerCtrl player = GetPlayerCtrl();
         if (player != null && player.isAttacking == true)
         {
-            if (other.gameObject.tag == "Enemy")
+            // 자신 및 자식 콜라이더 예외 처리
+            if (other.transform.root == player.transform.root || other.gameObject == player.gameObject)
             {
-                if (Time.time < HitTime + 0.15f)
-                {
-                    return;
-                }
+                return;
+            }
 
+            if (Time.time < HitTime + 0.15f)
+            {
+                return;
+            }
+
+            // ITakeDamage 인터페이스를 구현한 대상(EnemyCtrl, brokenPillar 등) 탐색
+            ITakeDamage target = other.GetComponentInParent<ITakeDamage>();
+            if (target == null)
+            {
+                target = other.GetComponent<ITakeDamage>();
+            }
+
+            if (target != null && target is Component comp && comp.transform.root == player.transform.root)
+            {
+                return;
+            }
+
+            if (target != null)
+            {
                 if (player.currentHitVFXState != null)
                 {
                     Vector3 contactPoint = other.ClosestPoint(transform.position);
@@ -88,7 +106,15 @@ public abstract class scWeaponBase : MonoBehaviour, IWeaponStats
                 }
 
                 int finalDamage = Damage();
-                other.GetComponentInParent<EnemyCtrl>().TakeDamage(finalDamage);
+                if (target is EnemyCtrl enemy)
+                {
+                    enemy.TakeDamage(finalDamage, player.gameObject);
+                }
+                else
+                {
+                    target.TakeDamage(finalDamage);
+                }
+                Debug.Log($"[scWeaponBase] 타겟({target.GetType().Name})에게 데미지 전달: {finalDamage}");
 
                 // 흡혈(Life Steal)
                 var sc = GetStatController();
@@ -132,8 +158,8 @@ public abstract class scWeaponBase : MonoBehaviour, IWeaponStats
 
         if (Random.Range(0, 100) < criticalProb)
         {
-            multiplier = criticalDmg / 100f;
-            Debug.Log("크리티컬 히트!");
+            multiplier = 1.0f + (criticalDmg / 100f);
+            Debug.Log($"[크리티컬] 기본공격력: {attackDmg} | 치명타확률: {criticalProb}% | 추가치명타데미지: +{criticalDmg}% ({multiplier:F2}배) ➔ 최종 데미지: {Mathf.RoundToInt(attackDmg * multiplier)}");
         }
 
         damage = Mathf.RoundToInt(attackDmg * multiplier);

@@ -85,16 +85,27 @@ public class CharacterPnl : MonoBehaviour
         if (SANcSlider != null) { SANcSlider.maxValue = 100f; SANcSlider.value = SANc; }
         if (SANcText   != null) SANcText.text = $"{SANc:0}%";
 
-        // ── 기본 능력치 (PlayerStatController SSOT 참조) ───────────────────
+        // ── 기본 능력치 (PlayerStatController & 장착 무기 참조) ───────────────────
         float attack, defense, critProb, critDmg, atkSpeed, moveSpeed;
 
         if (statCtrl != null)
         {
-            attack = statCtrl.TotalAttack;
+            scWeaponBase equippedWeapon = player != null ? player.GetComponentInChildren<scWeaponBase>() : null;
+            if (equippedWeapon != null)
+            {
+                attack = equippedWeapon.attackDmg;
+                critProb = equippedWeapon.criticalProb;
+                critDmg = equippedWeapon.criticalDmg;
+                atkSpeed = equippedWeapon.attackSpeed;
+            }
+            else
+            {
+                attack = statCtrl.TotalAttack;
+                critProb = statCtrl.TotalCritProb;
+                critDmg = statCtrl.TotalCritDmg;
+                atkSpeed = statCtrl.TotalAttackSpeed;
+            }
             defense = statCtrl.TotalDefense;
-            critProb = statCtrl.TotalCritProb;
-            critDmg = statCtrl.TotalCritDmg;
-            atkSpeed = statCtrl.TotalAttackSpeed;
             moveSpeed = statCtrl.MoveSpeed;
         }
         else

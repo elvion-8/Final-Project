@@ -547,7 +547,7 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
             _actorTr[actorId] = attacker.transform;   // 로컬 캐시
 
         // 모든 클라이언트가 같은 위협 목록을 갖도록 브로드캐스트
-        if (_pv != null && PhotonNetwork.connected)
+        if (_pv != null && _pv.viewID > 0 && PhotonNetwork.inRoom)
             _pv.RPC("RpcApplyDamage", PhotonTargets.All, damage, actorId);
         else
             ApplyDamage(damage, actorId);
@@ -564,6 +564,7 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
         if (enemyMode == MODE_STATE.DIE) return;
 
         hp = Mathf.Max(hp - damage, 0);
+        Debug.Log($"[EnemyCtrl] 피격! 받은 데미지: {damage}, 남은 HP: {hp}/{maxHp}");
         UpdateHpBar();
 
         // 위협 수치 누적

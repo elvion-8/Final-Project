@@ -72,17 +72,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseAttackDmg: 50
   baseAttackRange: 1
-  baseCritProb: 1
-  baseCritDmg: 1
+  baseCritProb: 20
+  baseCritDmg: 20
   baseAttackSpeed: 1
   baseDurability: 400
-  pS:
-    cost: 0
-    hpUpgrade: 0
-    weaponDmgUpgradeCnt: 0
-    weaponCritProbUpgradeCnt: 0
-    weaponCritDmgUpgradeCnt: 0
-    weaponAttackSpeed: 0
   anim: {fileID: 0}
 --- !u!54 &-2789345741428020436
 Rigidbody:
