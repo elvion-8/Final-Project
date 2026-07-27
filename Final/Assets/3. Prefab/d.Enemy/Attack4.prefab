@@ -53,7 +53,7 @@ MonoBehaviour:
   firePointOffset: {x: 0, y: 1.5, z: 2}
   damage: 600
   warningZoomAmount: 10.8
-  shakeIntensity: 0.35
+  shakeIntensity: 0.503
   shakeDuration: 0.35
   flashColor: {r: 1, g: 1, b: 1, a: 0.8}
   flashDuration: 0.25
