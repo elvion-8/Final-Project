@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: -3754621811313830631}
   m_Layer: 0
   m_Name: Hp
-  m_TagString: Untagged
+  m_TagString: ROOM_ITEM
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

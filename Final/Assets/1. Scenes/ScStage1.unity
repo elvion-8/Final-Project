@@ -2983,6 +2983,10 @@ PrefabInstance:
       propertyPath: hpBarImage
       value: 
       objectReference: {fileID: 1882887510}
+    - target: {fileID: 2606199624365376920, guid: cefa34030b7b5824fadfa099f90e0df5, type: 3}
+      propertyPath: animTable.Array.data[6].trigger
+      value: Die
+      objectReference: {fileID: 0}
     - target: {fileID: 3840601124338045230, guid: cefa34030b7b5824fadfa099f90e0df5, type: 3}
       propertyPath: dropTable.Array.data[0].minCount
       value: 1
@@ -2993,6 +2997,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3840601124338045230, guid: cefa34030b7b5824fadfa099f90e0df5, type: 3}
       propertyPath: dropTable.Array.data[2].minCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3840601124338045230, guid: cefa34030b7b5824fadfa099f90e0df5, type: 3}
+      propertyPath: dropTable.Array.data[0].dropChance
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3840601124338045230, guid: cefa34030b7b5824fadfa099f90e0df5, type: 3}
+      propertyPath: dropTable.Array.data[1].dropChance
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3840601124338045230, guid: cefa34030b7b5824fadfa099f90e0df5, type: 3}
+      propertyPath: dropTable.Array.data[2].dropChance
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4688862856659575060, guid: cefa34030b7b5824fadfa099f90e0df5, type: 3}
