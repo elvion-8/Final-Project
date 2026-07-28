@@ -83,6 +83,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 609ef9d0f02a2e34c9bd3fe25dcd7c44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _playerInput: {fileID: 0}
   move: {x: 0, y: 0}
   jumpKey: 0
   isJumpHeld: 0
@@ -114,15 +115,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e3b0e847e4c7654a861246d4bc5c908, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponVFXList:
-  - weaponID: a
-    vfxPrefab: {fileID: 274761310258684839, guid: 8f2bec3f27b76c14182b7a5414797940, type: 3}
-  - weaponID: d
-    vfxPrefab: {fileID: 0}
-  - weaponID: sw
-    vfxPrefab: {fileID: 5061498029215849979, guid: f4de5688d453a1d44be3c607c4f5a230, type: 3}
-  - weaponID: s
-    vfxPrefab: {fileID: 3651685925575709812, guid: 5b1d9a3d4638c8c4e97531085317de66, type: 3}
+  vfxSetList: []
 --- !u!82 &1212545339028591253
 AudioSource:
   m_ObjectHideFlags: 0

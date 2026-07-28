@@ -66,4 +66,5 @@ MonoBehaviour:
   - RPC_ReleaseBindEarly
   - RPC_UpdateBindFill
   - RpcApplyDamage
+  - ExecuteMove
   DisableAutoOpenWizard: 1

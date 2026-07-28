@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Text;
 using UnityEngine.Networking;
+using System;
 
 [System.Serializable]
 public class PhpResponse
@@ -10,6 +11,7 @@ public class PhpResponse
     public bool success;
     public string message;
     public int user_index;
+    public string token; // 💡 중복 접속 감시용 토큰 필드 추가
     public scPlayerStat stats;
 }
 
@@ -34,7 +36,6 @@ public class csButtonManager : MonoBehaviour
     public InputField loginIDInputField;
     public InputField loginPWInputField;
 
-   
     [Header("최종 제출용 버튼 2개")]
     public Button btnRegisterSubmit;   // 회원가입 완료 및 시작 버튼
     public Button btnLoginSubmit;      // 로그인 완료 및 시작 버튼
@@ -83,7 +84,7 @@ public class csButtonManager : MonoBehaviour
 
     public void LoadScene()
     {
-        Managers.loadingManager.LoadScene("ScStartPoint",LoadingType.MenuToGame);
+        Managers.loadingManager.LoadScene("ScStartPoint", LoadingType.MenuToGame);
     }
 
     private IEnumerator AuthRequestRoutine(string phpFile, string user_id, string password, bool isLogin)
@@ -113,17 +114,39 @@ public class csButtonManager : MonoBehaviour
                 string rawText = request.downloadHandler.text;
                 Debug.Log("서버가 보낸 원본 텍스트: " + rawText);
 
-                // ✨ 앞뒤 공백과 줄바꿈을 제거하고 정확하게 맨 처음 '{' 부터 잘라냅니다.
+                // 💡 JSON 잘라내기 로직 보강
                 if (!string.IsNullOrEmpty(rawText) && rawText.Contains("{"))
                 {
                     int jsonStartIndex = rawText.IndexOf('{');
-                    rawText = rawText.Substring(jsonStartIndex).Trim();
+                    int jsonEndIndex = rawText.LastIndexOf('}');
+
+                    if (jsonEndIndex > jsonStartIndex)
+                    {
+                        rawText = rawText.Substring(jsonStartIndex, (jsonEndIndex - jsonStartIndex) + 1).Trim();
+                    }
                 }
 
                 Debug.Log("✂️ 가위질 완료된 텍스트: " + rawText);
 
-                // ⚠️ 반드시 request.downloadHandler.text 대신 가위질된 'rawText'를 넣어야 합니다!
-                PhpResponse response = JsonUtility.FromJson<PhpResponse>(rawText);
+                // 💡 JSON 파싱 예외 처리 (JSON parse error 방지)
+                PhpResponse response = null;
+                try
+                {
+                    response = JsonUtility.FromJson<PhpResponse>(rawText);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"[JSON 파싱 에러] 올바른 JSON 포맷이 아닙니다.\n수신 문자열: {rawText}\n에러 메시지: {ex.Message}");
+                    LogMessage("서버 응답 처리 중 오류가 발생했습니다.");
+                    yield break;
+                }
+
+                if (response == null)
+                {
+                    LogMessage("서버 응답 데이터를 읽을 수 없습니다.");
+                    yield break;
+                }
+
                 LogMessage(response.message);
 
                 if (response.success)
@@ -136,6 +159,13 @@ public class csButtonManager : MonoBehaviour
                         {
                             dataManager.SetUserData(response.user_index, response.stats);
                         }
+
+                        // 💡 중복 접속 감시 매니저가 존재하는 경우 세션 체크 시작
+                        if (SessionManager.Instance != null && !string.IsNullOrEmpty(response.token))
+                        {
+                            SessionManager.Instance.StartSessionCheck(response.user_index, response.token);
+                        }
+
                         LogMessage("데이터 로드 성공! 게임을 로드합니다.");
                         yield return new WaitForSeconds(1.0f);
                         LoadScene();
@@ -160,7 +190,6 @@ public class csButtonManager : MonoBehaviour
         Debug.Log(msg);
         if (statusText != null) statusText.text = msg;
     }
-
 
     public void Option()
     {
