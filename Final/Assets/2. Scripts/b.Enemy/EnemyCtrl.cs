@@ -654,4 +654,37 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
     }
 
     void OnDestroy() => CleanupCurrentPattern();
+
+    // ────────────────────────────────────────────
+    // RPC 중계 메서드
+    // ────────────────────────────────────────────
+    [PunRPC]
+    public void RpcSetBoundTarget(int ownerId)
+    {
+        if (_currentPatternObj != null)
+        {
+            AttackPattern2 pattern = _currentPatternObj.GetComponent<AttackPattern2>();
+            if (pattern != null) pattern.ApplyBoundTargetLocal(ownerId);
+        }
+    }
+
+    [PunRPC]
+    public void RpcUpdateBindFill(float amount)
+    {
+        if (_currentPatternObj != null)
+        {
+            AttackPattern2 pattern = _currentPatternObj.GetComponent<AttackPattern2>();
+            if (pattern != null) pattern.ApplyBindFillLocal(amount);
+        }
+    }
+
+    [PunRPC]
+    public void RpcReleaseBindEarly()
+    {
+        if (_currentPatternObj != null)
+        {
+            AttackPattern2 pattern = _currentPatternObj.GetComponent<AttackPattern2>();
+            if (pattern != null) pattern.ApplyReleaseBindEarlyLocal();
+        }
+    }
 }
