@@ -19,13 +19,18 @@ public class CameraMove : MonoBehaviour
     public Transform playerPos;
 
     [Header("Camera Settings")]
-    public float mouseSensitivity = 2.0f;
+    public float mouseSensitivity = 65.0f;
     public float distance = 7f;
     [Range(-3f,10f)]
     [Tooltip("카메라가 바라보는 플레이어의 높이 오프셋")]
     public float cameraHeight = 1.5f;
     [Tooltip("락온 시 높이 보정")]
     public float height = 1.5f;
+
+    [Header("FOV Settings")]
+    [Range(30f, 110f)]
+    public float fov = 60.0f;
+    public Camera targetCamera;
 
     [Header("Collision Settings (벽 뚫기 방지)")]
     [Tooltip("카메라가 통과하지 못하는 장애물 레이어")]
@@ -65,6 +70,9 @@ public class CameraMove : MonoBehaviour
         }
 
         cmTr = GetComponent<Transform>();
+        if (targetCamera == null) targetCamera = GetComponent<Camera>();
+        if (targetCamera == null) targetCamera = Camera.main;
+
         if (playerPos == null)
         {
             GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -75,7 +83,31 @@ public class CameraMove : MonoBehaviour
 
     void Start()
     {
-        if (mouseSensitivity <= 0f) mouseSensitivity = 2.0f;
+        if (PlayerPrefs.HasKey("mouseSensitivity"))
+        {
+            mouseSensitivity = PlayerPrefs.GetFloat("mouseSensitivity", 65.0f);
+        }
+        else if (PlayerPrefs.HasKey("Camera_Sensitivity"))
+        {
+            mouseSensitivity = PlayerPrefs.GetFloat("Camera_Sensitivity", 65.0f);
+        }
+        else
+        {
+            mouseSensitivity = 65.0f;
+        }
+        mouseSensitivity = Mathf.Clamp(mouseSensitivity, 30f, 100f);
+
+        if (PlayerPrefs.HasKey("Camera_FOV"))
+        {
+            fov = PlayerPrefs.GetFloat("Camera_FOV", 60.0f);
+        }
+        else
+        {
+            fov = 60.0f;
+        }
+        if (fov < 35f) fov = 60.0f;
+
+        ApplyFOV(fov);
 
         Vector3 angles = transform.eulerAngles;
         rotX = angles.y;
@@ -83,7 +115,27 @@ public class CameraMove : MonoBehaviour
 
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
-        
+    }
+
+    public void SetSensitivity(float val)
+    {
+        mouseSensitivity = Mathf.Clamp(val, 30f, 100f);
+        PlayerPrefs.SetFloat("mouseSensitivity", mouseSensitivity);
+        PlayerPrefs.SetFloat("Camera_Sensitivity", mouseSensitivity);
+        PlayerPrefs.Save();
+    }
+
+    public void ApplyFOV(float newFov)
+    {
+        fov = Mathf.Clamp(newFov, 35f, 110f);
+        if (targetCamera == null) targetCamera = GetComponent<Camera>();
+        if (targetCamera == null) targetCamera = Camera.main;
+        if (targetCamera != null)
+        {
+            targetCamera.fieldOfView = fov;
+        }
+        PlayerPrefs.SetFloat("Camera_FOV", fov);
+        PlayerPrefs.Save();
     }
 
     IEnumerator FindPlayerTarget()

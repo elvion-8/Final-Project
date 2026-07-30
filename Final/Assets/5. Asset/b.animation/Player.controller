@@ -1963,7 +1963,7 @@ MonoBehaviour:
     endTime: 0.642
     direction: 4
     customDir: {x: 0, y: 0, z: 0}
-    force: 6
+    force: 3
     isImpulse: 1
     isTriggered: 0
   - label: Forward
@@ -1971,7 +1971,7 @@ MonoBehaviour:
     endTime: 0.642
     direction: 0
     customDir: {x: 0, y: 0, z: 0}
-    force: 7
+    force: 4
     isImpulse: 1
     isTriggered: 0
 --- !u!1109 &-956358309511583443
