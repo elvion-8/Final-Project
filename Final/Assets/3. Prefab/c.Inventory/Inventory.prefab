@@ -653,6 +653,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 61baa78dc988f8040bda223aace4f83d, type: 2}
   - {fileID: 11400000, guid: 7e783e41d2f5d8f4aa649e4d7c96ea65, type: 2}
   - {fileID: 11400000, guid: 0d9fa515fa88b0f4ebc7ff23c6f48e70, type: 2}
+  _selectedSlot: {fileID: 0}
+  movingInv: 0
   txtWType: {fileID: 1056189505552990698}
   txtTitle: {fileID: 6081229757093194912}
   txtSub: {fileID: 5369321914995837839}

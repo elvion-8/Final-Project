@@ -540,6 +540,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 117809993725554674, guid: 0a701f756440af6498ae4d679870829d, type: 3}
   m_PrefabInstance: {fileID: 3847340280885338654}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &88726654 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2802495561639063705, guid: 96ac34824dbd49b4e82d45b5b5a3ba30, type: 3}
+  m_PrefabInstance: {fileID: 1131534507}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &93399526
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -14777,6 +14782,14 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4277634990638269327, guid: 96ac34824dbd49b4e82d45b5b5a3ba30, type: 3}
+      propertyPath: popupEntries.Array.data[5].popup
+      value: 
+      objectReference: {fileID: 88726654}
+    - target: {fileID: 4277634990638269327, guid: 96ac34824dbd49b4e82d45b5b5a3ba30, type: 3}
+      propertyPath: popupEntries.Array.data[6].popup
+      value: 
+      objectReference: {fileID: 1949899553}
     - target: {fileID: 4586709486609304237, guid: 96ac34824dbd49b4e82d45b5b5a3ba30, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -22146,6 +22159,11 @@ BoxCollider:
 Transform:
   m_CorrespondingSourceObject: {fileID: 5743053949875054282, guid: 8a66f037d24cf5d4ca266ec436c56c31, type: 3}
   m_PrefabInstance: {fileID: 27622008}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1949899553 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2573120598967425210, guid: 96ac34824dbd49b4e82d45b5b5a3ba30, type: 3}
+  m_PrefabInstance: {fileID: 1131534507}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1950635284
 PrefabInstance:
