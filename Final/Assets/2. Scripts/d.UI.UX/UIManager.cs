@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CharacterUIManager : MonoBehaviour
+public class UIManager : MonoBehaviour
 {
     [System.Serializable]
     public class TabData
