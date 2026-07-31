@@ -6,7 +6,7 @@ using Rand = UnityEngine.Random;
 /// 적 사망 시 아이템 드랍을 담당하는 컴포넌트.
 /// EnemyCtrl과 분리해서 관리 (죽음 처리와 드랍 로직의 책임 분리).
 /// </summary>
-public class EnemyItemDrop : MonoBehaviour    //Photon.MonoBehaviour 
+public class EnemyItemDrop : Photon.MonoBehaviour 
 {
     [System.Serializable]
     public class DropEntry
@@ -27,8 +27,8 @@ public class EnemyItemDrop : MonoBehaviour    //Photon.MonoBehaviour
 
     public void Drop(Vector3 origin)
     {
-        //if (!PhotonNetwork.isMasterClient) return;
-        if (dropTable == null || dropTable.Length == 0) return;
+        if (!PhotonNetwork.isMasterClient) return;
+        //if (dropTable == null || dropTable.Length == 0) return;
 
         foreach (var entry in dropTable)
         {
@@ -53,8 +53,8 @@ public class EnemyItemDrop : MonoBehaviour    //Photon.MonoBehaviour
         {
             return; 
         }
-        //GameObject dropObj = PhotonNetwork.Instantiate(entry.fieldItemPrefab.name, pos, Quaternion.identity, 0);
-        GameObject dropObj = Instantiate(entry.fieldItemPrefab, pos, Quaternion.identity);
+        GameObject dropObj = PhotonNetwork.Instantiate(entry.fieldItemPrefab.name, pos, Quaternion.identity, 0);
+        //GameObject dropObj = Instantiate(entry.fieldItemPrefab, pos, Quaternion.identity);
 
         FieldItem fi = dropObj.GetComponent<FieldItem>();
         if (fi != null)

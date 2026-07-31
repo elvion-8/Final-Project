@@ -162,6 +162,7 @@ MonoBehaviour:
   hpBarImage: {fileID: 0}
   hpBarRoot: {fileID: 0}
   enemyBodyObject: {fileID: 3197093123523781393}
+  deathSequencePrefab: {fileID: 4688862856659575060, guid: a5125cbc41ece364eacd421cb48019bd, type: 3}
   attackPatternPrefabs:
   - {fileID: 2432664189829574563, guid: 4f3c8d1751625a24ab75ad482cea9819, type: 3}
   - {fileID: 1397536363142248949, guid: 6af2e190775e03241b947963ad374896, type: 3}

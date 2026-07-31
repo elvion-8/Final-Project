@@ -11,7 +11,7 @@ using Rand = UnityEngine.Random;
 public class EnemyCtrl : MonoBehaviour, ITakeDamage
 {
     // ────────────────────────────────────────────
-    //  ★ 애니메이션 테이블
+    // 애니메이션 테이블
     //  Animator의 Trigger 이름 + 클립을 짝지어 등록.
     //  인스펙터에서 +/- 로 자유롭게 추가/삭제 가능.
     //  (예: Idle1, Idle2, Aggro, Hit, Die, Attack1 ...)
@@ -48,7 +48,7 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
     private float lastAttackEndTime = -999f;
 
     // ────────────────────────────────────────────
-    //  ★ 어그로(위협 수치) 설정
+    //  어그로(위협 수치) 설정
     //  누적 피해량이 가장 큰 플레이어를 타겟으로 삼음
     // ────────────────────────────────────────────
     [Header("어그로 / 타겟팅")]
@@ -88,7 +88,14 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
     public GameObject enemyBodyObject;
 
     // ────────────────────────────────────────────
-    //  ★ 공격 패턴 프리팹 목록
+    //  사망 연출용 프리팹 (추가됨)
+    // ────────────────────────────────────────────
+    [Header("사망 연출")]
+    [Tooltip("HP가 0이 되었을 때 교체될 빨려들어가는 연출용 프리팹")]
+    public GameObject deathSequencePrefab;
+
+    // ────────────────────────────────────────────
+    //  공격 패턴 프리팹 목록
     //  각 패턴은 별도 프리팹으로 관리
     //  패턴 추가 시 프리팹 만들어서 슬롯에 연결만 하면 됨
     // ────────────────────────────────────────────
@@ -140,7 +147,7 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
     }
 
     // ────────────────────────────────────────────
-    //  ★ 애니메이션 테이블 유틸
+    //  애니메이션 테이블 유틸
     // ────────────────────────────────────────────
     void BuildAnimMap()
     {
@@ -230,7 +237,7 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
     }
 
     // ────────────────────────────────────────────
-    //  ★ 위협 수치 기반 타겟 선정
+    //  위협 수치 기반 타겟 선정
     // ────────────────────────────────────────────
     Transform GetHighestThreatTarget()
     {
@@ -459,7 +466,7 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
     }
 
     // ────────────────────────────────────────────
-    //  ★ AttackCoroutine
+    //  AttackCoroutine
     //  랜덤으로 패턴 프리팹 하나 선택 → Instantiate
     //  → Execute() 실행 → 끝나면 Destroy
     // ────────────────────────────────────────────
@@ -628,7 +635,8 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
     IEnumerator DieCoroutine()
     {
         CleanupCurrentPattern();
-        _anim.SetTrigger("Die");
+        
+        // _anim.SetTrigger("Die");
 
         gameObject.tag = "Untagged";
         if (enemyBodyObject != null)
@@ -644,13 +652,25 @@ public class EnemyCtrl : MonoBehaviour, ITakeDamage
 
         SetHpBarVisible(false);
 
-        // 죽음 애니메이션 재생 시간만큼 대기 (여유 시간은 Die 항목의 extraDelay로 조절)
-        yield return new WaitForSeconds(GetAnimLength("Die"));
-
-        // 애니메이션이 끝난 시점에 아이템 드랍
+        // 즉시 아이템 드랍
         if (_itemDrop != null)
             _itemDrop.Drop(myTr.position);
+
+        // 사망 연출용 프리팹(Implosion) 소환
+        if (deathSequencePrefab != null)
+        {
+            Instantiate(deathSequencePrefab, myTr.position, myTr.rotation);
+        }
+        else
+        {
+            Debug.LogWarning($"[EnemyCtrl] {gameObject.name}: deathSequencePrefab이 비어있습니다.");
+        }
+
+        // 기존 Enemy 즉시 삭제
         Destroy(gameObject);
+
+        // 코루틴 즉시 종료
+        yield break; 
     }
 
     void OnDestroy() => CleanupCurrentPattern();

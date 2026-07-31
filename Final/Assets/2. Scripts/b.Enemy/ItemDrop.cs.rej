@@ -1,0 +1,10 @@
+diff a/Final/Assets/2. Scripts/b.Enemy/ItemDrop.cs b/Final/Assets/2. Scripts/b.Enemy/ItemDrop.cs	(rejected hunks)
+@@ -6,7 +6,7 @@
+ /// 적 사망 시 아이템 드랍을 담당하는 컴포넌트.
+ /// EnemyCtrl과 분리해서 관리 (죽음 처리와 드랍 로직의 책임 분리).
+ /// </summary>
+-public class EnemyItemDrop : Photon.MonoBehaviour 
++public class EnemyItemDrop : MonoBehaviour    //Photon.MonoBehaviour 
+ {
+     [System.Serializable]
+     public class DropEntry
