@@ -168,9 +168,14 @@ public class CameraMove : MonoBehaviour
         //LockOn();
     }
     #region CallBack Input
-    public void OnScreenMove(InputValue value){moveInput = value.Get<Vector2>();}
+    public void OnScreenMove(InputValue value)
+    {
+        if (isDie) return;
+        moveInput = value.Get<Vector2>();
+    }
     public void OnLockOn(InputValue value)
     {
+        if (isDie) return;
         if(value.isPressed)
         {
             lockOn = !lockOn;
@@ -230,6 +235,23 @@ public class CameraMove : MonoBehaviour
     {
         if (playerPos == null) 
         {
+            return;
+        }
+
+        if (PlayerCtrl.localPlayer != null && PlayerCtrl.localPlayer.isDie)
+        {
+            isDie = true;
+        }
+
+        if (isDie)
+        {
+            moveInput = Vector2.zero;
+            mouseX = 0;
+            mouseY = 0;
+            if (lockOnMarker != null && lockOnMarker.activeSelf)
+            {
+                lockOnMarker.SetActive(false);
+            }
             return;
         }
 

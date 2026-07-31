@@ -643,6 +643,7 @@ GameObject:
   - component: {fileID: 7718799050016782552}
   - component: {fileID: 7468465819994353796}
   - component: {fileID: 8310845745751232393}
+  - component: {fileID: 8759328155871251504}
   m_Layer: 8
   m_Name: MainPlayer
   m_TagString: Player
@@ -659,7 +660,7 @@ Transform:
   m_GameObject: {fileID: 1226331344322202821}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -5.365725, y: 1.3940725, z: 102.838806}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -691,6 +692,7 @@ MonoBehaviour:
   jumpForwardForce: 6.5
   anim: {fileID: 0}
   MoveDir: {x: 0, y: 0, z: 0}
+  isDie: 0
   isAttacking: 0
   currentHitVFXState: {fileID: 0}
   playerId: -1
@@ -848,6 +850,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b303d73fa90956d4b8dbcfa1a454486b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &8759328155871251504
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1226331344322202821}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66db357ed8400254896da3117cbedc06, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  symbioteMaterial: {fileID: 2100000, guid: 2adda762639b0ca42929eb612af5f62d, type: 2}
+  idleDripSpeed: 1
+  moveDripSpeed: 0
+  idleDripAmount: 0.2
+  moveDripAmount: 0
 --- !u!1 &1263711682559840926
 GameObject:
   m_ObjectHideFlags: 0
@@ -2537,7 +2556,7 @@ Transform:
   m_GameObject: {fileID: 5244194690137758687}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: -101.15528, y: 2.9786596, z: -6.5715714}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
