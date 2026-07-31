@@ -55,7 +55,7 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     [Header("others")]
     public Animator anim;
     public Vector3 MoveDir;
-    private bool isDie;
+    public bool isDie;
     public bool isAttacking = false;        //무기들에서 공격 여부를 참조하기 때문에 퍼블릭
 
 
@@ -219,9 +219,10 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
 
     void Update()
     {
+        if (isDie) return;
+
         if (pv.isMine || PhotonNetwork.inRoom == false)
         {
-            if (isDie) return;
 
             // 입력
             GetInput();
@@ -774,10 +775,36 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     [PunRPC]
     void NetworkDie()
     {
-        charCon.enabled = false;
-        anim.SetTrigger("Die");
-        anim.SetLayerWeight(animDie, 1f);
-        Managers.gameOver.OnGameOver();
+        isDie = true;
+        MoveDir = Vector3.zero;
+        inputDir = Vector3.zero;
+        moveDir = Vector3.zero;
+        h = 0f;
+        v = 0f;
+
+        if (charCon != null) charCon.enabled = false;
+
+        gameObject.tag = "Untagged";
+        gameObject.layer = LayerMask.NameToLayer("Default");
+
+        Collider[] colliders = GetComponentsInChildren<Collider>();
+        foreach (Collider col in colliders)
+        {
+            col.enabled = false;
+        }
+
+        if (anim != null)
+        {
+            anim.SetTrigger("Die");
+            anim.SetLayerWeight(animDie, 1f);
+        }
+
+        if (pv == null || pv.isMine || !PhotonNetwork.inRoom)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            Managers.gameOver.OnGameOver();
+        }
         Debug.Log("you die");
 
     }

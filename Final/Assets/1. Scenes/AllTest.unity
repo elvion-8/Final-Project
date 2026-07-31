@@ -894,6 +894,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2258893425966321605, guid: cefa34030b7b5824fadfa099f90e0df5, type: 3}
+      propertyPath: viewIdField
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2258893425966321605, guid: cefa34030b7b5824fadfa099f90e0df5, type: 3}
+      propertyPath: instantiationId
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 2606199624365376920, guid: cefa34030b7b5824fadfa099f90e0df5, type: 3}
       propertyPath: attackZonePrefab
       value: 
@@ -1332,12 +1340,16 @@ MonoBehaviour:
   distance: 5.5
   cameraHeight: 1.5
   height: 3
+  fov: 60
+  targetCamera: {fileID: 0}
   obstacleLayers:
     serializedVersion: 2
     m_Bits: 72
   cameraRadius: 0.3
   smoothSpeed: 10
   lockOn: 0
+  lockOnMarker: {fileID: 0}
+  lockOnMarkerHeightOffset: 1
 --- !u!114 &1004565352
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1683,6 +1695,14 @@ PrefabInstance:
     - target: {fileID: 864673433483982420, guid: cefa34030b7b5824fadfa099f90e0df5, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2258893425966321605, guid: cefa34030b7b5824fadfa099f90e0df5, type: 3}
+      propertyPath: viewIdField
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2258893425966321605, guid: cefa34030b7b5824fadfa099f90e0df5, type: 3}
+      propertyPath: instantiationId
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2606199624365376920, guid: cefa34030b7b5824fadfa099f90e0df5, type: 3}
       propertyPath: hpBarRoot
