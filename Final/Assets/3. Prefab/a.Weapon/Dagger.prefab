@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3814540573827970797}
   - component: {fileID: 8573224183058982588}
   - component: {fileID: -7948147350544097422}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Dagger
   m_TagString: Weapon
   m_Icon: {fileID: 0}
@@ -54,13 +54,6 @@ MonoBehaviour:
   baseCritDmg: 13
   baseAttackSpeed: 12
   baseDurability: 1
-  pS:
-    cost: 0
-    hpUpgrade: 0
-    weaponDmgUpgradeCnt: 0
-    weaponCritProbUpgradeCnt: 0
-    weaponCritDmgUpgradeCnt: 0
-    weaponAttackSpeed: 0
 --- !u!54 &8573224183058982588
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -173,6 +166,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: WeaponTrail
       objectReference: {fileID: 0}
+    - target: {fileID: 6260243036576056154, guid: 76bb3d17b5383044583f32f9055114d0, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -250,6 +247,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: f71c5654f11dcd54a8cf1affc12019ea, type: 3}
       propertyPath: m_Name
       value: Dagger
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: f71c5654f11dcd54a8cf1affc12019ea, type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

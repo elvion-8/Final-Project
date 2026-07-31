@@ -165,6 +165,11 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
         groundCheck = GetComponentInChildren<groundCheck>();
         camera = CameraMove.Instance;
         sound = GetComponentInChildren<AttackSound>();
+
+        if (GetComponent<PlayerMarker>() == null)
+        {
+            gameObject.AddComponent<PlayerMarker>();
+        }
     }
 
     public float MoveSpeedVal => statController != null ? statController.MoveSpeed : 1.3f;

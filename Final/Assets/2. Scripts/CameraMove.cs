@@ -54,6 +54,12 @@ public class CameraMove : MonoBehaviour
     private bool isDie;
     private float hf;
 
+    [Header("Lock-On Marker Settings")]
+    [Tooltip("락온 표시용 마커 오브젝트/쿼드 (인스펙터에서 직접 할당)")]
+    public GameObject lockOnMarker;
+    [Tooltip("락온 마커 높이 오프셋")]
+    public float lockOnMarkerHeightOffset = 1.0f;
+
     private Vector2 moveInput;
     private bool isLockOnTrigger;
 
@@ -115,6 +121,11 @@ public class CameraMove : MonoBehaviour
 
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+
+        if (lockOnMarker != null)
+        {
+            lockOnMarker.SetActive(false);
+        }
     }
 
     public void SetSensitivity(float val)
@@ -225,7 +236,34 @@ public class CameraMove : MonoBehaviour
         if (!lockOn) { MouseMove(); }
         else { LockOn(); }
 
+        UpdateLockOnMarker();
+
         ApplyShake();
+    }
+
+    private void UpdateLockOnMarker()
+    {
+        if (lockOnMarker == null) return;
+
+        if (lockOn && isEnemyDetected && EnemyTarget != null && !isDie)
+        {
+            if (!lockOnMarker.activeSelf)
+                lockOnMarker.SetActive(true);
+
+            Vector3 targetPos = EnemyTarget.position + Vector3.up * lockOnMarkerHeightOffset;
+            Collider enemyCol = EnemyTarget.GetComponent<Collider>();
+            if (enemyCol != null)
+            {
+                targetPos = enemyCol.bounds.center;
+            }
+
+            lockOnMarker.transform.position = targetPos;
+        }
+        else
+        {
+            if (lockOnMarker.activeSelf)
+                lockOnMarker.SetActive(false);
+        }
     }
 
     void MouseMove()
