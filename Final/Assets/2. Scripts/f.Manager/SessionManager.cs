@@ -22,6 +22,9 @@ public class SessionManager : MonoBehaviour
 {
     public static SessionManager Instance { get; private set; }
 
+    // 💡 [추가 1] 오프라인 모드 상태 플래그 (DataManager에서 참조)
+    public bool IsOfflineMode { get; private set; } = false;
+
     [Header("서버 설정")]
     [SerializeField] private string serverBaseUrl = "http://192.168.0.44:8080/";
 
@@ -79,9 +82,20 @@ public class SessionManager : MonoBehaviour
         InitUI();
     }
 
+    // 💡 [추가 2] 오프라인 모드로 시작할 때 호출하는 메서드
+    public void StartOfflineSession()
+    {
+        StopSessionCheck(); // 실행 중인 세션 체크 코루틴 중단
+        IsOfflineMode = true; // 오프라인 모드 온!
+        Debug.Log("🎮 [SessionManager] 오프라인 모드가 활성화되었습니다.");
+    }
+
+
     // 로그인 성공 시 호출
     public void StartSessionCheck(int userIndex, string token)
     {
+        IsOfflineMode = false; // 💡 온라인 모드로 전환
+
         if (userIndex <= 0 || string.IsNullOrEmpty(token))
         {
             Debug.LogWarning("⚠️ [SessionManager] 유효하지 않은 userIndex 또는 token입니다.");

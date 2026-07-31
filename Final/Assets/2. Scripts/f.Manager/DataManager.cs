@@ -1,34 +1,236 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using System.Collections;
 using System.Text;
 using UnityEngine.Networking;
+using System.IO;
+using System.Security.Cryptography;
+
+[System.Serializable]
+public class SavePayload
+{
+    public int userId;
+    public scPlayerStat stats;
+}
+
+[System.Serializable]
+public class DataManagerPhpResponse
+{
+    public bool success;
+    public string message;
+}
 
 public class DataManager : MonoBehaviour
 {
+    public static DataManager Instance { get; private set; }
+
     public scPlayerStat stat { get; private set; } = new scPlayerStat();
 
-    // ·Î±×ÀÎ ¼º°ø ÈÄ ¼­¹ö¿¡¼­ ¹Ş¾Æ¿Í Ã¤¿öÁú À¯Àú °íÀ¯ ID ¹øÈ£
     private int currentUserId = -1;
-    private string serverUrl = "http://192.168.0.44:8080/";
+    [SerializeField] private string serverUrl = "http://192.168.0.44:8080/";
 
-    // ÀÎ°ÔÀÓ¿¡¼­ µ¥ÀÌÅÍ¸¦ ½Ì±ÛÅæ º¯¼ö¿¡ ÁÖÀÔÇÏ´Â À¯ÀÏÇÑ Åë·Î
+    private string localSaveFilePath;
+
+    // ğŸ”‘ AES256 í‚¤ ë° IV ì„¤ì • (32ë°”ì´íŠ¸ Key, 16ë°”ì´íŠ¸ IV)
+    // âš ï¸ ì‹¤ì œ ì¶œì‹œ ì‹œì—ëŠ” ê³ ìœ í•œ 32ì/16ì ë¬¸ìì—´ë¡œ ë³€ê²½í•˜ì—¬ ì‚¬ìš©í•˜ì„¸ìš”!
+    private static readonly string AesKey = "12345678901234567890123456789012"; // 32 characters (256-bit)
+    private static readonly string AesIV = "1234567890123456";                 // 16 characters (128-bit)
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+
+            // ğŸ’¡ ì‹¤í–‰ íŒŒì¼(.exe)ì´ ìˆëŠ” Root í´ë” ê²½ë¡œë¥¼ ê°€ì ¸ì˜µë‹ˆë‹¤.
+            string exeFolderPath = Directory.GetParent(Application.dataPath).FullName;
+
+            // ì‹¤í–‰ íŒŒì¼ ë°”ë¡œ ì˜† 'Saves' ë¼ëŠ” í´ë” ì•ˆì— ì €ì¥í•˜ê³  ì‹¶ì„ ë•Œ
+            string saveDirectory = Path.Combine(exeFolderPath, "Saves");
+
+            // í´ë”ê°€ ì—†ìœ¼ë©´ ìë™ ìƒì„±
+            if (!Directory.Exists(saveDirectory))
+            {
+                Directory.CreateDirectory(saveDirectory);
+            }
+
+            // ìµœì¢… íŒŒì¼ ê²½ë¡œ ì„¤ì •
+            localSaveFilePath = Path.Combine(saveDirectory, "offline_player_data.sav");
+            Debug.Log($"[DataManager] ì €ì¥ íŒŒì¼ ê²½ë¡œ ì„¤ì •ë¨: {localSaveFilePath}");
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
     public void SetUserData(int userId, scPlayerStat incomingStats)
     {
         currentUserId = userId;
-        stat = incomingStats; // ¼­¹ö¿¡¼­ ¹Ş¾Æ¿Â ½ºÅÈÀ» ³» ÁøÂ¥ ½ºÅÈ º¯¼ö¿¡ ´ëÀÔ!
-
-        Debug.Log($"[DataManager] À¯Àú ID {currentUserId}¹øÀÇ ¼­¹ö µ¥ÀÌÅÍ¸¦ Á¤»óÀûÀ¸·Î ·ÎµåÇß½À´Ï´Ù.");
+        stat = incomingStats;
+        Debug.Log($"[DataManager] ìœ ì € ID {currentUserId}ë²ˆì˜ ì„œë²„ ë°ì´í„°ë¥¼ ë¡œë“œí–ˆìŠµë‹ˆë‹¤.");
     }
+
+    #region í†µí•© Save / Load (ì˜¨ë¼ì¸ / ì˜¤í”„ë¼ì¸ ë¶„ê¸°)
 
     public void SaveGame()
     {
+        bool isOffline = SessionManager.Instance != null && SessionManager.Instance.IsOfflineMode;
+
+        if (isOffline)
+        {
+            SaveLocalGame();
+        }
+        else
+        {
+            SaveOnlineGame();
+        }
+    }
+
+    public void LoadGame(scPlayerStat incomingStats = null)
+    {
+        bool isOffline = SessionManager.Instance != null && SessionManager.Instance.IsOfflineMode;
+
+        if (isOffline)
+        {
+            LoadLocalGame();
+        }
+        else
+        {
+            LoadOnlineGame(incomingStats);
+        }
+    }
+
+    #endregion
+
+    #region ì•”í˜¸í™” ì˜¤í”„ë¼ì¸ ë¡œì»¬ ì €ì¥ / ë¶ˆëŸ¬ì˜¤ê¸°
+
+    private void SaveLocalGame()
+    {
+        try
+        {
+            // 1. ê°ì²´ë¥¼ JSON ë¬¸ìì—´ë¡œ ë³€í™˜
+            string json = JsonUtility.ToJson(stat, true);
+
+            // 2. JSON ë¬¸ìì—´ì„ AES256ìœ¼ë¡œ ì•”í˜¸í™”
+            string encryptedData = EncryptAES256(json);
+
+            // 3. ì•”í˜¸í™”ëœ í…ìŠ¤íŠ¸ë¥¼ íŒŒì¼ë¡œ ì €ì¥
+            File.WriteAllText(localSaveFilePath, encryptedData, Encoding.UTF8);
+            Debug.Log($"ğŸ”’ [DataManager] ì•”í˜¸í™”ëœ ì˜¤í”„ë¼ì¸ ë°ì´í„° ë¡œì»¬ ì €ì¥ ì™„ë£Œ: {localSaveFilePath}");
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"âŒ [DataManager] ì˜¤í”„ë¼ì¸ ì €ì¥ ì‹¤íŒ¨: {e.Message}");
+        }
+    }
+
+    private void LoadLocalGame()
+    {
+        try
+        {
+            if (File.Exists(localSaveFilePath))
+            {
+                // 1. ì•”í˜¸í™”ëœ íŒŒì¼ í…ìŠ¤íŠ¸ ì½ê¸°
+                string encryptedData = File.ReadAllText(localSaveFilePath, Encoding.UTF8);
+
+                // 2. AES256 ë³µí˜¸í™” ì§„í–‰
+                string json = DecryptAES256(encryptedData);
+
+                // 3. JSON ë³µí˜¸í™” ì„±ê³µ ì‹œ í´ë˜ìŠ¤ë¡œ ì—­ì§ë ¬í™”
+                if (!string.IsNullOrEmpty(json))
+                {
+                    stat = JsonUtility.FromJson<scPlayerStat>(json);
+                    Debug.Log("ğŸ”“ [DataManager] ì•”í˜¸í™”ëœ ì˜¤í”„ë¼ì¸ ë¡œì»¬ íŒŒì¼ ë³µí˜¸í™” & ë¡œë“œ ì„±ê³µ!");
+                }
+                else
+                {
+                    Debug.LogError("âŒ [DataManager] ë°ì´í„° ë³µí˜¸í™” ì‹¤íŒ¨! íŒŒì¼ì´ ë³€ì¡°ë˜ì—ˆê±°ë‚˜ ì˜¬ë°”ë¥´ì§€ ì•ŠìŠµë‹ˆë‹¤.");
+                }
+            }
+            else
+            {
+                Debug.LogWarning("âš ï¸ [DataManager] ë¡œì»¬ ì €ì¥ íŒŒì¼ì´ ì—†ìŠµë‹ˆë‹¤. ê¸°ë³¸ ìŠ¤íƒ¯ìœ¼ë¡œ ì´ˆê¸°í™” í›„ ìƒˆë¡œ ìƒì„±í•©ë‹ˆë‹¤.");
+                stat = new scPlayerStat();
+                SaveLocalGame(); // ìµœì´ˆ ì´ˆê¸° ì €ì¥
+            }
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"âŒ [DataManager] ì˜¤í”„ë¼ì¸ ë¶ˆëŸ¬ì˜¤ê¸° ë° ë³µí˜¸í™” ì‹¤íŒ¨ (íŒŒì¼ ë³€ì¡° ê°€ëŠ¥ì„±): {e.Message}");
+        }
+    }
+
+    #endregion
+
+    #region AES256 ì•”í˜¸í™” / ë³µí˜¸í™” í•µì‹¬ í•¨ìˆ˜
+
+    private string EncryptAES256(string plainText)
+    {
+        byte[] keyBytes = Encoding.UTF8.GetBytes(AesKey);
+        byte[] ivBytes = Encoding.UTF8.GetBytes(AesIV);
+
+        using (Aes aes = Aes.Create())
+        {
+            aes.Key = keyBytes;
+            aes.IV = ivBytes;
+            aes.Mode = CipherMode.CBC;
+            aes.Padding = PaddingMode.PKCS7;
+
+            ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
+
+            using (MemoryStream ms = new MemoryStream())
+            {
+                using (CryptoStream cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
+                {
+                    byte[] plainBytes = Encoding.UTF8.GetBytes(plainText);
+                    cs.Write(plainBytes, 0, plainBytes.Length);
+                    cs.FlushFinalBlock();
+                }
+                return System.Convert.ToBase64String(ms.ToArray());
+            }
+        }
+    }
+
+    private string DecryptAES256(string cipherText)
+    {
+        byte[] keyBytes = Encoding.UTF8.GetBytes(AesKey);
+        byte[] ivBytes = Encoding.UTF8.GetBytes(AesIV);
+
+        using (Aes aes = Aes.Create())
+        {
+            aes.Key = keyBytes;
+            aes.IV = ivBytes;
+            aes.Mode = CipherMode.CBC;
+            aes.Padding = PaddingMode.PKCS7;
+
+            ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
+
+            using (MemoryStream ms = new MemoryStream(System.Convert.FromBase64String(cipherText)))
+            {
+                using (CryptoStream cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read))
+                {
+                    using (StreamReader reader = new StreamReader(cs, Encoding.UTF8))
+                    {
+                        return reader.ReadToEnd();
+                    }
+                }
+            }
+        }
+    }
+
+    #endregion
+
+    #region ì˜¨ë¼ì¸ DB ì €ì¥ / ë¶ˆëŸ¬ì˜¤ê¸° (PHP ì„œë²„)
+
+    private void SaveOnlineGame()
+    {
         if (currentUserId == -1)
         {
-            Debug.LogError("[SaveGame ½ÇÆĞ] ·Î±×ÀÎµÈ À¯Àú ID°¡ ¾ø½À´Ï´Ù. ¿ÀÇÁ¶óÀÎ »óÅÂÀÌ°Å³ª ·Î±×ÀÎÀ» ¾È Çß½À´Ï´Ù.");
+            Debug.LogError("[SaveGame ì‹¤íŒ¨] ë¡œê·¸ì¸ëœ ìœ ì € IDê°€ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
-        // ¼­¹ö·Î º¸³¾ ¶§ »ç¿ëÇÒ ÀÓ½Ã º¸µû¸® µ¥ÀÌÅÍ ±¸Á¶ »ı¼º
         SavePayload payload = new SavePayload
         {
             userId = currentUserId,
@@ -36,15 +238,25 @@ public class DataManager : MonoBehaviour
         };
 
         string json = JsonUtility.ToJson(payload);
-
-        // ÄÚ·çÆ¾ ½ÇÇàÀ» À§ÇØ ÀÓ½Ã·Î MonoBehaviourÀÇ StartCoroutineÀ» È°¿ëÇÏ°Å³ª,
-        // ÀÌ ½ºÅ©¸³Æ®°¡ ºÙÀº ¿ÀºêÁ§Æ® ÄÄÆ÷³ÍÆ® ÀÚÃ¼¿¡¼­ ÄÚ·çÆ¾À» µ¹¸³´Ï´Ù.
         StartCoroutine(SaveRequestRoutine(json));
+    }
+
+    private void LoadOnlineGame(scPlayerStat incomingStats)
+    {
+        if (incomingStats != null)
+        {
+            stat = incomingStats;
+            Debug.Log("[DataManager] ì˜¨ë¼ì¸ ì„œë²„ ìŠ¤íƒ¯ ë¡œë“œ ì™„ë£Œ!");
+        }
+        else
+        {
+            Debug.LogError("[DataManager] ì„œë²„ë¡œë¶€í„° ì „ë‹¬ë°›ì€ ìŠ¤íƒ¯ ë°ì´í„°ê°€ nullì…ë‹ˆë‹¤!");
+        }
     }
 
     private IEnumerator SaveRequestRoutine(string jsonPayload)
     {
-        Debug.Log("[SaveGame] ¼­¹ö·Î µ¥ÀÌÅÍ¸¦ ÀúÀåÇÏ´Â Áß...");
+        Debug.Log("ğŸŒ [SaveGame] ì„œë²„ë¡œ ë°ì´í„°ë¥¼ ì €ì¥í•˜ëŠ” ì¤‘...");
 
         using (UnityWebRequest request = new UnityWebRequest(serverUrl + "save.php", "POST"))
         {
@@ -57,44 +269,30 @@ public class DataManager : MonoBehaviour
 
             if (request.result == UnityWebRequest.Result.Success)
             {
-                // ¾Õ¼­ ÀÛ¼ºÇÑ °¡À§Áú ¹æ¾î ÄÚµå¸¦ ¶È°°ÀÌ Àû¿ëÇÕ´Ï´Ù.
                 string rawText = request.downloadHandler.text;
-                if (rawText.Contains("{"))
+
+                if (!string.IsNullOrEmpty(rawText) && rawText.Contains("{"))
                 {
-                    rawText = rawText.Substring(rawText.IndexOf('{')).Trim();
+                    int jsonStartIndex = rawText.IndexOf('{');
+                    int jsonEndIndex = rawText.LastIndexOf('}');
+                    if (jsonEndIndex > jsonStartIndex)
+                    {
+                        rawText = rawText.Substring(jsonStartIndex, (jsonEndIndex - jsonStartIndex) + 1).Trim();
+                    }
                 }
 
-                // ¼º°ø ¸Ş½ÃÁö È®ÀÎ¿ë ÀÓ½Ã ÆÄ½Ì
-                PhpResponse response = JsonUtility.FromJson<PhpResponse>(rawText);
+                DataManagerPhpResponse response = JsonUtility.FromJson<DataManagerPhpResponse>(rawText);
                 if (response != null)
                 {
-                    Debug.Log($"[¼­¹ö ÀÀ´ä] {response.message}");
+                    Debug.Log($"[ì„œë²„ ì‘ë‹µ] {response.message}");
                 }
             }
             else
             {
-                Debug.LogError("[SaveGame ½ÇÆĞ] ¿¬°á ¿À·ù: " + request.error);
+                Debug.LogError("[SaveGame ì‹¤íŒ¨] ì—°ê²° ì˜¤ë¥˜: " + request.error);
             }
         }
     }
 
-    public void LoadGame(scPlayerStat incomingStats)
-    {
-        if (incomingStats != null)
-        {
-            stat = incomingStats;
-            Debug.Log("[DataManager] ·Î±×ÀÎ ¼º°øÀ¸·Î ¼­¹ö ½ºÅÈ ·Îµå ¿Ï·á!");
-        }
-        else
-        {
-            Debug.LogError("[DataManager] ¼­¹ö·ÎºÎÅÍ Àü´Ş¹ŞÀº ½ºÅÈ µ¥ÀÌÅÍ°¡ nullÀÔ´Ï´Ù!");
-        }
-    }
-}
-
-[System.Serializable]
-public class SavePayload
-{
-    public int userId;
-    public scPlayerStat stats;
+    #endregion
 }

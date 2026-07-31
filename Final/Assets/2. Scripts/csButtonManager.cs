@@ -107,6 +107,8 @@ public class csButtonManager : MonoBehaviour
             request.downloadHandler = new DownloadHandlerBuffer();
             request.SetRequestHeader("Content-Type", "application/json");
 
+            request.timeout = 3;
+
             yield return request.SendWebRequest();
 
             if (request.result == UnityWebRequest.Result.Success)
@@ -136,8 +138,9 @@ public class csButtonManager : MonoBehaviour
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogError($"[JSON 파싱 에러] 올바른 JSON 포맷이 아닙니다.\n수신 문자열: {rawText}\n에러 메시지: {ex.Message}");
-                    LogMessage("서버 응답 처리 중 오류가 발생했습니다.");
+                    Debug.LogError($"[JSON 파싱 에러] 수신 문자열: {rawText}\n에러 메시지: {ex.Message}");
+                    LogMessage("서버 응답 오류! 오프라인 모드로 진입합니다.");
+                    StartCoroutine(CoEnterOfflineMode());
                     yield break;
                 }
 
@@ -149,40 +152,66 @@ public class csButtonManager : MonoBehaviour
 
                 LogMessage(response.message);
 
-                if (response.success)
+                // 온라인 로그인 성공 처리
+                if (dataManager == null) dataManager = DataManager.Instance ?? FindFirstObjectByType<DataManager>();
+
+                if (isLogin)
                 {
-                    if (dataManager == null) dataManager = FindFirstObjectByType<DataManager>();
-
-                    if (isLogin)
+                    if (dataManager != null)
                     {
-                        if (dataManager != null)
-                        {
-                            dataManager.SetUserData(response.user_index, response.stats);
-                        }
-
-                        // 💡 중복 접속 감시 매니저가 존재하는 경우 세션 체크 시작
-                        if (SessionManager.Instance != null && !string.IsNullOrEmpty(response.token))
-                        {
-                            SessionManager.Instance.StartSessionCheck(response.user_index, response.token);
-                        }
-
-                        LogMessage("데이터 로드 성공! 게임을 로드합니다.");
-                        yield return new WaitForSeconds(1.0f);
-                        LoadScene();
+                        dataManager.SetUserData(response.user_index, response.stats);
                     }
-                    else
+
+                    if (SessionManager.Instance != null && !string.IsNullOrEmpty(response.token))
                     {
-                        LogMessage("회원가입 완료! 자동으로 로그인 중...");
-                        yield return new WaitForSeconds(1.0f);
-                        StartCoroutine(AuthRequestRoutine("login.php", user_id, password, true));
+                        SessionManager.Instance.StartSessionCheck(response.user_index, response.token);
                     }
+
+                    LogMessage("온라인 접속 성공! 게임을 로드합니다.");
+                    yield return new WaitForSeconds(1.0f);
+                    LoadScene();
+                }
+                else
+                {
+                    LogMessage("회원가입 완료! 자동으로 로그인 중...");
+                    yield return new WaitForSeconds(1.0f);
+                    StartCoroutine(AuthRequestRoutine("login.php", user_id, password, true));
                 }
             }
             else
             {
-                LogMessage("연결 실패: " + request.error);
+                Debug.LogWarning($"[서버 연결 실패] 오류 내용: {request.error}");
+                LogMessage("⚠️ 서버와 연결할 수 없습니다. 오프라인 모드로 자동 접속합니다...");
+
+                yield return new WaitForSeconds(1.2f);
+                yield return StartCoroutine(CoEnterOfflineMode());
             }
         }
+    }
+
+
+    /// <summary>
+    /// 서버 연결 안될 때 자동으로 실행되는 오프라인 접속 코루틴
+    /// </summary>
+    private IEnumerator CoEnterOfflineMode()
+    {
+        // 1. SessionManager 오프라인 세션 시작
+        if (SessionManager.Instance != null)
+        {
+            SessionManager.Instance.StartOfflineSession();
+        }
+
+        // 2. DataManager 로컬 저장 파일 불러오기
+        if (DataManager.Instance != null)
+        {
+            DataManager.Instance.LoadGame();
+        }
+
+        LogMessage("오프라인 모드로 접속 중...");
+        yield return new WaitForSeconds(0.8f);
+
+        // 3. 게임 씬으로 이동
+        LoadScene();
     }
 
     private void LogMessage(string msg)
