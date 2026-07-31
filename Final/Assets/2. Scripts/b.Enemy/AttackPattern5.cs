@@ -177,11 +177,18 @@ public class AttackPattern5 : MonoBehaviour, IAttackPattern
     void ApplyExplosionDamage(Vector3 center, float radius, int damage)
     {
         Collider[] hits = Physics.OverlapSphere(center, radius);
+        HashSet<ITakeDamage> damagedTargets = new HashSet<ITakeDamage>();
         foreach (Collider col in hits)
         {
-            ITakeDamage target = col.GetComponent<ITakeDamage>();
-            if (target != null)
-                target.TakeDamage(damage);
+            if (!col.CompareTag("Player")) continue;
+            if (col.TryGetComponent<ITakeDamage>(out var target))
+            {
+                if (damagedTargets.Add(target))
+                {
+                    target.TakeDamage(damage);
+                    Debug.Log($"[AttackPattern5] {col.name}에게 폭발 데미지 {damage} 적용");
+                }
+            }
         }
     }
 

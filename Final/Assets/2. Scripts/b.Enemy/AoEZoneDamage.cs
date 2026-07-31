@@ -1,31 +1,34 @@
 using UnityEngine;
 
-// ============================================================
-//  AoEZoneDamage
-//  AttackPattern1이 런타임에 장판 오브젝트에 AddComponent로 붙임
-// ============================================================
 public class AoEZoneDamage : MonoBehaviour
 {
-    [HideInInspector] public int damage = 20;
+    [HideInInspector] 
+    public int damage;
 
-    private bool _isActive       = false;
-    private bool _hasDealtDamage = false;
+    private bool isActive = false;
+    private bool hasDamaged = false; // 장판에 한 번만 데미지를 입게 하기 위한 변수
 
-    public void SetActive(bool active)
+    // AttackPattern1에서 장판이 활성화될 때 호출
+    public void SetActive(bool state)
     {
-        _isActive = active;
+        isActive = state;
     }
 
-    void OnTriggerEnter(Collider other)
+    // 콜라이더 안에 플레이어가 들어오거나 머물고 있을 때 실행
+    private void OnTriggerStay(Collider other)
     {
-        if (!_isActive)      return;
-        if (_hasDealtDamage) return;
-        if (!other.CompareTag("Player")) return;
+        // 장판이 아직 활성화되지 않았거나, 이미 데미지를 줬다면 무시
+        if (!isActive || hasDamaged) return;
 
-        if (other.TryGetComponent<ITakeDamage>(out var target))
+        // 플레이어 태그 확인
+        if (other.CompareTag("Player"))
         {
-            _hasDealtDamage = true;
-            target.TakeDamage(damage);
+            if (other.TryGetComponent<ITakeDamage>(out var target))
+            {
+                target.TakeDamage(damage);
+                Debug.Log($"[AoEZoneDamage] {other.name}에게 {damage} 장판 데미지 적용");
+                hasDamaged = true; 
+            }
         }
     }
 }

@@ -100,9 +100,39 @@ public class AttackPattern1 : MonoBehaviour, IAttackPattern
         zone.transform.SetParent(transform);
 
         // Collider 추가
-        SphereCollider col = zone.AddComponent<SphereCollider>();
+        CapsuleCollider col = zone.AddComponent<CapsuleCollider>();
         col.isTrigger = true;
         col.enabled   = false;
+
+        if (activeEffectPrefab != null)
+        {
+            CapsuleCollider effectCol = activeEffectPrefab.GetComponent<CapsuleCollider>();
+            if (effectCol != null)
+            {
+                // 프리팹의 반경, 높이, 방향, 중심축 보정을 모두 복사 (스케일도 고려)
+                col.radius = effectCol.radius * activeEffectPrefab.transform.lossyScale.x;
+                col.height = effectCol.height * activeEffectPrefab.transform.lossyScale.y;
+                col.direction = effectCol.direction;
+                
+                // 중심점(Center) 복사 시 프리팹 스케일 반영
+                Vector3 scaledCenter = effectCol.center;
+                scaledCenter.x *= activeEffectPrefab.transform.lossyScale.x;
+                scaledCenter.y *= activeEffectPrefab.transform.lossyScale.y;
+                scaledCenter.z *= activeEffectPrefab.transform.lossyScale.z;
+                col.center = scaledCenter;
+            }
+
+            else
+            {
+                Debug.LogWarning("[AttackPattern1] 이펙트 프리팹에 CapsuleCollider가 없습니다.");
+                col.radius = 3.0f;
+                col.height = 10.0f;
+            }
+        }
+
+        Rigidbody rb = zone.AddComponent<Rigidbody>();
+        rb.useGravity = false;
+        rb.isKinematic = true;
 
         // 데미지 처리 컴포넌트 추가
         AoEZoneDamage dmg = zone.AddComponent<AoEZoneDamage>();
@@ -117,7 +147,8 @@ public class AttackPattern1 : MonoBehaviour, IAttackPattern
     // ────────────────────────────────────────────
     //  장판 루틴 (경고 → 활성화 → 제거)
     // ────────────────────────────────────────────
-    IEnumerator ZoneRoutine(GameObject zone, SphereCollider col, AoEZoneDamage dmg)
+
+    IEnumerator ZoneRoutine(GameObject zone, CapsuleCollider col, AoEZoneDamage dmg)
     {
         // ── 경고 단계 ──
         GameObject warningFx = SpawnEffect(warningEffectPrefab, zone.transform);
