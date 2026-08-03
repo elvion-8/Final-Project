@@ -16871,6 +16871,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4740145899106092973, guid: c80eb222afb88204e95ad885914ad504, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7124886862659867887, guid: c80eb222afb88204e95ad885914ad504, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7582649616570537162, guid: c80eb222afb88204e95ad885914ad504, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7614318643140103765, guid: c80eb222afb88204e95ad885914ad504, type: 3}
       propertyPath: m_LocalRotation.w
       value: 0.41538116
@@ -16895,9 +16907,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -108.049
       objectReference: {fileID: 0}
+    - target: {fileID: 8471789394110992630, guid: c80eb222afb88204e95ad885914ad504, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9159102852955507597, guid: c80eb222afb88204e95ad885914ad504, type: 3}
       propertyPath: m_Name
       value: Axe
+      objectReference: {fileID: 0}
+    - target: {fileID: 9159102852955507597, guid: c80eb222afb88204e95ad885914ad504, type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
