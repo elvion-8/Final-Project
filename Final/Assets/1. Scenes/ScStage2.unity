@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 2100000, guid: 81f714daf7144784b8a2f42f1cd30927, type: 2}
+  m_SkyboxMaterial: {fileID: 2100000, guid: b13109bc4674dd24ebc04b7c12437ad6, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -17764,12 +17764,16 @@ MonoBehaviour:
   distance: 4.5
   cameraHeight: 2.5
   height: 0
+  fov: 60
+  targetCamera: {fileID: 0}
   obstacleLayers:
     serializedVersion: 2
     m_Bits: 0
   cameraRadius: 0.3
   smoothSpeed: 10
   lockOn: 0
+  lockOnMarker: {fileID: 0}
+  lockOnMarkerHeightOffset: 1
 --- !u!114 &1433590250
 MonoBehaviour:
   m_ObjectHideFlags: 0
