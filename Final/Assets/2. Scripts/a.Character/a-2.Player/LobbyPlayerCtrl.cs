@@ -71,12 +71,42 @@ public class LobbyPlayerCtrl : MonoBehaviour, ITakeDamage
 
     }
 
+    void OnEnable()
+    {
+        PlayerStatController.OnStatsChanged += UpdateStatsFromController;
+    }
+
+    void OnDisable()
+    {
+        PlayerStatController.OnStatsChanged -= UpdateStatsFromController;
+    }
+
+    private void UpdateStatsFromController()
+    {
+        scPlayerStat s = Managers.Data != null ? Managers.Data.stat : stat;
+        if (s != null)
+        {
+            int targetFullHp = 100 + s.hpUpgrade * 50;
+            int diff = targetFullHp - fullHp;
+            fullHp = targetFullHp;
+            if (diff > 0)
+            {
+                hp += diff;
+            }
+
+            if (hpBar != null && fullHp > 0)
+            {
+                hpBar.fillAmount = (float)hp / (float)fullHp;
+            }
+        }
+    }
+
     void Start()
     {
         MoveDir = Vector3.zero;
         jumpPower = 9.0f;
         gravity = 20.0f;
-        hp += stat.hpUpgrade * 50;
+        hp += stat != null ? stat.hpUpgrade * 50 : 0;
         fullHp = hp;
 
         if (obstacleLayer.value == 0)

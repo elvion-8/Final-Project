@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem;
 
 public class csMission : MonoBehaviour
 {
@@ -27,14 +28,14 @@ public class csMission : MonoBehaviour
     {
         if (isMissionPanelOpen)
         {
-            if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.X))
+            if (IsExitKeyPressed())
             {
                 ExitMission();
             }
         }
         else
         {
-            if (isPlayerInRange && Input.GetKeyDown(KeyCode.X))
+            if (isPlayerInRange && IsInteractKeyPressed())
             {
                 pnlMission.SetActive(true);
                 isMissionPanelOpen = true;
@@ -54,6 +55,29 @@ public class csMission : MonoBehaviour
                 mainCameraPos.Rotate(0, -15f, 0, Space.Self);
             }
         }
+    }
+
+    private bool IsInteractKeyPressed()
+    {
+        if (Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.JoystickButton0))
+            return true;
+
+        if (Gamepad.current != null && Gamepad.current.buttonSouth.wasPressedThisFrame)
+            return true;
+
+        return false;
+    }
+
+    private bool IsExitKeyPressed()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.A) ||
+            Input.GetKeyDown(KeyCode.JoystickButton0) || Input.GetKeyDown(KeyCode.JoystickButton1))
+            return true;
+
+        if (Gamepad.current != null && (Gamepad.current.buttonSouth.wasPressedThisFrame || Gamepad.current.buttonEast.wasPressedThisFrame))
+            return true;
+
+        return false;
     }
 
     void OnTriggerEnter(Collider other)

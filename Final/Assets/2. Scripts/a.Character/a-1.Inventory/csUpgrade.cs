@@ -1,5 +1,6 @@
 using System.ComponentModel.Design.Serialization;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class csUpgrade : MonoBehaviour
 {
@@ -25,14 +26,14 @@ public class csUpgrade : MonoBehaviour
     {
         if (isUpgradePanelOpen)
         {
-            if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.X))
+            if (IsExitKeyPressed())
             {
                 ExitUpgrade();
             }
         }
         else
         {
-            if (isPlayerInRange && Input.GetKeyDown(KeyCode.X))
+            if (isPlayerInRange && IsInteractKeyPressed())
             {
                 pnlUpgrade.SetActive(true);
                 isUpgradePanelOpen = true;
@@ -51,6 +52,29 @@ public class csUpgrade : MonoBehaviour
                 mainCameraPos.Rotate(0, -15f, 0, Space.Self);
             }
         }
+    }
+
+    private bool IsInteractKeyPressed()
+    {
+        if (Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.JoystickButton0))
+            return true;
+
+        if (Gamepad.current != null && Gamepad.current.buttonSouth.wasPressedThisFrame)
+            return true;
+
+        return false;
+    }
+
+    private bool IsExitKeyPressed()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.A) ||
+            Input.GetKeyDown(KeyCode.JoystickButton0) || Input.GetKeyDown(KeyCode.JoystickButton1))
+            return true;
+
+        if (Gamepad.current != null && (Gamepad.current.buttonSouth.wasPressedThisFrame || Gamepad.current.buttonEast.wasPressedThisFrame))
+            return true;
+
+        return false;
     }
 
     void OnTriggerEnter(Collider other)

@@ -504,9 +504,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: PlayerStatManage, Assembly-CSharp
-        m_MethodName: UpgradeHp
+      - m_Target: {fileID: 439022130}
+        m_TargetAssemblyTypeName: csUpgrade, Assembly-CSharp
+        m_MethodName: HpUpgrade
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -830,6 +830,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 153391823}
   m_CullTransparentMesh: 1
+--- !u!1 &153904031
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 153904033}
+  - component: {fileID: 153904032}
+  m_Layer: 0
+  m_Name: cheat
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &153904032
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 153904031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c40c975147991a4394528da6827f4cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &153904033
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 153904031}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &156171647 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5903493157727973117, guid: f466311c49fba214596cb20994cedf4d, type: 3}
@@ -1076,9 +1120,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: PlayerStatManage, Assembly-CSharp
-        m_MethodName: UpgradeAttackSpeed
+      - m_Target: {fileID: 439022130}
+        m_TargetAssemblyTypeName: csUpgrade, Assembly-CSharp
+        m_MethodName: WeaponAttackSpeedUpgrade
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4011,9 +4055,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: PlayerStatManage, Assembly-CSharp
-        m_MethodName: UpgradeWeaponDmg
+      - m_Target: {fileID: 439022130}
+        m_TargetAssemblyTypeName: csUpgrade, Assembly-CSharp
+        m_MethodName: WeaponDmgUpgrade
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4276,9 +4320,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: PlayerStatManage, Assembly-CSharp
-        m_MethodName: UpgradeCritProb
+      - m_Target: {fileID: 439022130}
+        m_TargetAssemblyTypeName: csUpgrade, Assembly-CSharp
+        m_MethodName: WeaponCritProbUpgrade
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5189,7 +5233,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1119780944}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 439022124}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1119780944
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6288,9 +6344,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: PlayerStatManage, Assembly-CSharp
-        m_MethodName: UpgradeCritDmg
+      - m_Target: {fileID: 439022130}
+        m_TargetAssemblyTypeName: csUpgrade, Assembly-CSharp
+        m_MethodName: WeaponCritDmgUpgrade
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -10173,3 +10229,4 @@ SceneRoots:
   - {fileID: 1179570102}
   - {fileID: 671035044}
   - {fileID: 312646532}
+  - {fileID: 153904033}

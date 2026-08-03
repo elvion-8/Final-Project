@@ -177,6 +177,38 @@ public class PlayerCtrl : MonoBehaviour, ITakeDamage
     public float JumpPowerVal => statController != null ? statController.JumpPower : jumpPower;
     public int JumpCountVal => statController != null ? statController.JumpCount : jumpCnt;
 
+    void OnEnable()
+    {
+        PlayerStatController.OnStatsChanged += UpdateStatsFromController;
+    }
+
+    void OnDisable()
+    {
+        PlayerStatController.OnStatsChanged -= UpdateStatsFromController;
+    }
+
+    private void UpdateStatsFromController()
+    {
+        if (statController != null)
+        {
+            int oldFullHp = fullHp;
+            fullHp = Mathf.RoundToInt(statController.MaxHP);
+            if (oldFullHp > 0 && fullHp > oldFullHp)
+            {
+                hp += (fullHp - oldFullHp);
+            }
+            else if (oldFullHp <= 0)
+            {
+                hp = fullHp;
+            }
+
+            if (hpBar != null && fullHp > 0)
+            {
+                hpBar.fillAmount = (float)hp / (float)fullHp;
+            }
+        }
+    }
+
     void Start()
     {
         MoveDir = Vector3.zero;
