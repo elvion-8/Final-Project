@@ -62,6 +62,24 @@ public class EnemyDeath : MonoBehaviour
             Instantiate(BlackHole, transform.position, transform.rotation);
         }
 
+        if (PhotonNetwork.isMasterClient)
+        {
+            // 씬에서 Portal 오브젝트를 찾기(Reasources의 Portal아님)
+            GameObject spawnerObj = GameObject.FindWithTag("Portal");
+            if (spawnerObj != null)
+            {
+                PortalSpawner spawner = spawnerObj.GetComponent<PortalSpawner>();
+                if (spawner != null)
+                {
+                    spawner.SpawnNetworkPortal();
+                }
+            }
+            else
+            {
+                Debug.LogWarning("씬에 'Portal' 태그를 가진 오브젝트가 없습니다!");
+            }
+        }
+
         // 연출용 오브젝트 삭제
         Destroy(gameObject);
     }

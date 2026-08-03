@@ -17,6 +17,7 @@ TagManager:
   - WeaponEffectManager
   - Target
   - UI
+  - Portal
   layers:
   - Default
   - TransparentFX

@@ -70,4 +70,7 @@ MonoBehaviour:
   - RpcReleaseBindEarly
   - RpcSetBoundTarget
   - RpcUpdateBindFill
+  - RPC_RequestLoadScene
+  - RPC_ExecuteSceneTransition
+  - RPC_RequestSceneTransition
   DisableAutoOpenWizard: 1
