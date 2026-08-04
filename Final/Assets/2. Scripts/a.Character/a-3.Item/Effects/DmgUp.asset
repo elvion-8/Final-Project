@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: DmgUp
   m_EditorClassIdentifier: 
   statType: 1
-  modifierValue: 100
+  modifierValue: 10
   duration: 0
