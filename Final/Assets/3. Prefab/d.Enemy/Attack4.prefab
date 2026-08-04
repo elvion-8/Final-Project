@@ -46,12 +46,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   coreOpenEffectPrefab: {fileID: 1315764361558410, guid: f99c3ed97779c5b4eb026cb91d4e4933, type: 3}
   beamPrefab: {fileID: 1395565506770744, guid: 9d5dbdf2d3c3c6b4eadc51123699d237, type: 3}
-  beamRange: 30
+  beamRange: 50
   warningDuration: 1
   beamSustainDuration: 1.2
   beamSpeed: 0
-  firePointOffset: {x: 0, y: 1.5, z: 2}
+  firePointOffset: {x: 0, y: 4, z: 0}
+  coreTransform: {fileID: 0}
   damage: 10
+  beamRadius: 2
+  targetMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  damageTickInterval: 0.6
   warningZoomAmount: 10.8
   shakeIntensity: 0.503
   shakeDuration: 0.35

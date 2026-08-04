@@ -36,13 +36,29 @@ public class AttackPattern4 : MonoBehaviour, IAttackPattern
     [Range(0f, 200f)]
     public float beamSpeed = 0f;
 
-    [Tooltip("빔 발사 위치 오프셋 (적 기준)")]
+    [Tooltip("빔 발사 위치 오프셋 (적 기준) — coreTransform이 비어있을 때만 사용되는 폴백")]
     public Vector3 firePointOffset = new Vector3(0f, 1.5f, 2f);
+
+    // ★추가: 발사 위치를 Core 오브젝트 중앙으로
+    [Header("발사 위치")]
+    [Tooltip("빔이 나올 Core 오브젝트. 지정하면 이 오브젝트 중앙에서 발사, 비우면 firePointOffset 사용")]
+    public Transform coreTransform;
 
     [Header("데미지 설정")]
     [Tooltip("빔 1회 피격 데미지")]
     [Min(1)]
     public int damage = 60;
+
+    // ★추가: 레이캐스트 기반 데미지 판정 설정
+    [Header("데미지 판정")]
+    [Tooltip("빔 굵기(판정 반지름). 0에 가까우면 얇은 선 판정")]
+    public float beamRadius = 0.5f;
+
+    [Tooltip("빔에 맞을 대상 레이어. Player 레이어만 켜두는 걸 권장")]
+    public LayerMask targetMask = ~0;
+
+    [Tooltip("빔 유지 중 데미지 재적용 간격(초). beamSustainDuration보다 크면 1회만 적중")]
+    public float damageTickInterval = 0.3f;
 
     [Header("카메라 연출")]
     [Tooltip("예고 중 카메라 줌인 정도 (FOV 감소량)")]
@@ -77,6 +93,10 @@ public class AttackPattern4 : MonoBehaviour, IAttackPattern
     {
         _enemyTr     = enemyTr;
         _traceTarget = traceTarget;
+
+        // 인스펙터에서 coreTransform을 안 넣었으면 자식에서 "Core" 자동 탐색
+        if (coreTransform == null && _enemyTr != null)
+            coreTransform = FindDeepChild(_enemyTr, "Core");
     }
 
     public IEnumerator Execute()
@@ -87,13 +107,16 @@ public class AttackPattern4 : MonoBehaviour, IAttackPattern
     // ────────────────────────────────────────────
     //  전체 루틴
     //  1) 예고: 코어 개방 VFX + 카메라 줌인 (warningDuration)
-    //  2) 발사: 빔 생성 + 데미지 활성화 + Shake/플래시 (beamSustainDuration)
+    //  2) 발사: 빔 생성 + 데미지 판정 + Shake/플래시 (beamSustainDuration)
     // ────────────────────────────────────────────
     IEnumerator IrisOverloadRoutine()
     {
         if (_enemyTr == null) yield break;
 
-        Vector3 firePos = _enemyTr.position + firePointOffset;
+        // Core 오브젝트가 있으면 그 중앙에서, 없으면 기존 오프셋으로
+        Vector3 firePos = (coreTransform != null)
+            ? coreTransform.position
+            : _enemyTr.position + firePointOffset;
 
         // 사거리 체크 (AttackPattern3과 동일 방식)
         if (_traceTarget != null)
@@ -121,8 +144,11 @@ public class AttackPattern4 : MonoBehaviour, IAttackPattern
 
         if (_coreOpenObj != null) Destroy(_coreOpenObj);
 
-        // ── 2단계: 발사 (데미지 + Shake + 플래시) ────────
+        // ── 2단계: 발사 (연출 + 데미지 판정) ────────────
         FireBeam(firePos, fireDir);
+
+        // 레이캐스트 데미지 판정을 유지시간 동안 돌림
+        StartCoroutine(BeamDamageRoutine(firePos, fireDir, beamSustainDuration));
 
         StartCoroutine(CameraShakeRoutine(shakeIntensity, shakeDuration));
         StartCoroutine(ScreenFlashRoutine(flashColor, flashDuration));
@@ -133,7 +159,7 @@ public class AttackPattern4 : MonoBehaviour, IAttackPattern
     }
 
     // ────────────────────────────────────────────
-    //  빔 발사 (데미지 컴포넌트 부착)
+    //  빔 발사 (연출용임.. 데미지는 BeamDamageRoutine이 담당)
     // ────────────────────────────────────────────
     void FireBeam(Vector3 firePos, Vector3 fireDir)
     {
@@ -148,10 +174,6 @@ public class AttackPattern4 : MonoBehaviour, IAttackPattern
 
         if (beamSpeed > 0f)
             ApplySpeed(_beamObj, beamSpeed);
-
-        // AttackPattern3과 동일한 데미지 컴포넌트 재사용
-        LaserHitDamage hitDmg = _beamObj.AddComponent<LaserHitDamage>();
-        hitDmg.damage = damage;
     }
 
     void ApplySpeed(GameObject obj, float speed)
@@ -160,6 +182,39 @@ public class AttackPattern4 : MonoBehaviour, IAttackPattern
         {
             var main = ps.main;
             main.startSpeed = speed;
+        }
+    }
+
+    // ────────────────────────────────────────────
+    //  빔 데미지 판정 (SphereCast)
+    //  방향은 발사 시점에 고정되므로 origin/dir을 그대로 재사용.
+    //  멀티: 연출은 각 클라 각자, 데미지는 오프라인이면 그냥 /
+    //        룸이면 마스터만 실행
+    // ────────────────────────────────────────────
+    IEnumerator BeamDamageRoutine(Vector3 origin, Vector3 dir, float duration)
+    {
+        if (PhotonNetwork.inRoom && !PhotonNetwork.isMasterClient) yield break;
+
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            ApplyBeamDamage(origin, dir);
+            yield return new WaitForSeconds(damageTickInterval);
+            elapsed += damageTickInterval;
+        }
+    }
+
+    void ApplyBeamDamage(Vector3 origin, Vector3 dir)
+    {
+        RaycastHit[] hits = Physics.SphereCastAll(
+            origin, beamRadius, dir, beamRange, targetMask, QueryTriggerInteraction.Ignore);
+
+        foreach (var hit in hits)
+        {
+            // 프로젝트의 ITakeDamage 라우팅 사용 (AoE/보스러시와 동일 계열)
+            var target = hit.collider.GetComponentInParent<ITakeDamage>();
+            if (target != null)
+                target.TakeDamage(damage);   // ← ITakeDamage 실제 시그니처에 맞춰. 공격자 인자 있으면 (damage, gameObject)
         }
     }
 
@@ -174,6 +229,20 @@ public class AttackPattern4 : MonoBehaviour, IAttackPattern
             return (targetPos - firePos).normalized;
         }
         return _enemyTr.forward;
+    }
+
+    // ────────────────────────────────────────────
+    //  자식 계층에서 이름으로 Transform 재귀 탐색
+    // ────────────────────────────────────────────
+    Transform FindDeepChild(Transform parent, string childName)
+    {
+        foreach (Transform c in parent)
+        {
+            if (c.name == childName) return c;
+            Transform found = FindDeepChild(c, childName);
+            if (found != null) return found;
+        }
+        return null;
     }
 
     // ────────────────────────────────────────────

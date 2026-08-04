@@ -49,7 +49,7 @@ MonoBehaviour:
   pullRange: 12
   pullDuration: 2
   pullSpeed: 4
-  explosionRadius: 6
+  explosionRadius: 6.07
   explosionDamage: 50
   pullZoomAmount: 8
   shakeIntensity: 0.3

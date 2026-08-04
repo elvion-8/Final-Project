@@ -11,21 +11,37 @@ public class TentacleIKController : MonoBehaviour
     [Header("IK 제어 설정")]
     public float smoothStopDuration = 1.0f;
 
+    [Header("애니메이션 이벤트용 타겟")]
+    public Transform animTarget;
+
+    public void AnimEvent_StartFollow()
+    {
+        Debug.Log("[Tentacle] StartFollow 호출됨!");
+        StopAllCoroutines();
+        foreach (var tail in tentacles)
+        {
+            if (tail == null) continue;
+            tail.UseIK = true;
+            tail.IKBlend = 1f;
+            tail.IKSetCustomPosition(null);   // 인스펙터에 지정된 IK Target(Target1/Target2)을 각자 따라감
+        }
+    }
+    public void AnimEvent_StopFollow()
+    {
+        StopAllTentaclesIK();
+    }
+
     // ============================================================
     // [초기화] 게임 시작 시 기본 상태 설정
     // ============================================================
     private void Start()
     {
-        // 게임이 시작될 때 모든 다리의 추적(IK) 기능을 즉시 비활성화합니다.
         if (tentacles == null) return;
-
         foreach (var tail in tentacles)
         {
-            if (tail != null)
-            {
-                tail.IKBlend = 0f;
-                tail.UseIK = false;
-            }
+            if (tail == null) continue;
+            tail.IKBlend = 0f;
+            tail.UseIK = false;
         }
     }
 
@@ -179,20 +195,21 @@ public class TentacleIKController : MonoBehaviour
     /// <param name="stopOthers">나머지 다리들의 IK를 끌 것인지 여부 (기본값: true)</param>
     public void SetTargetAndFollowSingle(int index, Transform newTarget, bool stopOthers = true)
     {
-        // 1. 나머지 다리들을 모두 정지시킴
-        if (stopOthers) 
+        if (!IsValidIndex(index)) return;
+
+        if (stopOthers)
         {
-            StopAllTentaclesIK();
+            for (int i = 0; i < tentacles.Length; i++)
+            {
+                if (i == index || tentacles[i] == null) continue;
+                StopTentacleIK(i);   // 대상 다리는 제외하고 나머지만 부드럽게 정지
+            }
         }
 
-        // 2. 지정한 다리만 타겟을 변경하고 활성화
-        if (IsValidIndex(index))
-        {
-            tentacles[index].IKTarget = newTarget; // 새로운 타겟 오브젝트 할당
-            tentacles[index].UseIK = true;
-            tentacles[index].IKBlend = 1f;
-            tentacles[index].IKSetCustomPosition(null); // 특정 좌표 고정을 풀고 오브젝트를 쫓게 함
-        }
+        tentacles[index].IKTarget = newTarget;
+        tentacles[index].UseIK = true;
+        tentacles[index].IKBlend = 1f;
+        tentacles[index].IKSetCustomPosition(null);
     }
 
     /// <summary>
@@ -203,22 +220,23 @@ public class TentacleIKController : MonoBehaviour
     /// <param name="stopOthers">나머지 다리들의 IK를 끌 것인지 여부 (기본값: true)</param>
     public void SetTargetAndFollowGroup(int[] indices, Transform newTarget, bool stopOthers = true)
     {
-        // 1. 나머지 다리들을 모두 정지시킴
-        if (stopOthers) 
+        if (stopOthers)
         {
-            StopAllTentaclesIK();
-        }
-
-        // 2. 배열로 전달받은 다리들만 타겟을 변경하고 활성화
-        foreach (int i in indices)
-        {
-            if (IsValidIndex(i))
+            for (int i = 0; i < tentacles.Length; i++)
             {
-                tentacles[i].IKTarget = newTarget;
-                tentacles[i].UseIK = true;
-                tentacles[i].IKBlend = 1f;
-                tentacles[i].IKSetCustomPosition(null);
+                if (tentacles[i] == null) continue;
+                if (System.Array.IndexOf(indices, i) >= 0) continue; // 대상 다리는 정지 대상에서 제외
+                StopTentacleIK(i);
             }
         }
-    }
+
+        foreach (int i in indices)
+        {
+            if (!IsValidIndex(i)) continue;
+            tentacles[i].IKTarget = newTarget;
+            tentacles[i].UseIK = true;
+            tentacles[i].IKBlend = 1f;
+            tentacles[i].IKSetCustomPosition(null);
+        }
+    } 
 }

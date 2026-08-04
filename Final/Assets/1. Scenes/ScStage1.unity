@@ -3132,27 +3132,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2606199624365376920, guid: cefa34030b7b5824fadfa099f90e0df5, type: 3}
       propertyPath: animTable.Array.data[0].extraDelay
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2606199624365376920, guid: cefa34030b7b5824fadfa099f90e0df5, type: 3}
       propertyPath: animTable.Array.data[1].extraDelay
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2606199624365376920, guid: cefa34030b7b5824fadfa099f90e0df5, type: 3}
       propertyPath: animTable.Array.data[2].extraDelay
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2606199624365376920, guid: cefa34030b7b5824fadfa099f90e0df5, type: 3}
       propertyPath: animTable.Array.data[3].extraDelay
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2606199624365376920, guid: cefa34030b7b5824fadfa099f90e0df5, type: 3}
       propertyPath: animTable.Array.data[4].extraDelay
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2606199624365376920, guid: cefa34030b7b5824fadfa099f90e0df5, type: 3}
       propertyPath: animTable.Array.data[5].extraDelay
-      value: 0
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2606199624365376920, guid: cefa34030b7b5824fadfa099f90e0df5, type: 3}
+      propertyPath: animTable.Array.data[6].extraDelay
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3840601124338045230, guid: cefa34030b7b5824fadfa099f90e0df5, type: 3}
       propertyPath: dropTable.Array.data[0].minCount

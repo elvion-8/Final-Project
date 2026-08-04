@@ -32,6 +32,8 @@ Transform:
   - {fileID: 990555879914560521}
   - {fileID: 6993933893132750343}
   - {fileID: 5034571084329135106}
+  - {fileID: 2399076311323499072}
+  - {fileID: 5940347806960017648}
   m_Father: {fileID: 2332704901982450317}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1713320392688721978
@@ -63,12 +65,12 @@ Transform:
   m_LocalScale: {x: 5, y: 5, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 4135639565151887412}
+  - {fileID: 697897984398885850}
   - {fileID: 6179896415313960166}
   - {fileID: 825148610299259850}
-  - {fileID: 5005905091915407959}
-  - {fileID: 697897984398885850}
   - {fileID: 7498583126032558346}
+  - {fileID: 5005905091915407959}
+  - {fileID: 4135639565151887412}
   m_Father: {fileID: 6993933893132750343}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3197093123523781393
@@ -139,17 +141,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c10ee17af33c5bd47b25dc3699d7860e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isStationary: 0
   animTable:
   - trigger: Idle1
     clip: {fileID: 7400000, guid: aa0c12a6b8237214e86c6655689c996a, type: 2}
-    extraDelay: 3
+    extraDelay: 1
   - trigger: Idle2
     clip: {fileID: 7400000, guid: 37ddf3c990920a6419abee263e8ca440, type: 2}
-    extraDelay: 0
+    extraDelay: 1
   - trigger: Aggro
     clip: {fileID: 7400000, guid: 01385bae3700cbc4b9a3c139f0096036, type: 2}
-    extraDelay: 0
+    extraDelay: 1
+  - trigger: Attack4
+    clip: {fileID: 7400000, guid: 0b7105684746f86409a80c9dc194468a, type: 2}
+    extraDelay: 1
   animSpeedMultiplier: 1
   fallbackDuration: 1
   attackCooldown: 1.5
@@ -196,6 +200,7 @@ MonoBehaviour:
   - {fileID: 3945268774029359208}
   - {fileID: 6986484754432044954}
   smoothStopDuration: 1
+  animTarget: {fileID: 0}
 --- !u!1 &3683281984212198883
 GameObject:
   m_ObjectHideFlags: 0
@@ -226,11 +231,11 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5702721564935738962}
-  - {fileID: 7980659018716247230}
-  - {fileID: 8272288856351956661}
   - {fileID: 220920792838284424}
-  - {fileID: 9104565867439154169}
   - {fileID: 2250136212712724711}
+  - {fileID: 8272288856351956661}
+  - {fileID: 7980659018716247230}
+  - {fileID: 9104565867439154169}
   m_Father: {fileID: 990555879914560521}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4055747626798057327
@@ -338,6 +343,68 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &5138335193674104273
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2399076311323499072}
+  m_Layer: 0
+  m_Name: Target1
+  m_TagString: Target
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2399076311323499072
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5138335193674104273}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4072132018042800054}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7990010814115086417
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5940347806960017648}
+  m_Layer: 0
+  m_Name: Target2
+  m_TagString: Target
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5940347806960017648
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7990010814115086417}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4072132018042800054}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &220920792837897752
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -349,6 +416,10 @@ PrefabInstance:
     - target: {fileID: 100016, guid: 06482bf7b9d61ab45bb2afe809282cc8, type: 3}
       propertyPath: m_Name
       value: Tentacle (8)
+      objectReference: {fileID: 0}
+    - target: {fileID: 100016, guid: 06482bf7b9d61ab45bb2afe809282cc8, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 400016, guid: 06482bf7b9d61ab45bb2afe809282cc8, type: 3}
       propertyPath: m_LocalScale.x
@@ -678,7 +749,7 @@ MonoBehaviour:
       m_RotationOrder: 4
     Use2D: 0
     Invert: 0
-  IKTarget: {fileID: 220920792838284478}
+  IKTarget: {fileID: 2399076311323499072}
   IKAlignEndWithTarget: 0
   IKAutoWeights: 1
   IKBaseReactionWeight: 0.65
@@ -1131,8 +1202,38 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7408102131176609238, guid: 291f7a022596ec04cb0c6be410d566d1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2752692122775136929}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4592464865913088083, guid: 291f7a022596ec04cb0c6be410d566d1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 9196519319181301287}
   m_SourcePrefab: {fileID: 100100000, guid: 291f7a022596ec04cb0c6be410d566d1, type: 3}
+--- !u!1 &4069593833972740994 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4592464865913088083, guid: 291f7a022596ec04cb0c6be410d566d1, type: 3}
+  m_PrefabInstance: {fileID: 558917432084175825}
+  m_PrefabAsset: {fileID: 0}
+--- !u!64 &9196519319181301287
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4069593833972740994}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 2959467708922500008, guid: 884f622086379874bb3892ce39e42e58, type: 3}
 --- !u!4 &6993933893132750343 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7408102131176609238, guid: 291f7a022596ec04cb0c6be410d566d1, type: 3}
@@ -1478,7 +1579,7 @@ MonoBehaviour:
       m_RotationOrder: 4
     Use2D: 0
     Invert: 0
-  IKTarget: {fileID: 697897984398885868}
+  IKTarget: {fileID: 5940347806960017648}
   IKAlignEndWithTarget: 0
   IKAutoWeights: 1
   IKBaseReactionWeight: 0.65
@@ -2279,7 +2380,7 @@ MonoBehaviour:
       m_RotationOrder: 4
     Use2D: 0
     Invert: 0
-  IKTarget: {fileID: 0}
+  IKTarget: {fileID: 5940347806960017648}
   IKAlignEndWithTarget: 0
   IKAutoWeights: 1
   IKBaseReactionWeight: 0.65
@@ -2612,6 +2713,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tentacle (7)
       objectReference: {fileID: 0}
+    - target: {fileID: 100016, guid: 06482bf7b9d61ab45bb2afe809282cc8, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 400016, guid: 06482bf7b9d61ab45bb2afe809282cc8, type: 3}
       propertyPath: m_LocalScale.x
       value: 1
@@ -2940,7 +3045,7 @@ MonoBehaviour:
       m_RotationOrder: 4
     Use2D: 0
     Invert: 0
-  IKTarget: {fileID: 0}
+  IKTarget: {fileID: 2399076311323499072}
   IKAlignEndWithTarget: 0
   IKAutoWeights: 1
   IKBaseReactionWeight: 0.65
@@ -3671,7 +3776,7 @@ MonoBehaviour:
       m_RotationOrder: 4
     Use2D: 0
     Invert: 0
-  IKTarget: {fileID: 0}
+  IKTarget: {fileID: 2399076311323499072}
   IKAlignEndWithTarget: 0
   IKAutoWeights: 1
   IKBaseReactionWeight: 0.65
@@ -4402,7 +4507,7 @@ MonoBehaviour:
       m_RotationOrder: 4
     Use2D: 0
     Invert: 0
-  IKTarget: {fileID: 0}
+  IKTarget: {fileID: 2399076311323499072}
   IKAlignEndWithTarget: 0
   IKAutoWeights: 1
   IKBaseReactionWeight: 0.65
@@ -4669,8 +4774,8 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   DeflectOnlyCollisions: 1
-  _Editor_Category: 0
-  _Editor_FeaturesCategory: 0
+  _Editor_Category: 2
+  _Editor_FeaturesCategory: 2
   DrawGizmos: 1
   StartBone: {fileID: 5005905091915407961}
   EndBone: {fileID: 0}
@@ -4804,6 +4909,10 @@ PrefabInstance:
     - target: {fileID: 100016, guid: 06482bf7b9d61ab45bb2afe809282cc8, type: 3}
       propertyPath: m_Name
       value: Tentacle (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 100016, guid: 06482bf7b9d61ab45bb2afe809282cc8, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 400016, guid: 06482bf7b9d61ab45bb2afe809282cc8, type: 3}
       propertyPath: m_LocalScale.x
@@ -5133,7 +5242,7 @@ MonoBehaviour:
       m_RotationOrder: 4
     Use2D: 0
     Invert: 0
-  IKTarget: {fileID: 0}
+  IKTarget: {fileID: 2399076311323499072}
   IKAlignEndWithTarget: 0
   IKAutoWeights: 1
   IKBaseReactionWeight: 0.65
@@ -5400,8 +5509,8 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   DeflectOnlyCollisions: 1
-  _Editor_Category: 0
-  _Editor_FeaturesCategory: 0
+  _Editor_Category: 2
+  _Editor_FeaturesCategory: 2
   DrawGizmos: 1
   StartBone: {fileID: 5702721564935738972}
   EndBone: {fileID: 0}
@@ -5859,7 +5968,7 @@ MonoBehaviour:
       m_RotationOrder: 4
     Use2D: 0
     Invert: 0
-  IKTarget: {fileID: 0}
+  IKTarget: {fileID: 5940347806960017648}
   IKAlignEndWithTarget: 0
   IKAutoWeights: 1
   IKBaseReactionWeight: 0.65
@@ -6665,7 +6774,7 @@ MonoBehaviour:
       m_RotationOrder: 4
     Use2D: 0
     Invert: 0
-  IKTarget: {fileID: 0}
+  IKTarget: {fileID: 5940347806960017648}
   IKAlignEndWithTarget: 0
   IKAutoWeights: 1
   IKBaseReactionWeight: 0.65
@@ -7048,13 +7157,43 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7408102131176609238, guid: 291f7a022596ec04cb0c6be410d566d1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4637835554543205648}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4592464865913088083, guid: 291f7a022596ec04cb0c6be410d566d1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3748974438902550980}
   m_SourcePrefab: {fileID: 100100000, guid: 291f7a022596ec04cb0c6be410d566d1, type: 3}
 --- !u!4 &990555879914560521 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7408102131176609238, guid: 291f7a022596ec04cb0c6be410d566d1, type: 3}
   m_PrefabInstance: {fileID: 7742238547882789343}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &6109768991479554444 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4592464865913088083, guid: 291f7a022596ec04cb0c6be410d566d1, type: 3}
+  m_PrefabInstance: {fileID: 7742238547882789343}
+  m_PrefabAsset: {fileID: 0}
+--- !u!64 &3748974438902550980
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6109768991479554444}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 2959467708922500008, guid: 884f622086379874bb3892ce39e42e58, type: 3}
 --- !u!1001 &7980659018716638766
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7460,7 +7599,7 @@ MonoBehaviour:
       m_RotationOrder: 4
     Use2D: 0
     Invert: 0
-  IKTarget: {fileID: 0}
+  IKTarget: {fileID: 5940347806960017648}
   IKAlignEndWithTarget: 0
   IKAutoWeights: 1
   IKBaseReactionWeight: 0.65
@@ -7727,8 +7866,8 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   DeflectOnlyCollisions: 1
-  _Editor_Category: 0
-  _Editor_FeaturesCategory: 0
+  _Editor_Category: 2
+  _Editor_FeaturesCategory: 2
   DrawGizmos: 1
   StartBone: {fileID: 7980659018716247216}
   EndBone: {fileID: 0}
@@ -8121,7 +8260,7 @@ MonoBehaviour:
       m_RotationOrder: 4
     Use2D: 0
     Invert: 0
-  IKTarget: {fileID: 0}
+  IKTarget: {fileID: 2399076311323499072}
   IKAlignEndWithTarget: 0
   IKAutoWeights: 1
   IKBaseReactionWeight: 0.65
@@ -8927,7 +9066,7 @@ MonoBehaviour:
       m_RotationOrder: 4
     Use2D: 0
     Invert: 0
-  IKTarget: {fileID: 0}
+  IKTarget: {fileID: 5940347806960017648}
   IKAlignEndWithTarget: 0
   IKAutoWeights: 1
   IKBaseReactionWeight: 0.65
